@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 
 
 @Entity(tableName = "floor", foreignKeys = [
-    (ForeignKey(entity = DefectList::class,
+    (ForeignKey(entity = StreetAddress::class,
             parentColumns = ["id"],
             childColumns = ["street_address_id"],
             onDelete = ForeignKey.CASCADE))])

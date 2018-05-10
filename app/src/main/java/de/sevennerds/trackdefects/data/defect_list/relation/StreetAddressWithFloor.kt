@@ -12,5 +12,5 @@ class StreetAddressWithFloor {
 
     @Relation(parentColumn = "id",
             entityColumn = "street_address_id", entity = Floor::class)
-    lateinit var floorList: List<Floor>
+    lateinit var floorList: List<FloorWithLivingUnit>
 }

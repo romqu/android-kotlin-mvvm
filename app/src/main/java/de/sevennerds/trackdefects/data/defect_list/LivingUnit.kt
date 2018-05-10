@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "living_unit", foreignKeys = [
-    (ForeignKey(entity = DefectList::class,
+    (ForeignKey(entity = Floor::class,
             parentColumns = ["id"],
             childColumns = ["floor_id"],
             onDelete = ForeignKey.CASCADE))])
