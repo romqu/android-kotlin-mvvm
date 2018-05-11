@@ -9,5 +9,5 @@ import androidx.room.OnConflictStrategy
 interface FloorLocalDataSource {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(floor: Floor)
+    fun insert(floor: Floor): Long
 }

@@ -45,6 +45,4 @@ abstract class LocalDataSource : RoomDatabase() {
     abstract fun defect(): DefectLocalDataSource
 
     abstract fun defectImage(): DefectImageLocalDataSource
-
-
 }

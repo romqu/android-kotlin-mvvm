@@ -8,5 +8,5 @@ import androidx.room.OnConflictStrategy
 interface RoomLocalDataSource {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(room: Room)
+    fun insert(room: Room): Long
 }

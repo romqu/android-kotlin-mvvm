@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.squareup.moshi.Moshi
 import de.sevennerds.trackdefects.data.AppJsonAdapterFactory
 import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
+import de.sevennerds.trackdefects.data.defect_list.DefectList
 import de.sevennerds.trackdefects.data.defect_list.DefectListLocalDataSource
 import de.sevennerds.trackdefects.data.floor.FloorLocalDataSource
 import de.sevennerds.trackdefects.data.response.Response
@@ -66,10 +67,15 @@ class MainActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe()
 
+        Single.just(DefectList(0, 0, "wqdwqdwqd", "30.10.1111"))
+                .map { list -> defectListLocal.insert(list) }
+                .subscribe { id -> Log.d("ID", id.toString()) }
+
+
         test()
 
         val r = defectListLocal
-                .getDefectListWithStreetAddress()
+                .getDefectListWithRelations()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { list ->

@@ -8,5 +8,5 @@ import androidx.room.OnConflictStrategy
 interface DefectLocalDataSource {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(defect: Defect)
+    fun insert(defect: Defect): Long
 }

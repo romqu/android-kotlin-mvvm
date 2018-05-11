@@ -8,5 +8,5 @@ import androidx.room.OnConflictStrategy
 interface StreetAddressLocalDataSource {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(streetAddress: StreetAddress)
+    fun insert(streetAddress: StreetAddress): Long
 }

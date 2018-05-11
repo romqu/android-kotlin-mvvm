@@ -8,5 +8,5 @@ import androidx.room.OnConflictStrategy
 interface DefectImageLocalDataSource {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(defectImage: DefectImage)
+    fun insert(defectImage: DefectImage): Long
 }

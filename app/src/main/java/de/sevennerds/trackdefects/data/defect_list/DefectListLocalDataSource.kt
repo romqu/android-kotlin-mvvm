@@ -1,18 +1,18 @@
 package de.sevennerds.trackdefects.data.defect_list
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
+import de.sevennerds.trackdefects.data.BaseLocalDataSource
 import de.sevennerds.trackdefects.data.defect_list.relation.DefectListWithStreetAddress
 import io.reactivex.Flowable
 
 @Dao
-interface DefectListLocalDataSource {
+interface DefectListLocalDataSource : BaseLocalDataSource<DefectList> {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(defectList: DefectList)
-
+    @Transaction
     @Query("SELECT * FROM defect_list")
-    fun getDefectListWithStreetAddress(): Flowable<List<DefectListWithStreetAddress>>
+    fun getDefectListWithRelations(): Flowable<List<DefectListWithStreetAddress>>
+
+
 }
