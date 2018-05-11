@@ -1,4 +1,4 @@
-package de.sevennerds.trackdefects.data.defect_list
+package de.sevennerds.trackdefects.data.floor
 
 
 import androidx.room.Dao

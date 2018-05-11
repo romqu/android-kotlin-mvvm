@@ -3,7 +3,7 @@ package de.sevennerds.trackdefects.data.defect_list.relation
 import androidx.room.Embedded
 import androidx.room.Relation
 import de.sevennerds.trackdefects.data.defect_list.DefectList
-import de.sevennerds.trackdefects.data.defect_list.StreetAddress
+import de.sevennerds.trackdefects.data.street_address.StreetAddress
 
 class DefectListWithStreetAddress {
 

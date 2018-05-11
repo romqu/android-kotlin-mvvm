@@ -1,4 +1,4 @@
-package de.sevennerds.trackdefects.data
+package de.sevennerds.trackdefects.data.error
 
 import se.ansman.kotshi.JsonSerializable
 

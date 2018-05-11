@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "85bcb18aa767e78bd98f6ab6a627b14e",
+    "identityHash": "78c31ea871ace6ab3ce131a79c06fabf",
     "entities": [
       {
         "tableName": "client",
@@ -156,7 +156,7 @@
       },
       {
         "tableName": "floor",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `street_address_id` INTEGER NOT NULL, `name` TEXT NOT NULL, FOREIGN KEY(`street_address_id`) REFERENCES `defect_list`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `street_address_id` INTEGER NOT NULL, `name` TEXT NOT NULL, FOREIGN KEY(`street_address_id`) REFERENCES `street_address`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -192,7 +192,7 @@
         "indices": [],
         "foreignKeys": [
           {
-            "table": "defect_list",
+            "table": "street_address",
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
@@ -206,7 +206,7 @@
       },
       {
         "tableName": "living_unit",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `floor_id` INTEGER NOT NULL, `number` INTEGER NOT NULL, FOREIGN KEY(`floor_id`) REFERENCES `defect_list`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `floor_id` INTEGER NOT NULL, `number` INTEGER NOT NULL, FOREIGN KEY(`floor_id`) REFERENCES `floor`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -242,7 +242,7 @@
         "indices": [],
         "foreignKeys": [
           {
-            "table": "defect_list",
+            "table": "floor",
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
@@ -253,11 +253,203 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "room",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `living_unit_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `number` INTEGER NOT NULL, `location_description` TEXT NOT NULL, FOREIGN KEY(`living_unit_id`) REFERENCES `living_unit`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remoteId",
+            "columnName": "remote_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "livingUnitId",
+            "columnName": "living_unit_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "number",
+            "columnName": "number",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "locationDescription",
+            "columnName": "location_description",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "living_unit",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "living_unit_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "defect",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `description` TEXT NOT NULL, `measure` TEXT NOT NULL, `company_in_charge` TEXT NOT NULL, `done_till` TEXT NOT NULL, `room_id` INTEGER NOT NULL, FOREIGN KEY(`room_id`) REFERENCES `room`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remoteId",
+            "columnName": "remote_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "measure",
+            "columnName": "measure",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "companyInCharge",
+            "columnName": "company_in_charge",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doneTill",
+            "columnName": "done_till",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "roomId",
+            "columnName": "room_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "room",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "room_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "defect_image",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `original_name` TEXT NOT NULL, `position` TEXT NOT NULL, `defect_id` INTEGER NOT NULL, FOREIGN KEY(`defect_id`) REFERENCES `defect`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remoteId",
+            "columnName": "remote_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "originalName",
+            "columnName": "original_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "position",
+            "columnName": "position",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "roomId",
+            "columnName": "defect_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "defect",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "defect_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"85bcb18aa767e78bd98f6ab6a627b14e\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"78c31ea871ace6ab3ce131a79c06fabf\")"
     ]
   }
 }

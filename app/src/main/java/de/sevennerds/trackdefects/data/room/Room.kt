@@ -1,9 +1,10 @@
-package de.sevennerds.trackdefects.data.defect_list
+package de.sevennerds.trackdefects.data.room
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import de.sevennerds.trackdefects.data.living_unit.LivingUnit
 
 
 @Entity(tableName = "room", foreignKeys = [

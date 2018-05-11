@@ -5,11 +5,11 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.squareup.moshi.Moshi
 import de.sevennerds.trackdefects.data.AppJsonAdapterFactory
-import de.sevennerds.trackdefects.data.Response
 import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
 import de.sevennerds.trackdefects.data.defect_list.DefectListLocalDataSource
-import de.sevennerds.trackdefects.data.defect_list.FloorLocalDataSource
-import de.sevennerds.trackdefects.data.defect_list.StreetAddressLocalDataSource
+import de.sevennerds.trackdefects.data.floor.FloorLocalDataSource
+import de.sevennerds.trackdefects.data.response.Response
+import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSource
 import de.sevennerds.trackdefects.data.test.TestLocalDataSource
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers

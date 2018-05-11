@@ -7,9 +7,9 @@ import dagger.Provides
 import de.sevennerds.trackdefects.data.LocalDataSource
 import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
 import de.sevennerds.trackdefects.data.defect_list.DefectListLocalDataSource
-import de.sevennerds.trackdefects.data.defect_list.FloorLocalDataSource
-import de.sevennerds.trackdefects.data.defect_list.LivingUnitLocalDataSource
-import de.sevennerds.trackdefects.data.defect_list.StreetAddressLocalDataSource
+import de.sevennerds.trackdefects.data.floor.FloorLocalDataSource
+import de.sevennerds.trackdefects.data.living_unit.LivingUnitLocalDataSource
+import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSource
 import io.requery.android.database.sqlite.RequerySQLiteOpenHelperFactory
 import javax.inject.Singleton
 

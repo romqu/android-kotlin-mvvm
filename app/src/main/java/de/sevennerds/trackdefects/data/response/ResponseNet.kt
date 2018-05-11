@@ -1,6 +1,7 @@
-package de.sevennerds.trackdefects.data
+package de.sevennerds.trackdefects.data.response
 
 import com.squareup.moshi.Json
+import de.sevennerds.trackdefects.data.error.ErrorNet
 import se.ansman.kotshi.JsonSerializable
 
 @JsonSerializable

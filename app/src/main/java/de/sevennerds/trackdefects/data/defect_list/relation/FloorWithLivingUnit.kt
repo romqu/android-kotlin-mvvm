@@ -2,8 +2,8 @@ package de.sevennerds.trackdefects.data.defect_list.relation
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import de.sevennerds.trackdefects.data.defect_list.Floor
-import de.sevennerds.trackdefects.data.defect_list.LivingUnit
+import de.sevennerds.trackdefects.data.floor.Floor
+import de.sevennerds.trackdefects.data.living_unit.LivingUnit
 
 class FloorWithLivingUnit {
 
@@ -12,5 +12,5 @@ class FloorWithLivingUnit {
 
     @Relation(parentColumn = "id",
             entityColumn = "floor_id", entity = LivingUnit::class)
-    lateinit var livingUnitList: List<LivingUnit>
+    lateinit var livingUnitList: List<LivingUnitWithRoom>
 }
