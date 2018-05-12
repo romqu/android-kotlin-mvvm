@@ -2,12 +2,9 @@ package de.sevennerds.trackdefects.data.floor
 
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
+import de.sevennerds.trackdefects.data.BaseLocalDataSource
 
 @Dao
-interface FloorLocalDataSource {
+interface FloorLocalDataSource : BaseLocalDataSource<Floor> {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(floor: Floor): Long
 }

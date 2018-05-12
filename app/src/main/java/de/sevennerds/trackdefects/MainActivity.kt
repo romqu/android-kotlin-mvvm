@@ -11,7 +11,6 @@ import de.sevennerds.trackdefects.data.defect_list.DefectListLocalDataSource
 import de.sevennerds.trackdefects.data.floor.FloorLocalDataSource
 import de.sevennerds.trackdefects.data.response.Response
 import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSource
-import de.sevennerds.trackdefects.data.test.TestLocalDataSource
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -53,10 +52,10 @@ class MainActivity : AppCompatActivity() {
 
         TrackDefectsApp.get(this).component.inject(this);
 
-        val sub = retrofit.create(TestLocalDataSource::class.java).test()
+/*        val sub = retrofit.create(TestLocalDataSource::class.java).test()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { response -> Log.d("RESPONSE", response.body().toString()) }
+                .subscribe { response -> Log.d("RESPONSE", response.body().toString()) }*/
 
         Single.fromCallable {
             /*defectListLocal.insert(DefectList(0, 0, "wqdwqdwqd", "30.10.1111"))
@@ -67,34 +66,13 @@ class MainActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe()
 
+        deleteDatabase("trackdefects.db")
+
         Single.just(DefectList(0, 0, "wqdwqdwqd", "30.10.1111"))
                 .map { list -> defectListLocal.insert(list) }
-                .subscribe { id -> Log.d("ID", id.toString()) }
-
-
-        test()
-
-        val r = defectListLocal
-                .getDefectListWithRelations()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { list ->
-                    list.forEach {
-                        run {
-                            Log.d("TAG", it.defectList.toString())
-                            it.streetAddressList.forEach {
-                                run {
-                                    Log.d("TAG", it.streetAddress.toString())
-                                    it.floorList.forEach {
-                                        run {
-                                            Log.d("TAG", it.toString())
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                .subscribe { id -> Log.d("ID", id.toString()) }
 
     }
 

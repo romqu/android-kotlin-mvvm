@@ -1,12 +1,9 @@
 package de.sevennerds.trackdefects.data.defect_image
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
+import de.sevennerds.trackdefects.data.BaseLocalDataSource
 
 @Dao
-interface DefectImageLocalDataSource {
+interface DefectImageLocalDataSource : BaseLocalDataSource<DefectImage> {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(defectImage: DefectImage): Long
 }
