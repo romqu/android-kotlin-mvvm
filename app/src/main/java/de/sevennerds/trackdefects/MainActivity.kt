@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
         TrackDefectsApp.get(this).component.inject(this);
 
-/*        val sub = retrofit.create(TestLocalDataSource::class.java).test()
+/*        val sub = retrofit.create(TestNetDataSource::class.java).test()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { response -> Log.d("RESPONSE", response.body().toString()) }*/
@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity() {
                 .subscribe()
 
         deleteDatabase("trackdefects.db")
+
 
         Single.just(DefectList(0, 0, "wqdwqdwqd", "30.10.1111"))
                 .map { list -> defectListLocal.insert(list) }

@@ -5,7 +5,7 @@ import io.reactivex.Single
 import retrofit2.Response
 import retrofit2.http.GET
 
-interface TestLocalDataSource {
+interface TestNetDataSource {
 
     @GET("test")
     fun test(): Single<Response<ResponseNet<String>>>

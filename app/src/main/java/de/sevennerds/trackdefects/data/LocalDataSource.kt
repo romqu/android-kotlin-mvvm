@@ -18,6 +18,7 @@ import de.sevennerds.trackdefects.data.room.Room
 import de.sevennerds.trackdefects.data.room.RoomLocalDataSource
 import de.sevennerds.trackdefects.data.street_address.StreetAddress
 import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSource
+import de.sevennerds.trackdefects.data.test.TestEntity
 
 @Database(entities = [
     Client::class,
@@ -26,7 +27,7 @@ import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSour
     Floor::class,
     LivingUnit::class,
     Room::class, Defect::class,
-    DefectImage::class],
+    DefectImage::class, TestEntity::class],
         version = 1)
 abstract class LocalDataSource : RoomDatabase() {
 
