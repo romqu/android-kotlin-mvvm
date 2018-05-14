@@ -19,11 +19,14 @@ import de.sevennerds.trackdefects.data.room.RoomLocalDataSource
 import de.sevennerds.trackdefects.data.street_address.StreetAddress
 import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSource
 import de.sevennerds.trackdefects.data.test.TestEntity
+import de.sevennerds.trackdefects.data.view_participant.ViewParticipant
+import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalDataSource
 
 @Database(entities = [
     Client::class,
     DefectList::class,
     StreetAddress::class,
+    ViewParticipant::class,
     Floor::class,
     LivingUnit::class,
     Room::class, Defect::class,
@@ -36,6 +39,8 @@ abstract class LocalDataSource : RoomDatabase() {
     abstract fun defectList(): DefectListLocalDataSource
 
     abstract fun streetAddress(): StreetAddressLocalDataSource
+
+    abstract fun viewParticipant(): ViewParticipantLocalDataSource
 
     abstract fun floor(): FloorLocalDataSource
 

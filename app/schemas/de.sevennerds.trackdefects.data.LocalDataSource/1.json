@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e5bcc54ab91ea986bc53cf715f5c1de6",
+    "identityHash": "aec127bdc59090942f37f7aaea840527",
     "entities": [
       {
         "tableName": "client",
@@ -156,6 +156,89 @@
             "onUpdate": "CASCADE",
             "columns": [
               "defect_list_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "view_participant",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `street_address_id` INTEGER NOT NULL, `forename` TEXT NOT NULL, `surname` TEXT NOT NULL, `phone_number` INTEGER NOT NULL, `e_mail` TEXT NOT NULL, `company_name` TEXT NOT NULL, FOREIGN KEY(`street_address_id`) REFERENCES `defect_list`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remoteId",
+            "columnName": "remote_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "streetAddressId",
+            "columnName": "street_address_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "forename",
+            "columnName": "forename",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "surname",
+            "columnName": "surname",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "phoneNumber",
+            "columnName": "phone_number",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "email",
+            "columnName": "e_mail",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "companyName",
+            "columnName": "company_name",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "view_participant_street_address_idx",
+            "unique": false,
+            "columnNames": [
+              "street_address_id"
+            ],
+            "createSql": "CREATE  INDEX `view_participant_street_address_idx` ON `${TABLE_NAME}` (`street_address_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "defect_list",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "street_address_id"
             ],
             "referencedColumns": [
               "id"
@@ -476,7 +559,16 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "defect_idx",
+            "unique": false,
+            "columnNames": [
+              "defect_id"
+            ],
+            "createSql": "CREATE  INDEX `defect_idx` ON `${TABLE_NAME}` (`defect_id`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "defect",
@@ -520,7 +612,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"e5bcc54ab91ea986bc53cf715f5c1de6\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"aec127bdc59090942f37f7aaea840527\")"
     ]
   }
 }

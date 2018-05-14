@@ -3,26 +3,16 @@ package de.sevennerds.trackdefects
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.squareup.moshi.Moshi
-import de.sevennerds.trackdefects.data.AppJsonAdapterFactory
-import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
 import de.sevennerds.trackdefects.data.defect_list.DefectList
 import de.sevennerds.trackdefects.data.defect_list.DefectListLocalDataSource
-import de.sevennerds.trackdefects.data.floor.FloorLocalDataSource
-import de.sevennerds.trackdefects.data.response.Response
 import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSource
+import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalDataSource
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
-
-    @Inject
-    lateinit var clientLocalDataSource: ClientLocalDataSource;
 
     @Inject
     lateinit var defectListLocal: DefectListLocalDataSource;
@@ -31,7 +21,35 @@ class MainActivity : AppCompatActivity() {
     lateinit var streetAddressLocal: StreetAddressLocalDataSource;
 
     @Inject
-    lateinit var floorLocal: FloorLocalDataSource;
+    lateinit var viewParticipantLocal: ViewParticipantLocalDataSource
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        TrackDefectsApp.get(this).component.inject(this);
+
+        val dl = DefectList(0, 0, "name", "wqdwqd"
+                /*StreetAddress(0, 0, 0, "street", 1, 1, "addd", "d21")*/)
+
+
+
+        deleteDatabase("trackdefects.db")
+
+        val r = Single.fromCallable {
+            val id = defectListLocal.insert(dl)
+            dl.streetAddress?.copy(defectListId = id)
+        }
+                .map { streetAddress -> streetAddressLocal.insert(streetAddress) }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { _, t2 -> Log.d("TAG", t2.toString()) }
+
+
+    }
+
+/*    fun testRetrofit(): Int {
 
     val moshi = Moshi.Builder()
             .add(AppJsonAdapterFactory.INSTANCE)
@@ -45,39 +63,11 @@ class MainActivity : AppCompatActivity() {
             .baseUrl("http://10.0.2.2:3000/")
             .build()
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        TrackDefectsApp.get(this).component.inject(this);
-
-/*        val sub = retrofit.create(TestNetDataSource::class.java).test()
+        val sub = retrofit.create(TestNetDataSource::class.java).test()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { response -> Log.d("RESPONSE", response.body().toString()) }*/
+                .subscribe { response -> Log.d("RESPONSE", response.body().toString()) }
 
-        Single.fromCallable {
-            /*defectListLocal.insert(DefectList(0, 0, "wqdwqdwqd", "30.10.1111"))
-            streetAddressLocal.insert(StreetAddress(0, 0, 1, "ewqewqe", 1212, 1, "a", "21323"))*/
-            // floorLocal.insert(Floor(0, 0, 1, "EG"))
-
-        }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe()
-
-        deleteDatabase("trackdefects.db")e
-
-
-        Single.just(DefectList(0, 0, "wqdwqdwqd", "30.10.1111"))
-                .map { list -> defectListLocal.insert(list) }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { id -> Log.d("ID", id.toString()) }
-
-    }
-
-    fun test(): Int {
         val response: Response<String> = Response.Failure("TADA")
 
 
@@ -85,5 +75,5 @@ class MainActivity : AppCompatActivity() {
             is Response.Success<String> -> Log.d("Success", response.data)
             is Response.Failure -> Log.d("Failure", response.error)
         }
-    }
+    }*/
 }
