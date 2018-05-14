@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe()
 
-        deleteDatabase("trackdefects.db")
+        deleteDatabase("trackdefects.db")e
 
 
         Single.just(DefectList(0, 0, "wqdwqdwqd", "30.10.1111"))

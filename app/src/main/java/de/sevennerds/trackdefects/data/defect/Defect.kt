@@ -10,7 +10,7 @@ import de.sevennerds.trackdefects.data.room.Room
             childColumns = ["room_id"],
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE))],
-        indices = [(androidx.room.Index(value = ["defect_image_id"], name = "defect_image_idx"))])
+        indices = [(Index(value = ["room_id"], name = "room_idx"))])
 data class Defect @JvmOverloads constructor(@PrimaryKey(autoGenerate = true) val id: Long,
                                             @ColumnInfo(name = "remote_id") val remoteId: Long,
                                             @ColumnInfo(name = "description") val description: String,

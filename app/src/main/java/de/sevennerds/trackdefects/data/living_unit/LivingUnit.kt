@@ -7,7 +7,9 @@ import de.sevennerds.trackdefects.data.floor.Floor
     (ForeignKey(entity = Floor::class,
             parentColumns = ["id"],
             childColumns = ["floor_id"],
-            onDelete = ForeignKey.CASCADE))])
+            onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE))],
+        indices = [(Index(value = ["floor_id"], name = "floor_idx"))])
 data class LivingUnit @JvmOverloads constructor(@PrimaryKey(autoGenerate = true) val id: Long,
                                                 @ColumnInfo(name = "remote_id") val remoteId: Long,
                                                 @ColumnInfo(name = "floor_id") val floorId: Long,

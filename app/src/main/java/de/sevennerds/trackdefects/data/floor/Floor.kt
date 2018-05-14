@@ -9,7 +9,9 @@ import de.sevennerds.trackdefects.data.street_address.StreetAddress
     (ForeignKey(entity = StreetAddress::class,
             parentColumns = ["id"],
             childColumns = ["street_address_id"],
-            onDelete = ForeignKey.CASCADE))])
+            onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE))],
+        indices = [(Index(value = ["street_address_id"], name = "street_address_idx"))])
 data class Floor @JvmOverloads constructor(@PrimaryKey(autoGenerate = true) val id: Long,
                                            @ColumnInfo(name = "remote_id") val remoteId: Long,
                                            @ColumnInfo(name = "street_address_id") val streetAddressId: Long,

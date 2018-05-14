@@ -20,7 +20,4 @@ data class StreetAddress @JvmOverloads constructor(@PrimaryKey(autoGenerate = tr
                                                    @ColumnInfo(name = "number") val number: Int,
                                                    @ColumnInfo(name = "additional") val additional: String,
                                                    @ColumnInfo(name = "creation_date") val creationDate: String,
-                                                   @Ignore val floorList: List<Floor> = emptyList()) {
-
-
-}
+                                                   @Ignore val floorList: List<Floor> = emptyList()) {}

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ef3e8c80561bb3ff20b2847180d96c5b",
+    "identityHash": "e5bcc54ab91ea986bc53cf715f5c1de6",
     "entities": [
       {
         "tableName": "client",
@@ -82,7 +82,7 @@
       },
       {
         "tableName": "street_address",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `defect_list_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `postal_code` INTEGER NOT NULL, `number` INTEGER NOT NULL, `additional` TEXT NOT NULL, `creation_date` TEXT NOT NULL, FOREIGN KEY(`defect_list_id`) REFERENCES `defect_list`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `defect_list_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `postal_code` INTEGER NOT NULL, `number` INTEGER NOT NULL, `additional` TEXT NOT NULL, `creation_date` TEXT NOT NULL, FOREIGN KEY(`defect_list_id`) REFERENCES `defect_list`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -153,7 +153,7 @@
           {
             "table": "defect_list",
             "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
+            "onUpdate": "CASCADE",
             "columns": [
               "defect_list_id"
             ],
@@ -165,7 +165,7 @@
       },
       {
         "tableName": "floor",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `street_address_id` INTEGER NOT NULL, `name` TEXT NOT NULL, FOREIGN KEY(`street_address_id`) REFERENCES `street_address`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `street_address_id` INTEGER NOT NULL, `name` TEXT NOT NULL, FOREIGN KEY(`street_address_id`) REFERENCES `street_address`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -198,12 +198,21 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "street_address_idx",
+            "unique": false,
+            "columnNames": [
+              "street_address_id"
+            ],
+            "createSql": "CREATE  INDEX `street_address_idx` ON `${TABLE_NAME}` (`street_address_id`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "street_address",
             "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
+            "onUpdate": "CASCADE",
             "columns": [
               "street_address_id"
             ],
@@ -215,7 +224,7 @@
       },
       {
         "tableName": "living_unit",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `floor_id` INTEGER NOT NULL, `number` INTEGER NOT NULL, FOREIGN KEY(`floor_id`) REFERENCES `floor`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `floor_id` INTEGER NOT NULL, `number` INTEGER NOT NULL, FOREIGN KEY(`floor_id`) REFERENCES `floor`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -248,12 +257,21 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "floor_idx",
+            "unique": false,
+            "columnNames": [
+              "floor_id"
+            ],
+            "createSql": "CREATE  INDEX `floor_idx` ON `${TABLE_NAME}` (`floor_id`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "floor",
             "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
+            "onUpdate": "CASCADE",
             "columns": [
               "floor_id"
             ],
@@ -265,7 +283,7 @@
       },
       {
         "tableName": "room",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `living_unit_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `number` INTEGER NOT NULL, `location_description` TEXT NOT NULL, FOREIGN KEY(`living_unit_id`) REFERENCES `living_unit`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `living_unit_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `number` INTEGER NOT NULL, `location_description` TEXT NOT NULL, FOREIGN KEY(`living_unit_id`) REFERENCES `living_unit`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -310,12 +328,21 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "living_unit_idx",
+            "unique": false,
+            "columnNames": [
+              "living_unit_id"
+            ],
+            "createSql": "CREATE  INDEX `living_unit_idx` ON `${TABLE_NAME}` (`living_unit_id`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "living_unit",
             "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
+            "onUpdate": "CASCADE",
             "columns": [
               "living_unit_id"
             ],
@@ -327,7 +354,7 @@
       },
       {
         "tableName": "defect",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `description` TEXT NOT NULL, `measure` TEXT NOT NULL, `company_in_charge` TEXT NOT NULL, `done_till` TEXT NOT NULL, `room_id` INTEGER NOT NULL, FOREIGN KEY(`room_id`) REFERENCES `room`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `description` TEXT NOT NULL, `measure` TEXT NOT NULL, `company_in_charge` TEXT NOT NULL, `done_till` TEXT NOT NULL, `room_id` INTEGER NOT NULL, FOREIGN KEY(`room_id`) REFERENCES `room`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -378,12 +405,21 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "room_idx",
+            "unique": false,
+            "columnNames": [
+              "room_id"
+            ],
+            "createSql": "CREATE  INDEX `room_idx` ON `${TABLE_NAME}` (`room_id`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "room",
             "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
+            "onUpdate": "CASCADE",
             "columns": [
               "room_id"
             ],
@@ -484,7 +520,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"ef3e8c80561bb3ff20b2847180d96c5b\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"e5bcc54ab91ea986bc53cf715f5c1de6\")"
     ]
   }
 }

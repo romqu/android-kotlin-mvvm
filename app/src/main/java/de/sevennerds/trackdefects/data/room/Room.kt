@@ -9,7 +9,9 @@ import de.sevennerds.trackdefects.data.living_unit.LivingUnit
     (ForeignKey(entity = LivingUnit::class,
             parentColumns = ["id"],
             childColumns = ["living_unit_id"],
-            onDelete = ForeignKey.CASCADE))])
+            onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE))],
+        indices = [(Index(value = ["living_unit_id"], name = "living_unit_idx"))])
 data class Room @JvmOverloads constructor(@PrimaryKey(autoGenerate = true) val id: Long,
                                           @ColumnInfo(name = "remote_id") val remoteId: Long,
                                           @ColumnInfo(name = "living_unit_id") val livingUnitId: Long,
