@@ -1,7 +1,7 @@
 package de.sevennerds.trackdefects.data.room
 
 import androidx.room.*
-import de.sevennerds.trackdefects.data.defect.Defect
+import de.sevennerds.trackdefects.data.defect_info.DefectInfo
 import de.sevennerds.trackdefects.data.living_unit.LivingUnit
 
 
@@ -18,4 +18,4 @@ data class Room @JvmOverloads constructor(@PrimaryKey(autoGenerate = true) val i
                                           @ColumnInfo(name = "name") val name: String,
                                           @ColumnInfo(name = "number") val number: Int,
                                           @ColumnInfo(name = "location_description") val locationDescription: String,
-                                          @Ignore val defectList: List<Defect> = emptyList()) {}
+                                          @Ignore val defectInfoList: List<DefectInfo> = emptyList()) {}

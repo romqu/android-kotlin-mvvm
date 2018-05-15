@@ -1,8 +1,9 @@
 package de.sevennerds.trackdefects.data.error
 
-import se.ansman.kotshi.JsonSerializable
+import com.squareup.moshi.JsonClass
 
-@JsonSerializable
+// @JsonSerializable
+@JsonClass(generateAdapter = true)
 data class ErrorNet(val status: String,
                     val code: String,
                     val title: String,

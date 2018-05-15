@@ -1,4 +1,4 @@
-package de.sevennerds.trackdefects.data.defect_list.relation
+package de.sevennerds.trackdefects.data.defect_list.local.relation
 
 import androidx.room.Embedded
 import androidx.room.Relation
@@ -12,5 +12,5 @@ class DefectListWithStreetAddress {
 
     @Relation(parentColumn = "id",
             entityColumn = "defect_list_id", entity = StreetAddress::class)
-    lateinit var streetAddressList: List<StreetAddressWithFloor>
+    lateinit var streetAddressWithFloor: Set<StreetAddressWithFloor>
 }

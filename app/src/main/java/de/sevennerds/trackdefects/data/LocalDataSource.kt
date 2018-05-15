@@ -4,12 +4,12 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import de.sevennerds.trackdefects.data.client.Client
 import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
-import de.sevennerds.trackdefects.data.defect.Defect
-import de.sevennerds.trackdefects.data.defect.DefectLocalDataSource
 import de.sevennerds.trackdefects.data.defect_image.DefectImage
 import de.sevennerds.trackdefects.data.defect_image.DefectImageLocalDataSource
+import de.sevennerds.trackdefects.data.defect_info.DefectInfo
+import de.sevennerds.trackdefects.data.defect_info.DefectInfoLocalDataSource
 import de.sevennerds.trackdefects.data.defect_list.DefectList
-import de.sevennerds.trackdefects.data.defect_list.DefectListLocalDataSource
+import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSource
 import de.sevennerds.trackdefects.data.floor.Floor
 import de.sevennerds.trackdefects.data.floor.FloorLocalDataSource
 import de.sevennerds.trackdefects.data.living_unit.LivingUnit
@@ -29,7 +29,7 @@ import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalData
     ViewParticipant::class,
     Floor::class,
     LivingUnit::class,
-    Room::class, Defect::class,
+    Room::class, DefectInfo::class,
     DefectImage::class, TestEntity::class],
         version = 1)
 abstract class LocalDataSource : RoomDatabase() {
@@ -48,7 +48,7 @@ abstract class LocalDataSource : RoomDatabase() {
 
     abstract fun room(): RoomLocalDataSource
 
-    abstract fun defect(): DefectLocalDataSource
+    abstract fun defectInfo(): DefectInfoLocalDataSource
 
     abstract fun defectImage(): DefectImageLocalDataSource
 }

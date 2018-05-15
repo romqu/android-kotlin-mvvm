@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "aec127bdc59090942f37f7aaea840527",
+    "identityHash": "1c1f07688f86498498e5afeb1d1793a6",
     "entities": [
       {
         "tableName": "client",
@@ -436,7 +436,7 @@
         ]
       },
       {
-        "tableName": "defect",
+        "tableName": "defect_info",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `description` TEXT NOT NULL, `measure` TEXT NOT NULL, `company_in_charge` TEXT NOT NULL, `done_till` TEXT NOT NULL, `room_id` INTEGER NOT NULL, FOREIGN KEY(`room_id`) REFERENCES `room`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
@@ -514,7 +514,7 @@
       },
       {
         "tableName": "defect_image",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `original_name` TEXT NOT NULL, `position` TEXT NOT NULL, `defect_id` INTEGER NOT NULL, FOREIGN KEY(`defect_id`) REFERENCES `defect`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `original_name` TEXT NOT NULL, `position` TEXT NOT NULL, `defect_info_id` INTEGER NOT NULL, FOREIGN KEY(`defect_info_id`) REFERENCES `defect_info`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -547,8 +547,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "roomId",
-            "columnName": "defect_id",
+            "fieldPath": "defectInfoId",
+            "columnName": "defect_info_id",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -561,21 +561,21 @@
         },
         "indices": [
           {
-            "name": "defect_idx",
+            "name": "defect_info_idx",
             "unique": false,
             "columnNames": [
-              "defect_id"
+              "defect_info_id"
             ],
-            "createSql": "CREATE  INDEX `defect_idx` ON `${TABLE_NAME}` (`defect_id`)"
+            "createSql": "CREATE  INDEX `defect_info_idx` ON `${TABLE_NAME}` (`defect_info_id`)"
           }
         ],
         "foreignKeys": [
           {
-            "table": "defect",
+            "table": "defect_info",
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "defect_id"
+              "defect_info_id"
             ],
             "referencedColumns": [
               "id"
@@ -612,7 +612,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"aec127bdc59090942f37f7aaea840527\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"1c1f07688f86498498e5afeb1d1793a6\")"
     ]
   }
 }

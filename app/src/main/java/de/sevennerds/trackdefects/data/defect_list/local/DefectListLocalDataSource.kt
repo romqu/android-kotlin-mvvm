@@ -1,10 +1,11 @@
-package de.sevennerds.trackdefects.data.defect_list
+package de.sevennerds.trackdefects.data.defect_list.local
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import de.sevennerds.trackdefects.data.BaseLocalDataSource
-import de.sevennerds.trackdefects.data.defect_list.relation.DefectListWithStreetAddress
+import de.sevennerds.trackdefects.data.defect_list.DefectList
+import de.sevennerds.trackdefects.data.defect_list.local.relation.DefectListWithStreetAddress
 import io.reactivex.Flowable
 
 @Dao

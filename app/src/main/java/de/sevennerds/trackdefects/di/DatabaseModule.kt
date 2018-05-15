@@ -7,9 +7,9 @@ import dagger.Provides
 import de.sevennerds.trackdefects.common.Constants
 import de.sevennerds.trackdefects.data.LocalDataSource
 import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
-import de.sevennerds.trackdefects.data.defect.DefectLocalDataSource
 import de.sevennerds.trackdefects.data.defect_image.DefectImageLocalDataSource
-import de.sevennerds.trackdefects.data.defect_list.DefectListLocalDataSource
+import de.sevennerds.trackdefects.data.defect_info.DefectInfoLocalDataSource
+import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSource
 import de.sevennerds.trackdefects.data.floor.FloorLocalDataSource
 import de.sevennerds.trackdefects.data.living_unit.LivingUnitLocalDataSource
 import de.sevennerds.trackdefects.data.room.RoomLocalDataSource
@@ -76,8 +76,8 @@ abstract class DatabaseModule {
         @Provides
         @Singleton
         @JvmStatic
-        fun provideDefectLocalDataSource(localDataSource: LocalDataSource): DefectLocalDataSource =
-                localDataSource.defect()
+        fun provideDefectInfoLocalDataSource(localDataSource: LocalDataSource): DefectInfoLocalDataSource =
+                localDataSource.defectInfo()
 
         @Provides
         @Singleton
