@@ -3,10 +3,10 @@ package de.sevennerds.trackdefects
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import de.sevennerds.trackdefects.data.defect_list.DefectList
+import de.sevennerds.trackdefects.data.defect.DefectInsert
+import de.sevennerds.trackdefects.data.defect.DefectRepo
 import de.sevennerds.trackdefects.data.defect_list.DefectListRepo
-import de.sevennerds.trackdefects.data.street_address.StreetAddress
-import de.sevennerds.trackdefects.data.view_participant.ViewParticipant
+import de.sevennerds.trackdefects.util.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -14,7 +14,10 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var repo: DefectListRepo
+    lateinit var defectListRepo: DefectListRepo
+
+    @Inject
+    lateinit var defectRepo: DefectRepo
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,37 +26,26 @@ class MainActivity : AppCompatActivity() {
 
         TrackDefectsApp.get(this).component.inject(this);
 
-        val viewParticipantList = listOf(ViewParticipant(0,
-                0,
-                0,
-                "Bern",
-                "Trem",
-                1324141,
-                "a@a.de",
-                "myco"))
-
-        val streetAddress = StreetAddress(0,
-                0,
-                0,
-                "street",
-                1,
-                1,
-                "addd",
-                "d21",
-                viewParticipantList = viewParticipantList)
-
-        val defectList = DefectList(0,
-                0,
-                "name",
-                "wqdwqd", streetAddress)
-
 
         deleteDatabase("trackdefects.db")
 
-        val r = repo.insertBasic(defectList)
+        val r = defectListRepo.insertBasic(defectList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { response -> Log.d("RESPONSE", response.toString()) }
+
+        val e = defectRepo.insert(DefectInsert(
+                1,
+                floor,
+                livingUnit,
+                room,
+                defectInfo,
+                defectImageList))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { response -> Log.d("RESPONSE1", response.toString()) }
+
+
     }
 
 /*    fun testRetrofit(): Int {

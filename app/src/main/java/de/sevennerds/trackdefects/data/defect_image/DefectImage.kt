@@ -13,5 +13,5 @@ data class DefectImage(@PrimaryKey(autoGenerate = true) val id: Long,
                        @ColumnInfo(name = "remote_id") val remoteId: Long,
                        @ColumnInfo(name = "name") val name: String,
                        @ColumnInfo(name = "original_name") val originalName: String,
-                       @ColumnInfo(name = "position") val position: String,
+                       @ColumnInfo(name = "position") val position: Int,
                        @ColumnInfo(name = "defect_info_id") val defectInfoId: Long) {}

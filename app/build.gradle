@@ -86,4 +86,7 @@ dependencies {
     kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.6.0'
     implementation 'se.ansman.kotshi:api:1.0.4'
     kapt 'se.ansman.kotshi:compiler:1.0.4'
+
+    //Stetho
+    implementation 'com.facebook.stetho:stetho:1.5.0'
 }

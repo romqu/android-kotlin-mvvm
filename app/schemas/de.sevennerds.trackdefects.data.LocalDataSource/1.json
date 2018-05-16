@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "1c1f07688f86498498e5afeb1d1793a6",
+    "identityHash": "3d153023d61b4a1954f3e1e2b0cc250a",
     "entities": [
       {
         "tableName": "client",
@@ -328,7 +328,7 @@
             "notNull": true
           },
           {
-            "fieldPath": "name",
+            "fieldPath": "number",
             "columnName": "number",
             "affinity": "INTEGER",
             "notNull": true
@@ -514,7 +514,7 @@
       },
       {
         "tableName": "defect_image",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `original_name` TEXT NOT NULL, `position` TEXT NOT NULL, `defect_info_id` INTEGER NOT NULL, FOREIGN KEY(`defect_info_id`) REFERENCES `defect_info`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `original_name` TEXT NOT NULL, `position` INTEGER NOT NULL, `defect_info_id` INTEGER NOT NULL, FOREIGN KEY(`defect_info_id`) REFERENCES `defect_info`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -543,7 +543,7 @@
           {
             "fieldPath": "position",
             "columnName": "position",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -612,7 +612,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"1c1f07688f86498498e5afeb1d1793a6\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"3d153023d61b4a1954f3e1e2b0cc250a\")"
     ]
   }
 }
