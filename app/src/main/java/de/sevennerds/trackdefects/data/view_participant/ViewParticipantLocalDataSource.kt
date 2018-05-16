@@ -4,5 +4,5 @@ import androidx.room.Dao
 import de.sevennerds.trackdefects.data.BaseLocalDataSource
 
 @Dao
-interface ViewParticipantLocalDataSource : BaseLocalDataSource<ViewParticipant> {
+abstract class ViewParticipantLocalDataSource : BaseLocalDataSource<ViewParticipant> {
 }

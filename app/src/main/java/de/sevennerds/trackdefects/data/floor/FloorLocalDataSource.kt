@@ -5,6 +5,6 @@ import androidx.room.Dao
 import de.sevennerds.trackdefects.data.BaseLocalDataSource
 
 @Dao
-interface FloorLocalDataSource : BaseLocalDataSource<Floor> {
+abstract class FloorLocalDataSource : BaseLocalDataSource<Floor> {
 
 }

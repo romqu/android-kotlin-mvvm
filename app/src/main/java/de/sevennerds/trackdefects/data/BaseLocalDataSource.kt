@@ -23,4 +23,15 @@ interface BaseLocalDataSource<in T> {
 
     @Update(onConflict = OnConflictStrategy.IGNORE)
     fun updateIgnore(objList: List<T>): Int
+
+    // call only in transaction
+    fun upsert(obj: T): Long {
+        val id = insertIgnore(obj)
+
+        if (id == -1L) {
+            updateIgnore(obj)
+        }
+
+        return id
+    }
 }

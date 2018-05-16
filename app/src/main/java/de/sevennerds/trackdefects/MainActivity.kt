@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import de.sevennerds.trackdefects.data.defect.DefectInsert
 import de.sevennerds.trackdefects.data.defect.DefectRepo
 import de.sevennerds.trackdefects.data.defect_list.DefectListRepo
+import de.sevennerds.trackdefects.data.response.Response
 import de.sevennerds.trackdefects.util.*
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -41,6 +43,20 @@ class MainActivity : AppCompatActivity() {
                 room,
                 defectInfo,
                 defectImageList))
+                .flatMap { defectResponse ->
+                    when (defectResponse) {
+                        is Response.Success -> defectRepo
+                                .update(defectResponse.data.floor.copy(id = 0, name = "New"))
+                        is Response.Failure -> Single.just(defectResponse)
+                    }
+                }
+                /*.map { defectResponse ->
+                    when (defectResponse) {
+                        is Response.Success -> defectRepo
+                                .update(defectResponse.data.floor.copy(name = "CHANGED")).toString()
+                        is Response.Failure -> defectResponse.error
+                    }
+                }*/
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { response -> Log.d("RESPONSE1", response.toString()) }

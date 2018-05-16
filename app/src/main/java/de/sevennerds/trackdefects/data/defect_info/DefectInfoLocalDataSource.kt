@@ -4,6 +4,6 @@ import androidx.room.Dao
 import de.sevennerds.trackdefects.data.BaseLocalDataSource
 
 @Dao
-interface DefectInfoLocalDataSource : BaseLocalDataSource<DefectInfo> {
+abstract class DefectInfoLocalDataSource : BaseLocalDataSource<DefectInfo> {
 
 }
