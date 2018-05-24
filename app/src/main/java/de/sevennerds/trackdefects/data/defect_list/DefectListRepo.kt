@@ -2,7 +2,7 @@ package de.sevennerds.trackdefects.data.defect_list
 
 import de.sevennerds.trackdefects.data.LocalDataSource
 import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSource
-import de.sevennerds.trackdefects.data.response.Response
+import de.sevennerds.trackdefects.data.response.Result
 import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSource
 import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalDataSource
 import io.reactivex.Single
@@ -16,7 +16,7 @@ class DefectListRepo @Inject constructor(private val defectListLocal: DefectList
                                          private val viewParticipantLocal: ViewParticipantLocalDataSource,
                                          private val localDataSource: LocalDataSource) {
 
-    fun insertBasic(defectList: DefectList): Single<Response<DefectList>> =
+    fun insertBasic(defectList: DefectList): Single<Result<DefectList>> =
             Single.fromCallable {
 
                 val streetAddress = defectList.streetAddress!!
@@ -50,7 +50,7 @@ class DefectListRepo @Inject constructor(private val defectListLocal: DefectList
                             id = defectListId,
                             streetAddress = streetAddressNew)
 
-                    Response.Success(defectListNew)
+                    Result.Success(defectListNew)
                 })
             }
 

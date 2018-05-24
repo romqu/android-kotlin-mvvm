@@ -1,12 +1,7 @@
 package de.sevennerds.trackdefects.data.client
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import com.squareup.moshi.JsonClass
 
-@Entity(tableName = "client")
-data class Client(@PrimaryKey(autoGenerate = true) val id: Long,
-                  @ColumnInfo(name = "remote_id") val remoteId: Long,
-                  @ColumnInfo(name = "forename") val forename: String,
-                  @ColumnInfo(name = "surname") val surname: String) {
-}
+@JsonClass(generateAdapter = true)
+data class Client(val forename: String,
+                  val surname: String)

@@ -7,6 +7,6 @@ import de.sevennerds.trackdefects.data.error.ErrorNet
 // @JsonSerializable
 @JsonClass(generateAdapter = true)
 data class ResponseNet<T>(@Json(name = "is_success") val isSuccess: Boolean,
-                          val data: T,
+                          val data: T?,
                           val errors: List<ErrorNet>) {
 }

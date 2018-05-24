@@ -3,10 +3,9 @@ package de.sevennerds.trackdefects.data.defect
 import de.sevennerds.trackdefects.data.LocalDataSource
 import de.sevennerds.trackdefects.data.defect_image.DefectImageLocalDataSource
 import de.sevennerds.trackdefects.data.defect_info.DefectInfoLocalDataSource
-import de.sevennerds.trackdefects.data.floor.Floor
 import de.sevennerds.trackdefects.data.floor.FloorLocalDataSource
 import de.sevennerds.trackdefects.data.living_unit.LivingUnitLocalDataSource
-import de.sevennerds.trackdefects.data.response.Response
+import de.sevennerds.trackdefects.data.response.Result
 import de.sevennerds.trackdefects.data.room.RoomLocalDataSource
 import io.reactivex.Single
 import java.util.concurrent.Callable
@@ -22,7 +21,7 @@ class DefectRepo @Inject constructor(
         private val defectInfoLocalDataSource: DefectInfoLocalDataSource,
         private val defectImageLocalDataSource: DefectImageLocalDataSource) {
 
-    fun insert(defectInsert: DefectInsert): Single<Response<Defect>> =
+    fun insert(defectInsert: DefectInsert): Single<Result<Defect>> =
 
             Single.fromCallable {
                 localDataSource.runInTransaction(Callable {
@@ -69,7 +68,7 @@ class DefectRepo @Inject constructor(
                     val floorNew = floor.copy(id = floorId, streetAddressId = streetAddressId)
 
 
-                    Response.Success(Defect(
+                    Result.Success(Defect(
                             floorNew,
                             livingUnitNew,
                             roomNew,
@@ -77,16 +76,4 @@ class DefectRepo @Inject constructor(
                             defectImageListNew))
                 })
             }
-
-    fun update(floor: Floor): Single<Response<Floor>> = Single.fromCallable {
-
-        localDataSource.runInTransaction(Callable {
-
-            val id = floorLocalDataSource.upsert(floor)
-
-            Response.Success(floor)
-        })
-
-
-    }
 }

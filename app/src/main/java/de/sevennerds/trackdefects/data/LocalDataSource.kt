@@ -2,7 +2,7 @@ package de.sevennerds.trackdefects.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import de.sevennerds.trackdefects.data.client.Client
+import de.sevennerds.trackdefects.data.client.ClientEntity
 import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
 import de.sevennerds.trackdefects.data.defect_image.DefectImage
 import de.sevennerds.trackdefects.data.defect_image.DefectImageLocalDataSource
@@ -23,7 +23,7 @@ import de.sevennerds.trackdefects.data.view_participant.ViewParticipant
 import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalDataSource
 
 @Database(entities = [
-    Client::class,
+    ClientEntity::class,
     DefectList::class,
     StreetAddress::class,
     ViewParticipant::class,
