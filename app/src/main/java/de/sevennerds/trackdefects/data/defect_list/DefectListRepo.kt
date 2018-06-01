@@ -16,16 +16,16 @@ class DefectListRepo @Inject constructor(private val defectListLocal: DefectList
                                          private val viewParticipantLocal: ViewParticipantLocalDataSource,
                                          private val localDataSource: LocalDataSource) {
 
-    fun insertBasic(defectList: DefectList): Single<Result<DefectList>> =
+    fun insertBasic(defectListEntity: DefectListEntity): Single<Result<DefectListEntity>> =
             Single.fromCallable {
 
-                val streetAddress = defectList.streetAddress!!
-                val viewParticipantList = streetAddress.viewParticipantList
+                val streetAddress = defectListEntity.streetAddressEntity!!
+                val viewParticipantList = streetAddress.viewParticipantEntityList
 
-                var defectListNew: DefectList
+                var defectListEntityNew: DefectListEntity
 
                 localDataSource.runInTransaction(Callable {
-                    val defectListId = defectListLocal.insert(defectList)
+                    val defectListId = defectListLocal.insert(defectListEntity)
 
                     val streetAddressId = streetAddressLocal.insert(streetAddress
                             .copy(defectListId = defectListId))
@@ -44,13 +44,13 @@ class DefectListRepo @Inject constructor(private val defectListLocal: DefectList
                     val streetAddressNew = streetAddress.copy(
                             id = streetAddressId,
                             defectListId = defectListId,
-                            viewParticipantList = viewParticipantNewList)
+                            viewParticipantEntityList = viewParticipantNewList)
 
-                    defectListNew = defectList.copy(
+                    defectListEntityNew = defectListEntity.copy(
                             id = defectListId,
-                            streetAddress = streetAddressNew)
+                            streetAddressEntity = streetAddressNew)
 
-                    Result.Success(defectListNew)
+                    Result.Success(defectListEntityNew)
                 })
             }
 

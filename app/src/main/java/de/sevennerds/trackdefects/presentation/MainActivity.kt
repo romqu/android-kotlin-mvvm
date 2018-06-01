@@ -1,28 +1,38 @@
 package de.sevennerds.trackdefects.presentation
 
-import android.graphics.*
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
+import de.sevennerds.trackdefects.common.addFragment
 import de.sevennerds.trackdefects.data.client.Client
 import de.sevennerds.trackdefects.data.client.ClientRepo
+import de.sevennerds.trackdefects.data.client.LoginCredentials
+import de.sevennerds.trackdefects.data.client.RegistrationData
 import de.sevennerds.trackdefects.data.defect.DefectRepo
 import de.sevennerds.trackdefects.data.defect_list.DefectListRepo
 import de.sevennerds.trackdefects.data.floor.FloorRepo
-import de.sevennerds.trackdefects.data.client.LoginCredentials
-import de.sevennerds.trackdefects.data.client.RegistrationData
-import de.sevennerds.trackdefects.data.response.LoginResponse
 import de.sevennerds.trackdefects.data.response.RegistrationResponse
 import de.sevennerds.trackdefects.data.response.Result
+import de.sevennerds.trackdefects.presentation.create_defect_list.CreateDefectListFragment
+import de.sevennerds.trackdefects.presentation.select_contacts.SelectContactsFragment
+import de.sevennerds.trackdefects.presentation.show_defect_list.ShowDefectListFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.lay.*
+import ir.mirrajabi.rxcontacts.Contact
+import ir.mirrajabi.rxcontacts.RxContacts
 import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity() {
+
+    val PICK_CONTACT = 2015
+
+    val REQUEST_CODE_PICK_CONTACT = 1
+    val MAX_PICK_CONTACT = 10
 
     @Inject
     lateinit var clientRepo: ClientRepo
@@ -39,11 +49,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.lay)
+        setContentView(R.layout.activity_main)
+
+
+        addFragment(SelectContactsFragment.newInstance(),
+                    R.id.fragment_container)
+
+
 
         TrackDefectsApp.get(this).component.inject(this)
 
-        val imageBitmap = BitmapFactory.decodeResource(resources, R.drawable.mangel)
+        /*val imageBitmap = BitmapFactory.decodeResource(resources, R.drawable.mangel)
                 .copy(Bitmap.Config.ARGB_8888, true)
 
         val canvas = Canvas(imageBitmap)
@@ -54,7 +70,7 @@ class MainActivity : AppCompatActivity() {
 
             drawImageView.setImageBitmap(imageBitmap)
 
-        }
+        }*/
 
 /*        val imageBitmap = BitmapFactory.decodeResource(resources, R.drawable.mangel)
                 .copy(Bitmap.Config.ARGB_8888, true)
@@ -81,9 +97,50 @@ class MainActivity : AppCompatActivity() {
 
         canvas.drawText("helloaaaaaaaaaaaaaaaaaaaaaaa", 0F, 600F, paint)*/
 
-        drawImageView.setImageDrawable(getDrawable(R.drawable.mangel))
+        // drawImageView.setImageDrawable(getDrawable(R.drawable.mangel))
 
-        testRetrofit()
+        // testContact()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        /*if (requestCode == PICK_CONTACT && resultCode == Activity.RESULT_OK) {
+            val contactUri = data!!.data
+            val cursor = contentResolver.query(contactUri!!, null, null, null, null)
+            cursor!!.moveToFirst()
+            val column = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+            Log.d("phone number", cursor.getString(column))
+            cursor.close()
+        }*/
+
+        if (resultCode == Activity.RESULT_OK) {
+
+            if (requestCode == REQUEST_CODE_PICK_CONTACT) {
+
+                val bundle = data!!.getExtras()
+
+                val result = bundle.getString("result")
+                val contacts = bundle.getStringArrayList("result")
+
+
+                Log.d("TAG", "launchMultiplePhonePicker bundle.toString()= " + contacts.toString())
+
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    fun testContact() {
+
+        /*val i = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+
+        startActivityForResult(i, PICK_CONTACT)*/
+
+        RxContacts.fetch(this)
+                .toSortedList(Contact::compareTo)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ contact -> Log.d("Contact", contact.toString()) })
     }
 
     fun testRetrofit() {
@@ -91,7 +148,7 @@ class MainActivity : AppCompatActivity() {
         clientRepo
                 .register(RegistrationData(
                         LoginCredentials("test@test4.de", "qwertzuiop"),
-                        Client("Bern", "Berni")) )
+                        Client("Bern", "Berni")))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { t: Result<RegistrationResponse> -> Log.d("TAG", t.toString()) }
@@ -103,34 +160,34 @@ class MainActivity : AppCompatActivity() {
 
 // deleteDatabase("trackdefects.db")
 
-/*        val r = defectListRepo.insertBasic(defectList)
+/*        val r = defectListRepo.insertBasic(defectListEntity)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { response -> Log.d("RESPONSE", response.toString()) }
 
         val e = defectRepo.insert(DefectInsert(
                 1,
-                floor,
-                livingUnit,
-                room,
-                defectInfo,
-                defectImageList))
+                floorEntity,
+                livingUnitEntity,
+                roomEntity,
+                defectInfoEntity,
+                defectImageEntityList))
                 .flatMap { defectResponse ->
                     when (defectResponse) {
                         is Result.Success -> defectRepo
-                                .insertOrUpdate(defectResponse.data.floor.copy(id = 0, name = "New"))
+                                .insertOrUpdate(defectResponse.data.floorEntity.copy(id = 0, name = "New"))
                         is Result.Failure -> Single.just(defectResponse)
                     }
-                }.flatMap { floorRepo.insert(floor.copy(id = 1)) }*/
+                }.flatMap { floorRepo.insert(floorEntity.copy(id = 1)) }*/
 /*.map { defectResponse ->
     when (defectResponse) {
         is Result.Success -> defectRepo
-                .insertOrUpdate(defectResponse.data.floor.copy(name = "CHANGED")).toString()
+                .insertOrUpdate(defectResponse.data.floorEntity.copy(name = "CHANGED")).toString()
         is Result.Failure -> defectResponse.error
     }
 }*/
 
-/*        floorRepo.insert(floor.copy(id = 1))
+/*        floorRepo.insert(floorEntity.copy(id = 1))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { t1, t2 -> Log.d("RESPONSE1", t2?.toString() ?: "") }*/

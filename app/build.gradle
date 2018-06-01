@@ -6,6 +6,10 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
+androidExtensions {
+    experimental = true
+}
+
 android {
     compileSdkVersion 'android-P'
     defaultConfig {
@@ -43,12 +47,15 @@ dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
     implementation 'androidx.appcompat:appcompat:1.0.0-alpha1'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.0'
     implementation 'com.google.android.material:material:1.0.0-alpha1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha1'
+
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha2'
+    androidTestImplementation 'androidx.test:runner:1.1.0-alpha3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha3'
 
     // android ktx
     implementation 'androidx.core:core-ktx:1.0.0-alpha1'
@@ -92,4 +99,25 @@ dependencies {
 
     //Stetho
     implementation 'com.facebook.stetho:stetho:1.5.0'
+
+    // rx contacts
+    implementation 'com.github.mirrajabi:rx-contacts2:1.2.0'
+    implementation 'com.github.broakenmedia:MultiContactPicker:1.7'
+
+    // rx binding
+    implementation 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.1.1'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-support-v4-kotlin:2.1.1'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7-kotlin:2.1.1'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-design-kotlin:2.1.1'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-recyclerview-v7-kotlin:2.1.1'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-leanback-v17-kotlin:2.1.1'
+
+    // logger
+
+    implementation 'com.orhanobut:logger:2.2.0'
+
+    // camera
+
+    // implementation 'com.asksira.android:cameraviewplus:0.9.0'
+    // implementation 'io.fotoapparat.fotoapparat:library:2.2.0'
 }

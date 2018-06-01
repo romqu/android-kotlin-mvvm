@@ -4,5 +4,5 @@ import androidx.room.Dao
 import de.sevennerds.trackdefects.data.BaseLocalDataSource
 
 @Dao
-abstract class StreetAddressLocalDataSource : BaseLocalDataSource<StreetAddress> {
+abstract class StreetAddressLocalDataSource : BaseLocalDataSource<StreetAddressEntity> {
 }

@@ -5,5 +5,5 @@ import androidx.room.Dao
 import de.sevennerds.trackdefects.data.BaseLocalDataSource
 
 @Dao
-abstract class LivingUnitLocalDataSource : BaseLocalDataSource<LivingUnit> {
+abstract class LivingUnitLocalDataSource : BaseLocalDataSource<LivingUnitEntity> {
 }

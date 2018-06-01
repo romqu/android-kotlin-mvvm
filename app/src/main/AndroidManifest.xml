@@ -3,6 +3,7 @@
     package="de.sevennerds.trackdefects">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:name=".TrackDefectsApp"
@@ -15,7 +16,7 @@
         <activity
             android:name=".presentation.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

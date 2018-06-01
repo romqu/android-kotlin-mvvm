@@ -6,17 +6,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import de.sevennerds.trackdefects.R
+import de.sevennerds.trackdefects.common.addFragment
+import de.sevennerds.trackdefects.common.hideAddFragment
 import de.sevennerds.trackdefects.common.snack
-import kotlinx.android.synthetic.main.fragment_create_defect_list.*
+import de.sevennerds.trackdefects.presentation.MainActivity
+import de.sevennerds.trackdefects.presentation.MainActivity_MembersInjector
+import de.sevennerds.trackdefects.presentation.create_defect_list.CreateDefectListFragment
+import kotlinx.android.synthetic.main.fragment_show_defect_list.*
 
 
-class CreateDefectListFragment : Fragment() {
+class ShowDefectListFragment : Fragment() {
 
     companion object {
 
         @JvmStatic
-        fun newInstance(): CreateDefectListFragment {
-            return CreateDefectListFragment()
+        fun newInstance(): ShowDefectListFragment {
+            return ShowDefectListFragment()
         }
     }
 
@@ -26,13 +31,20 @@ class CreateDefectListFragment : Fragment() {
 
         super.onCreateView(inflater, container, savedInstanceState)
 
-        return inflater.inflate(R.layout.fragment_create_defect_list, container, false)
+        return inflater.inflate(R.layout.fragment_show_defect_list,
+                                container,
+                                false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        create_defect_list_fab.setOnClickListener { view?.snack("Hello")}
+        create_defect_list_fab.setOnClickListener {
+
+            (activity as MainActivity).hideAddFragment(this,
+                                                       CreateDefectListFragment.newInstance(),
+                                                       R.id.fragment_container)
+        }
     }
 }
 

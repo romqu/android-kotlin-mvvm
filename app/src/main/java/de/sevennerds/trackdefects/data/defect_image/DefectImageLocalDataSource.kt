@@ -4,6 +4,6 @@ import androidx.room.Dao
 import de.sevennerds.trackdefects.data.BaseLocalDataSource
 
 @Dao
-abstract class DefectImageLocalDataSource : BaseLocalDataSource<DefectImage> {
+abstract class DefectImageLocalDataSource : BaseLocalDataSource<DefectImageEntity> {
 
 }

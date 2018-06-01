@@ -1,29 +1,29 @@
 package de.sevennerds.trackdefects.util
 
-import de.sevennerds.trackdefects.data.defect_image.DefectImage
-import de.sevennerds.trackdefects.data.defect_info.DefectInfo
-import de.sevennerds.trackdefects.data.defect_list.DefectList
-import de.sevennerds.trackdefects.data.floor.Floor
-import de.sevennerds.trackdefects.data.living_unit.LivingUnit
-import de.sevennerds.trackdefects.data.room.Room
-import de.sevennerds.trackdefects.data.street_address.StreetAddress
-import de.sevennerds.trackdefects.data.view_participant.ViewParticipant
+import de.sevennerds.trackdefects.data.defect_image.DefectImageEntity
+import de.sevennerds.trackdefects.data.defect_info.DefectInfoEntity
+import de.sevennerds.trackdefects.data.defect_list.DefectListEntity
+import de.sevennerds.trackdefects.data.floor.FloorEntity
+import de.sevennerds.trackdefects.data.living_unit.LivingUnitEntity
+import de.sevennerds.trackdefects.data.room.RoomEntity
+import de.sevennerds.trackdefects.data.street_address.StreetAddressEntity
+import de.sevennerds.trackdefects.data.view_participant.ViewParticipantEntity
 
 val defectImageList = listOf(
-        DefectImage(0,
-                0,
-                "name",
-                "orig",
-                0,
-                1),
-        DefectImage(0,
-                0,
-                "name1",
-                "orig1",
-                1,
-                1))
+        DefectImageEntity(0,
+                          0,
+                          "name",
+                          "orig",
+                          0,
+                          1),
+        DefectImageEntity(0,
+                          0,
+                          "name1",
+                          "orig1",
+                          1,
+                          1))
 
-val defectInfo = DefectInfo(
+val defectInfo = DefectInfoEntity(
         0,
         0,
         "desc",
@@ -33,43 +33,43 @@ val defectInfo = DefectInfo(
         1,
         defectImageList)
 
-val room = Room(0,
-        0,
-        1,
-        "Wohnzimmer",
-        1,
-        "Hier")
+val room = RoomEntity(0,
+                      0,
+                      1,
+                      "Wohnzimmer",
+                      1,
+                      "Hier")
 
-val livingUnit = LivingUnit(0,
-        0,
-        1,
-        1)
+val livingUnit = LivingUnitEntity(0,
+                                  0,
+                                  1,
+                                  1)
 
-val floor = Floor(0,
-        0,
-        1,
-        "EG")
+val floor = FloorEntity(0,
+                        0,
+                        1,
+                        "EG")
 
-val viewParticipantList = listOf(ViewParticipant(0,
-        0,
-        0,
-        "Bern",
-        "Trem",
-        1324141,
-        "a@a.de",
-        "myco"))
+val viewParticipantList = listOf(ViewParticipantEntity(0,
+                                                       0,
+                                                       0,
+                                                       "Bern",
+                                                       "Trem",
+                                                       1324141,
+                                                       "a@a.de",
+                                                       "myco"))
 
-val streetAddress = StreetAddress(0,
-        0,
-        0,
-        "street",
-        1,
-        1,
-        "addd",
-        "d21",
-        viewParticipantList = viewParticipantList)
+val streetAddress = StreetAddressEntity(0,
+                                        0,
+                                        0,
+                                        "street",
+                                        1,
+                                        1,
+                                        "addd",
+                                        "d21",
+                                        viewParticipantEntityList = viewParticipantList)
 
-val defectList = DefectList(0,
-        0,
-        "name",
-        "wqdwqd", streetAddress)
+val defectList = DefectListEntity(0,
+                                  0,
+                                  "name",
+                                  "wqdwqd", streetAddress)

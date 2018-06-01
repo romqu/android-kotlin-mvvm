@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "3d153023d61b4a1954f3e1e2b0cc250a",
+    "identityHash": "d848d72860f7a94828bf9e4214c6bc3e",
     "entities": [
       {
         "tableName": "client",
@@ -141,12 +141,12 @@
         },
         "indices": [
           {
-            "name": "defect_list_idx",
+            "name": "street_address_defect_list_idx",
             "unique": false,
             "columnNames": [
               "defect_list_id"
             ],
-            "createSql": "CREATE  INDEX `defect_list_idx` ON `${TABLE_NAME}` (`defect_list_id`)"
+            "createSql": "CREATE  INDEX `street_address_defect_list_idx` ON `${TABLE_NAME}` (`defect_list_id`)"
           }
         ],
         "foreignKeys": [
@@ -247,7 +247,7 @@
         ]
       },
       {
-        "tableName": "floor",
+        "tableName": "floorEntity",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `street_address_id` INTEGER NOT NULL, `name` TEXT NOT NULL, FOREIGN KEY(`street_address_id`) REFERENCES `street_address`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
@@ -283,12 +283,12 @@
         },
         "indices": [
           {
-            "name": "street_address_idx",
+            "name": "floor_street_address_idx",
             "unique": false,
             "columnNames": [
               "street_address_id"
             ],
-            "createSql": "CREATE  INDEX `street_address_idx` ON `${TABLE_NAME}` (`street_address_id`)"
+            "createSql": "CREATE  INDEX `floor_street_address_idx` ON `${TABLE_NAME}` (`street_address_id`)"
           }
         ],
         "foreignKeys": [
@@ -307,7 +307,7 @@
       },
       {
         "tableName": "living_unit",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `floor_id` INTEGER NOT NULL, `number` INTEGER NOT NULL, FOREIGN KEY(`floor_id`) REFERENCES `floor`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `floor_id` INTEGER NOT NULL, `number` INTEGER NOT NULL, FOREIGN KEY(`floor_id`) REFERENCES `floorEntity`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -342,17 +342,17 @@
         },
         "indices": [
           {
-            "name": "floor_idx",
+            "name": "living_unit_floor_idx",
             "unique": false,
             "columnNames": [
               "floor_id"
             ],
-            "createSql": "CREATE  INDEX `floor_idx` ON `${TABLE_NAME}` (`floor_id`)"
+            "createSql": "CREATE  INDEX `living_unit_floor_idx` ON `${TABLE_NAME}` (`floor_id`)"
           }
         ],
         "foreignKeys": [
           {
-            "table": "floor",
+            "table": "floorEntity",
             "onDelete": "CASCADE",
             "onUpdate": "CASCADE",
             "columns": [
@@ -365,7 +365,7 @@
         ]
       },
       {
-        "tableName": "room",
+        "tableName": "roomEntity",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `living_unit_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `number` INTEGER NOT NULL, `location_description` TEXT NOT NULL, FOREIGN KEY(`living_unit_id`) REFERENCES `living_unit`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
@@ -413,12 +413,12 @@
         },
         "indices": [
           {
-            "name": "living_unit_idx",
+            "name": "room_living_unit_idx",
             "unique": false,
             "columnNames": [
               "living_unit_id"
             ],
-            "createSql": "CREATE  INDEX `living_unit_idx` ON `${TABLE_NAME}` (`living_unit_id`)"
+            "createSql": "CREATE  INDEX `room_living_unit_idx` ON `${TABLE_NAME}` (`living_unit_id`)"
           }
         ],
         "foreignKeys": [
@@ -437,7 +437,7 @@
       },
       {
         "tableName": "defect_info",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `description` TEXT NOT NULL, `measure` TEXT NOT NULL, `company_in_charge` TEXT NOT NULL, `done_till` TEXT NOT NULL, `room_id` INTEGER NOT NULL, FOREIGN KEY(`room_id`) REFERENCES `room`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `description` TEXT NOT NULL, `measure` TEXT NOT NULL, `company_in_charge` TEXT NOT NULL, `done_till` TEXT NOT NULL, `room_id` INTEGER NOT NULL, FOREIGN KEY(`room_id`) REFERENCES `roomEntity`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -490,17 +490,17 @@
         },
         "indices": [
           {
-            "name": "room_idx",
+            "name": "defect_info_room_idx",
             "unique": false,
             "columnNames": [
               "room_id"
             ],
-            "createSql": "CREATE  INDEX `room_idx` ON `${TABLE_NAME}` (`room_id`)"
+            "createSql": "CREATE  INDEX `defect_info_room_idx` ON `${TABLE_NAME}` (`room_id`)"
           }
         ],
         "foreignKeys": [
           {
-            "table": "room",
+            "table": "roomEntity",
             "onDelete": "CASCADE",
             "onUpdate": "CASCADE",
             "columns": [
@@ -561,12 +561,12 @@
         },
         "indices": [
           {
-            "name": "defect_info_idx",
+            "name": "defect_image_defect_info_idx",
             "unique": false,
             "columnNames": [
               "defect_info_id"
             ],
-            "createSql": "CREATE  INDEX `defect_info_idx` ON `${TABLE_NAME}` (`defect_info_id`)"
+            "createSql": "CREATE  INDEX `defect_image_defect_info_idx` ON `${TABLE_NAME}` (`defect_info_id`)"
           }
         ],
         "foreignKeys": [
@@ -612,7 +612,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"3d153023d61b4a1954f3e1e2b0cc250a\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"d848d72860f7a94828bf9e4214c6bc3e\")"
     ]
   }
 }
