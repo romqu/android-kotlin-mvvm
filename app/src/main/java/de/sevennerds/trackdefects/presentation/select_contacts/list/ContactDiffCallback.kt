@@ -1,7 +1,7 @@
-package de.sevennerds.trackdefects.presentation.select_contacts
+package de.sevennerds.trackdefects.presentation.select_contacts.list
 
 import androidx.recyclerview.widget.DiffUtil
-import ir.mirrajabi.rxcontacts.Contact
+import de.sevennerds.trackdefects.presentation.select_contacts.ContactModel
 
 class ContactDiffCallback(private val oldContactList: List<ContactModel>,
                           private val newContactList: List<ContactModel>) : DiffUtil.Callback() {

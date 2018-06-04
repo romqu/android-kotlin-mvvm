@@ -5,43 +5,31 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.room.Room
 import com.jakewharton.rxbinding2.view.clicks
-import com.orhanobut.logger.Logger
 import com.wafflecopter.multicontactpicker.ContactResult
 import com.wafflecopter.multicontactpicker.MultiContactPicker
 import de.sevennerds.trackdefects.R
-import de.sevennerds.trackdefects.common.Constants
-import de.sevennerds.trackdefects.common.applySchedulers
-import de.sevennerds.trackdefects.data.LocalDataSource
-import de.sevennerds.trackdefects.data.client.ClientEntity
-import de.sevennerds.trackdefects.data.test.TestEntity
-import de.sevennerds.trackdefects.data.test.TestLocalData
-import de.sevennerds.trackdefects.data.test.TestLocalDb
+import de.sevennerds.trackdefects.common.asObservable
 import de.sevennerds.trackdefects.presentation.MainActivity
+import de.sevennerds.trackdefects.presentation.base.BaseFragment
+import de.sevennerds.trackdefects.presentation.select_contacts.list.SelectContactsAdapter
+import de.sevennerds.trackdefects.presentation.take_ground_plan_image.navigation.TakeGroundPlanImageKey
 import io.reactivex.Observable
-import io.reactivex.Single
+import io.reactivex.ObservableTransformer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.fragment_select_contacts.*
 
 
-class SelectContactsFragment : Fragment() {
-
-    data class SelectContactEvent(val contactResultList: List<ContactResult>,
-                                  val currentContactModelList: List<ContactModel>)
-
-    @Parcelize
-    data class State(val state: String) : Parcelable
+class SelectContactsFragment : BaseFragment() {
 
     private lateinit var listAdapter: SelectContactsAdapter
+
+    private val clickTransformer = ObservableTransformer<Int, Int> { it }
 
     private val contactBuilder =
             MultiContactPicker.Builder(this)
@@ -80,10 +68,6 @@ class SelectContactsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val state: State = savedInstanceState?.getParcelable("key") ?: State("")
-
-        Logger.d(state.toString())
-
         setup()
     }
 
@@ -92,8 +76,6 @@ class SelectContactsFragment : Fragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-
-        outState.putParcelable("key", State("state"))
 
         super.onSaveInstanceState(outState)
     }
@@ -158,25 +140,58 @@ class SelectContactsFragment : Fragment() {
                             .showPickerForResult(CONTACT_PICKER_REQUEST)
                 }
 
+        compositeDisposable += listAdapter
+                .onClickSubject
+                .map {
+                    SelectContactsEvent
+                            .RemoveContactEvent(it,
+                                                listAdapter.getList())
+                }
+                .compose(viewModel.eventTransformer)
+                .subscribe(::render)
+
         compositeDisposable += select_contacts_next_skip_btn
                 .clicks()
-                .subscribe {  }
+                .subscribe {
+                    MainActivity[context!!].navigateTo(TakeGroundPlanImageKey())
+                }
     }
 
     private fun contactResult(contactResultList: List<ContactResult>) {
 
-        compositeDisposable += Observable.just(
-                SelectContactEvent(contactResultList,
-                                   listAdapter.getList()))
-                .compose(viewModel.transformerContact)
-                .subscribe { contactResult ->
-
-                    with(listAdapter) {
-                        clearList()
-                        addAllToList(contactResult.contactModelList)
-                        contactResult.diffResult.dispatchUpdatesTo(this)
-                    }
-                }
+        compositeDisposable +=
+                SelectContactsEvent
+                        .SelectContactEvent(contactResultList,
+                                            listAdapter.getList())
+                        .asObservable()
+                        .compose(viewModel.eventTransformer)
+                        .subscribe(::render)
     }
 
+    private fun render(state: SelectContactsViewModel.State) {
+        return when (state) {
+
+            is SelectContactsViewModel.State.SelectContactResult -> {
+                select_contacts_next_skip_btn.text = "Next"
+
+                with(listAdapter) {
+                    clearList()
+                    val list = mutableListOf<ContactModel>()
+                    for (i in 0..20) {
+                        list.add(state.contactModelList.first().copy(name = i.toString()))
+                    }
+                    addAllToList(list)
+                    state.diffResult.dispatchUpdatesTo(this)
+                }
+            }
+
+            is SelectContactsViewModel.State.RemoveContactResult -> {
+                with(listAdapter) {
+                    clearList()
+                    addAllToList(state.contactModelList)
+                    state.diffResult.dispatchUpdatesTo(this)
+                }
+            }
+        }
+    }
 }
