@@ -1,8 +1,8 @@
 package de.sevennerds.trackdefects
 
+import io.reactivex.Observable
 import org.junit.Test
 
-import org.junit.Assert.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -12,6 +12,15 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+
+        Observable.just(1, 2, 3, 4)
+                .scan(10) { t1: Int, t2: Int ->
+                    println("$t1 + $t2")
+                    t1 + t2
+                }
+                .startWith(1)
+                .doOnNext { println("Next: $it") }
+                .test()
+        //.assertResult(2);
     }
 }

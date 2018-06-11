@@ -11,8 +11,7 @@ import de.sevennerds.trackdefects.di.AppModule
 import de.sevennerds.trackdefects.di.DaggerAppComponent
 import com.orhanobut.logger.PrettyFormatStrategy
 import com.orhanobut.logger.FormatStrategy
-
-
+import kotlin.reflect.KClass
 
 
 class TrackDefectsApp : Application() {

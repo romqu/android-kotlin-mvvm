@@ -1,6 +1,5 @@
 package de.sevennerds.trackdefects.presentation.select_contacts
 
-import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Color
@@ -10,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxbinding2.view.clicks
+import com.orhanobut.logger.Logger
 import com.wafflecopter.multicontactpicker.ContactResult
 import com.wafflecopter.multicontactpicker.MultiContactPicker
 import de.sevennerds.trackdefects.R
@@ -18,8 +18,6 @@ import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
 import de.sevennerds.trackdefects.presentation.select_contacts.list.SelectContactsAdapter
 import de.sevennerds.trackdefects.presentation.take_ground_plan_image.navigation.TakeGroundPlanImageKey
-import io.reactivex.Observable
-import io.reactivex.ObservableTransformer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_select_contacts.*
@@ -27,9 +25,12 @@ import kotlinx.android.synthetic.main.fragment_select_contacts.*
 
 class SelectContactsFragment : BaseFragment() {
 
-    private lateinit var listAdapter: SelectContactsAdapter
+    private val KEY_STATE = "KEY"
+    private var isRotation = false
 
-    private val clickTransformer = ObservableTransformer<Int, Int> { it }
+    private lateinit var viewStateP: ViewStateP
+
+    private lateinit var listAdapter: SelectContactsAdapter
 
     private val contactBuilder =
             MultiContactPicker.Builder(this)
@@ -42,15 +43,7 @@ class SelectContactsFragment : BaseFragment() {
     private val CONTACT_PICKER_REQUEST = 991
     private val compositeDisposable = CompositeDisposable()
 
-    private val viewModel = SelectContactsViewModel()
-
-    companion object {
-
-        @JvmStatic
-        fun newInstance(): SelectContactsFragment {
-            return SelectContactsFragment()
-        }
-    }
+    private lateinit var viewModel: SelectContactsViewModel
 
     // Fragment override methods
 
@@ -60,6 +53,10 @@ class SelectContactsFragment : BaseFragment() {
 
         super.onCreateView(inflater, container, savedInstanceState)
 
+        isRotation = false
+
+        Logger.d("onCreateView: ${savedInstanceState?.getParcelable<ViewStateP>(KEY_STATE)}")
+
         return inflater.inflate(R.layout.fragment_select_contacts,
                                 container,
                                 false)
@@ -68,20 +65,47 @@ class SelectContactsFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        Logger.d("onActivityCreated: ${savedInstanceState?.getParcelable<ViewStateP>(KEY_STATE)}")
+
+        viewModel = SelectContactsViewModel(
+                ViewState(savedInstanceState
+                                  ?.getParcelable<ViewStateP>(KEY_STATE)?.contactModelList
+                                  ?: emptyList(),
+                          null))
+
         setup()
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
+
+        Logger.d("onViewStateRestored: ${savedInstanceState?.getParcelable<ViewStateP>(KEY_STATE)}")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-
         super.onSaveInstanceState(outState)
+
+        Logger.d("onSaveInstanceState: ${viewModel.getViewStateP()}")
+
+        outState.putParcelable(KEY_STATE, viewModel.getViewStateP())
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        Logger.d("onStart")
+    }
+
+
+    // save state into variable
     override fun onPause() {
         super.onPause()
+
+        Logger.d("onPause")
+
+        isRotation = true
+
+        viewStateP = viewModel.getViewStateP()
 
         compositeDisposable.clear()
     }
@@ -89,7 +113,12 @@ class SelectContactsFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
 
-        setupReactive()
+        if (isRotation) {
+            setupReactive()
+            isRotation = false
+        }
+
+        Logger.d("onResume")
     }
 
 
@@ -98,20 +127,25 @@ class SelectContactsFragment : BaseFragment() {
 
         if (requestCode == CONTACT_PICKER_REQUEST) {
             when (resultCode) {
-                RESULT_OK -> {
+                RESULT_OK ->
                     contactResult(MultiContactPicker.obtainResult(data))
-                }
-                RESULT_CANCELED ->
-                    contactResult(emptyList())
             }
+            /* RESULT_CANCELED ->
+                 contactResult(emptyList())*/
         }
+
     }
 
-    // ------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------
 
     private fun setup() {
         setupActionBar()
         setupRecyclerView()
+/*
+         compositeDisposable += Observable.fromCallable { SelectContactsEvent.Init }
+                 .compose(viewModel.eventTransformer)
+                 .subscribe(::render)*/
+
         setupReactive()
     }
 
@@ -168,30 +202,41 @@ class SelectContactsFragment : BaseFragment() {
                         .subscribe(::render)
     }
 
-    private fun render(state: SelectContactsViewModel.State) {
-        return when (state) {
+    private fun render(viewRenderState: ViewRenderState) {
 
-            is SelectContactsViewModel.State.SelectContactResult -> {
+        return when (viewRenderState) {
+
+            is ViewRenderState.Init -> updateList(viewRenderState.contactModelList)
+
+            is ViewRenderState.SelectContact -> {
                 select_contacts_next_skip_btn.text = "Next"
 
                 with(listAdapter) {
                     clearList()
-                    val list = mutableListOf<ContactModel>()
+                    /*val list = mutableListOf<ContactModel>()
                     for (i in 0..20) {
-                        list.add(state.contactModelList.first().copy(name = i.toString()))
-                    }
-                    addAllToList(list)
-                    state.diffResult.dispatchUpdatesTo(this)
+                        list.add(viewRenderState.contactModelList.first().copy(name = i.toString()))
+                    }*/
+                    addAllToList(viewRenderState.contactModelList)
+                    viewRenderState.diffResult.dispatchUpdatesTo(this)
                 }
             }
 
-            is SelectContactsViewModel.State.RemoveContactResult -> {
+            is ViewRenderState.RemoveContact -> {
                 with(listAdapter) {
                     clearList()
-                    addAllToList(state.contactModelList)
-                    state.diffResult.dispatchUpdatesTo(this)
+                    addAllToList(viewRenderState.contactModelList)
+                    viewRenderState.diffResult.dispatchUpdatesTo(this)
                 }
             }
+        }
+    }
+
+    private fun updateList(newContactModeList: List<ContactModel>) {
+        with(listAdapter) {
+            clearList()
+            addAllToList(newContactModeList)
+            notifyDataSetChanged()
         }
     }
 }
