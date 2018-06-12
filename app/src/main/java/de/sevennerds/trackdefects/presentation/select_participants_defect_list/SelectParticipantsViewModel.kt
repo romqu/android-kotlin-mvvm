@@ -1,9 +1,8 @@
-package de.sevennerds.trackdefects.presentation.select_contacts
+package de.sevennerds.trackdefects.presentation.select_participants_defect_list
 
 import androidx.recyclerview.widget.DiffUtil
-import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.common.applySchedulers
-import de.sevennerds.trackdefects.presentation.select_contacts.list.ContactDiffCallback
+import de.sevennerds.trackdefects.presentation.select_participants_defect_list.list.ParticipantDiffCallback
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.rxkotlin.toObservable
@@ -34,7 +33,7 @@ class SelectContactsViewModel(var viewState: ViewState) {
         upstream.map { ViewResult.Init }
                 .compose(resultTransformer)
                 //.doOnNext { Logger.d("AAAA") }
-                .map { ViewRenderState.Init(it.contactModelList) }
+                .map { ViewRenderState.Init(it.participantModelList) }
     }
 
     private val selectContactTransformer = ObservableTransformer<SelectContactsEvent.SelectContactEvent,
@@ -48,7 +47,7 @@ class SelectContactsViewModel(var viewState: ViewState) {
                     .toObservable()
                     // domain
                     .map { contactResult ->
-                        ContactModel(
+                        ParticipantModel(
                                 contactResult.displayName,
                                 contactResult.phoneNumbers.firstOrNull() ?: "",
                                 contactResult.emails.firstOrNull() ?: "")
@@ -57,7 +56,7 @@ class SelectContactsViewModel(var viewState: ViewState) {
                     .toObservable()
                     .map { newContactModelList ->
                         ViewResult.SelectContact(DiffUtil.calculateDiff(
-                                ContactDiffCallback(
+                                ParticipantDiffCallback(
                                         currentContactModelList,
                                         newContactModelList)), newContactModelList)
                     }
@@ -67,7 +66,7 @@ class SelectContactsViewModel(var viewState: ViewState) {
                     //.skip(1)
                     .map { viewState ->
                         ViewRenderState.SelectContact(
-                                viewState.contactModelList,
+                                viewState.participantModelList,
                                 viewState.diffResult!!)
                     }
                     .applySchedulers()
@@ -94,14 +93,14 @@ class SelectContactsViewModel(var viewState: ViewState) {
                         ViewResult.RemoveContact(
                                 newContactModelList,
                                 DiffUtil.calculateDiff(
-                                        ContactDiffCallback(currentContactModelList,
-                                                            newContactModelList)))
+                                        ParticipantDiffCallback(currentContactModelList,
+                                                                newContactModelList)))
                     }
                     .compose(resultTransformer)
                     .skip(1)
                     .map { viewState ->
                         ViewRenderState.RemoveContact(
-                                viewState.contactModelList,
+                                viewState.participantModelList,
                                 viewState.diffResult!!)
                     }
                     .applySchedulers()
@@ -117,13 +116,13 @@ class SelectContactsViewModel(var viewState: ViewState) {
                 is ViewResult.Init -> viewState
 
                 is ViewResult.SelectContact -> {
-                    viewState = previousState.copy(contactModelList = result.contactModelList,
+                    viewState = previousState.copy(participantModelList = result.participantModelList,
                                                    diffResult = result.diffResult)
                     viewState
                 }
 
                 is ViewResult.RemoveContact -> {
-                    viewState = previousState.copy(contactModelList = result.contactModelList,
+                    viewState = previousState.copy(participantModelList = result.participantModelList,
                                                    diffResult = result.diffResult)
                     viewState
                 }
@@ -132,7 +131,7 @@ class SelectContactsViewModel(var viewState: ViewState) {
     }
 
     fun getViewStateP(): ViewStateP =
-            ViewStateP(viewState.contactModelList)
+            ViewStateP(viewState.participantModelList)
 
 }
 

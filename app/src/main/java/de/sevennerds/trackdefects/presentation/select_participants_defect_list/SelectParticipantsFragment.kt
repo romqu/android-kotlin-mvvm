@@ -1,4 +1,4 @@
-package de.sevennerds.trackdefects.presentation.select_contacts
+package de.sevennerds.trackdefects.presentation.select_participants_defect_list
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -16,7 +16,7 @@ import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.common.asObservable
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
-import de.sevennerds.trackdefects.presentation.select_contacts.list.SelectContactsAdapter
+import de.sevennerds.trackdefects.presentation.select_participants_defect_list.list.SelectContactsAdapter
 import de.sevennerds.trackdefects.presentation.take_ground_plan_image.navigation.TakeGroundPlanImageKey
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -69,7 +69,7 @@ class SelectContactsFragment : BaseFragment() {
 
         viewModel = SelectContactsViewModel(
                 ViewState(savedInstanceState
-                                  ?.getParcelable<ViewStateP>(KEY_STATE)?.contactModelList
+                                  ?.getParcelable<ViewStateP>(KEY_STATE)?.participantModelList
                                   ?: emptyList(),
                           null))
 
@@ -206,18 +206,18 @@ class SelectContactsFragment : BaseFragment() {
 
         return when (viewRenderState) {
 
-            is ViewRenderState.Init -> updateList(viewRenderState.contactModelList)
+            is ViewRenderState.Init -> updateList(viewRenderState.participantModelList)
 
             is ViewRenderState.SelectContact -> {
                 select_contacts_next_skip_btn.text = "Next"
 
                 with(listAdapter) {
                     clearList()
-                    /*val list = mutableListOf<ContactModel>()
+                    /*val list = mutableListOf<ParticipantModel>()
                     for (i in 0..20) {
-                        list.add(viewRenderState.contactModelList.first().copy(name = i.toString()))
+                        list.add(viewRenderState.participantModelList.first().copy(name = i.toString()))
                     }*/
-                    addAllToList(viewRenderState.contactModelList)
+                    addAllToList(viewRenderState.participantModelList)
                     viewRenderState.diffResult.dispatchUpdatesTo(this)
                 }
             }
@@ -225,17 +225,17 @@ class SelectContactsFragment : BaseFragment() {
             is ViewRenderState.RemoveContact -> {
                 with(listAdapter) {
                     clearList()
-                    addAllToList(viewRenderState.contactModelList)
+                    addAllToList(viewRenderState.participantModelList)
                     viewRenderState.diffResult.dispatchUpdatesTo(this)
                 }
             }
         }
     }
 
-    private fun updateList(newContactModeList: List<ContactModel>) {
+    private fun updateList(newParticipantModeList: List<ParticipantModel>) {
         with(listAdapter) {
             clearList()
-            addAllToList(newContactModeList)
+            addAllToList(newParticipantModeList)
             notifyDataSetChanged()
         }
     }
