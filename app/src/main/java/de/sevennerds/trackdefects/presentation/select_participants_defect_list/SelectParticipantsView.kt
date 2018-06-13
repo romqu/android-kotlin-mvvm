@@ -7,6 +7,9 @@ import kotlinx.android.parcel.Parcelize
 
 class SelectParticipantsView {
 
+    /**
+     * Events created by the view (Fragment)
+     */
     sealed class Event {
 
         data class Add(val contactResultList: List<ContactResult>,
@@ -18,6 +21,9 @@ class SelectParticipantsView {
         object Init : Event()
     }
 
+    /**
+     * Result returned by the domain
+     */
     sealed class Result {
         data class Add(val diffResult: DiffUtil.DiffResult,
                        val participantModelList: List<ParticipantModel>) : Result()
@@ -28,6 +34,9 @@ class SelectParticipantsView {
         object Init : Result()
     }
 
+    /**
+     * The "global" view state, kept in the ViewModel
+     */
     data class State(val participantModelList: List<ParticipantModel>,
                      val diffResult: DiffUtil.DiffResult?) {
         companion object {
@@ -35,6 +44,9 @@ class SelectParticipantsView {
         }
     }
 
+    /**
+     * The states the view receives and uses to render its ui, hence RenderState
+     */
     sealed class RenderState {
         data class Add(val participantModelList: List<ParticipantModel>,
                        val diffResult: DiffUtil.DiffResult) : RenderState()
@@ -42,9 +54,12 @@ class SelectParticipantsView {
         data class Remove(val participantModelList: List<ParticipantModel>,
                           val diffResult: DiffUtil.DiffResult) : RenderState()
 
-        data class  Init(val participantModelList: List<ParticipantModel>) : RenderState()
+        data class Init(val participantModelList: List<ParticipantModel>) : RenderState()
     }
 
+    /**
+     * The Parcelable version of the ViewState
+     */
     @Parcelize
     data class StateParcel(val participantModelList: List<ParticipantModel>) : Parcelable
 

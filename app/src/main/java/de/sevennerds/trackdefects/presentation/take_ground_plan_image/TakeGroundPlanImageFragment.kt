@@ -43,14 +43,6 @@ class TakeGroundPlanImageFragment : BaseFragment() {
             jpegQuality = manualJpegQuality(90)
     )
 
-    companion object {
-
-        @JvmStatic
-        fun newInstance(): TakeGroundPlanImageFragment {
-            return TakeGroundPlanImageFragment()
-        }
-    }
-
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -65,7 +57,7 @@ class TakeGroundPlanImageFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val main = MainActivity.get(context!!)
+        val main = MainActivity[context!!]
 
         val decorView = main.window.decorView
 

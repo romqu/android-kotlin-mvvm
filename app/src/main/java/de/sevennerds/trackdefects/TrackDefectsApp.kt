@@ -5,18 +5,16 @@ import android.content.Context
 import com.facebook.stetho.Stetho
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
+import com.orhanobut.logger.PrettyFormatStrategy
 import com.squareup.leakcanary.LeakCanary
 import de.sevennerds.trackdefects.di.AppComponent
 import de.sevennerds.trackdefects.di.AppModule
 import de.sevennerds.trackdefects.di.DaggerAppComponent
-import com.orhanobut.logger.PrettyFormatStrategy
-import com.orhanobut.logger.FormatStrategy
-import kotlin.reflect.KClass
 
 
 class TrackDefectsApp : Application() {
 
-    val component: AppComponent by lazy {
+    val appComponent: AppComponent by lazy {
         DaggerAppComponent
                 .builder()
                 .appModule(AppModule(this))
@@ -53,9 +51,9 @@ class TrackDefectsApp : Application() {
 
 
         Logger.addLogAdapter(object : AndroidLogAdapter(formatStrategy) {
-            override fun isLoggable(priority: Int, tag: String?): Boolean {
-                return BuildConfig.DEBUG
-            }
+            override fun isLoggable(priority: Int, tag: String?): Boolean =
+                    BuildConfig.DEBUG
+
         })
     }
 

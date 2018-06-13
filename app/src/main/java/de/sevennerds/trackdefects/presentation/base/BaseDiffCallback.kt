@@ -1,10 +1,9 @@
-package de.sevennerds.trackdefects.presentation.select_participants_defect_list.list
+package de.sevennerds.trackdefects.presentation.base
 
 import androidx.recyclerview.widget.DiffUtil
-import de.sevennerds.trackdefects.presentation.select_participants_defect_list.ParticipantModel
 
 class BaseDiffCallback<T : IDiffable>(private val oldList: List<T>,
-                                      private val newList: List<T>) : DiffUtil.Callback() {
+                                                                                   private val newList: List<T>) : DiffUtil.Callback() {
 
     override fun getOldListSize() = oldList.size
 

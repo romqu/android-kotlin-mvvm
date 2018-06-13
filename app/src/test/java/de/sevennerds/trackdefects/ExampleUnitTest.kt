@@ -14,13 +14,11 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
 
         Observable.just(1, 2, 3, 4)
-                .scan(10) { t1: Int, t2: Int ->
-                    println("$t1 + $t2")
-                    t1 + t2
+                .flatMap { t ->
+                    if (t == 2) {
+                        println(t)
+                        Observable.just(2)
+                    } else Observable.empty()
                 }
-                .startWith(1)
-                .doOnNext { println("Next: $it") }
-                .test()
-        //.assertResult(2);
     }
 }

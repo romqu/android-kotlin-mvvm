@@ -7,30 +7,39 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxbinding2.view.clicks
-import com.orhanobut.logger.Logger
 import com.wafflecopter.multicontactpicker.ContactResult
 import com.wafflecopter.multicontactpicker.MultiContactPicker
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.common.asObservable
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
-import de.sevennerds.trackdefects.presentation.select_participants_defect_list.list.SelectContactsAdapter
+import de.sevennerds.trackdefects.presentation.select_participants_defect_list.list.SelectParticipantsListAdapter
 import de.sevennerds.trackdefects.presentation.take_ground_plan_image.navigation.TakeGroundPlanImageKey
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_select_contacts.*
 
 
-class SelectContactsFragment : BaseFragment() {
+/**
+ * Takes care of saving the state
+ * Accesses the ViewModel via compose(eventTransformer)
+ * Renders the state
+ */
+class SelectParticipantsFragment : BaseFragment() {
 
-    private val KEY_STATE = "KEY"
+    private val KEY_STATE = "KEY_STATE"
+    private val CONTACT_PICKER_REQUEST = 991
+
+    private val compositeDisposable = CompositeDisposable()
+
+    private lateinit var listAdapter: SelectParticipantsListAdapter
+    private lateinit var viewModel: SelectParticipantsViewModel
+
     private var isRotation = false
-
-    private lateinit var viewStateP: ViewStateP
-
-    private lateinit var listAdapter: SelectContactsAdapter
 
     private val contactBuilder =
             MultiContactPicker.Builder(this)
@@ -40,12 +49,6 @@ class SelectContactsFragment : BaseFragment() {
                     .setChoiceMode(MultiContactPicker.CHOICE_MODE_MULTIPLE)
                     .bubbleTextColor(Color.WHITE)
 
-    private val CONTACT_PICKER_REQUEST = 991
-    private val compositeDisposable = CompositeDisposable()
-
-    private lateinit var viewModel: SelectContactsViewModel
-
-    // Fragment override methods
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -55,8 +58,6 @@ class SelectContactsFragment : BaseFragment() {
 
         isRotation = false
 
-        Logger.d("onCreateView: ${savedInstanceState?.getParcelable<ViewStateP>(KEY_STATE)}")
-
         return inflater.inflate(R.layout.fragment_select_contacts,
                                 container,
                                 false)
@@ -65,47 +66,28 @@ class SelectContactsFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        Logger.d("onActivityCreated: ${savedInstanceState?.getParcelable<ViewStateP>(KEY_STATE)}")
-
-        viewModel = SelectContactsViewModel(
-                ViewState(savedInstanceState
-                                  ?.getParcelable<ViewStateP>(KEY_STATE)?.participantModelList
-                                  ?: emptyList(),
-                          null))
+        viewModel = SelectParticipantsViewModel(
+                SelectParticipantsView.State(
+                        savedInstanceState
+                                ?.getParcelable<SelectParticipantsView.StateParcel>(KEY_STATE)
+                                ?.participantModelList
+                                ?: emptyList(),
+                        null))
 
         setup()
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-
-        Logger.d("onViewStateRestored: ${savedInstanceState?.getParcelable<ViewStateP>(KEY_STATE)}")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        Logger.d("onSaveInstanceState: ${viewModel.getViewStateP()}")
-
-        outState.putParcelable(KEY_STATE, viewModel.getViewStateP())
+        outState.putParcelable(KEY_STATE,
+                               viewModel.getViewStateParcel())
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        Logger.d("onStart")
-    }
-
-
-    // save state into variable
     override fun onPause() {
         super.onPause()
 
-        Logger.d("onPause")
-
         isRotation = true
-
-        viewStateP = viewModel.getViewStateP()
 
         compositeDisposable.clear()
     }
@@ -114,11 +96,9 @@ class SelectContactsFragment : BaseFragment() {
         super.onResume()
 
         if (isRotation) {
-            setupReactive()
+            setupEvents()
             isRotation = false
         }
-
-        Logger.d("onResume")
     }
 
 
@@ -130,8 +110,7 @@ class SelectContactsFragment : BaseFragment() {
                 RESULT_OK ->
                     contactResult(MultiContactPicker.obtainResult(data))
             }
-            /* RESULT_CANCELED ->
-                 contactResult(emptyList())*/
+            /* RESULT_CANCELED -> */
         }
 
     }
@@ -141,30 +120,29 @@ class SelectContactsFragment : BaseFragment() {
     private fun setup() {
         setupActionBar()
         setupRecyclerView()
-/*
-         compositeDisposable += Observable.fromCallable { SelectContactsEvent.Init }
-                 .compose(viewModel.eventTransformer)
-                 .subscribe(::render)*/
-
-        setupReactive()
+        setupEvents()
     }
 
     private fun setupActionBar() {
-        (activity as MainActivity).supportActionBar?.title = "Teilnehmer"
-
+        MainActivity[context!!].supportActionBar?.title = "Teilnehmer"
     }
 
     private fun setupRecyclerView() {
 
         with(select_contacts_rcv) {
-            layoutManager = (LinearLayoutManager(context))
-            listAdapter = SelectContactsAdapter(mutableListOf())
+            layoutManager = LinearLayoutManager(context)
+            listAdapter = SelectParticipantsListAdapter(mutableListOf())
             adapter = listAdapter
         }
-
     }
 
-    private fun setupReactive() {
+    private fun setupEvents() {
+
+        compositeDisposable += Observable.fromCallable {
+            SelectParticipantsView.Event.Init
+        }
+                .compose(viewModel.eventTransformer)
+                .subscribe(::render)
 
         compositeDisposable += select_contacts_fab
                 .clicks()
@@ -175,11 +153,11 @@ class SelectContactsFragment : BaseFragment() {
                 }
 
         compositeDisposable += listAdapter
-                .onClickSubject
-                .map {
-                    SelectContactsEvent
-                            .RemoveContactEvent(it,
-                                                listAdapter.getList())
+                .getOnItemClickListener()
+                .map { itemPosition ->
+                    SelectParticipantsView.Event
+                            .Remove(itemPosition,
+                                    listAdapter.getList())
                 }
                 .compose(viewModel.eventTransformer)
                 .subscribe(::render)
@@ -194,49 +172,48 @@ class SelectContactsFragment : BaseFragment() {
     private fun contactResult(contactResultList: List<ContactResult>) {
 
         compositeDisposable +=
-                SelectContactsEvent
-                        .SelectContactEvent(contactResultList,
-                                            listAdapter.getList())
+                SelectParticipantsView.Event
+                        .Add(contactResultList,
+                             listAdapter.getList())
                         .asObservable()
                         .compose(viewModel.eventTransformer)
                         .subscribe(::render)
     }
 
-    private fun render(viewRenderState: ViewRenderState) {
+    private fun render(renderState: SelectParticipantsView.RenderState) {
 
-        return when (viewRenderState) {
+        return when (renderState) {
 
-            is ViewRenderState.Init -> updateList(viewRenderState.participantModelList)
+            is SelectParticipantsView.RenderState.Init ->
+                updateList(renderState.participantModelList)
 
-            is ViewRenderState.SelectContact -> {
-                select_contacts_next_skip_btn.text = "Next"
+            is SelectParticipantsView.RenderState.Add -> {
 
-                with(listAdapter) {
-                    clearList()
-                    /*val list = mutableListOf<ParticipantModel>()
-                    for (i in 0..20) {
-                        list.add(viewRenderState.participantModelList.first().copy(name = i.toString()))
-                    }*/
-                    addAllToList(viewRenderState.participantModelList)
-                    viewRenderState.diffResult.dispatchUpdatesTo(this)
-                }
+                updateList(renderState.participantModelList,
+                           renderState.diffResult)
             }
 
-            is ViewRenderState.RemoveContact -> {
-                with(listAdapter) {
-                    clearList()
-                    addAllToList(viewRenderState.participantModelList)
-                    viewRenderState.diffResult.dispatchUpdatesTo(this)
-                }
+            is SelectParticipantsView.RenderState.Remove -> {
+                updateList(renderState.participantModelList,
+                           renderState.diffResult)
             }
         }
     }
 
-    private fun updateList(newParticipantModeList: List<ParticipantModel>) {
-        with(listAdapter) {
-            clearList()
-            addAllToList(newParticipantModeList)
-            notifyDataSetChanged()
-        }
+    // TODO: is suppose to change the buttons text from "Skip" to "Next"
+    private fun updateButtonText(text: String) {
+        select_contacts_next_skip_btn.text = text
     }
+
+    private fun updateList(newParticipantModeList: List<ParticipantModel>) =
+            updateList(newParticipantModeList, null)
+
+    private fun updateList(newParticipantModeList: List<ParticipantModel>,
+                           diffResult: DiffUtil.DiffResult?) =
+
+            with(listAdapter) {
+                clearList()
+                addAllToList(newParticipantModeList)
+                diffResult?.dispatchUpdatesTo(this) ?: notifyDataSetChanged()
+            }
 }
