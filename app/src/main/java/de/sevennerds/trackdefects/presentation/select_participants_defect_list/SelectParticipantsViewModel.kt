@@ -9,7 +9,13 @@ import io.reactivex.rxkotlin.toObservable
 
 
 /**
- * The flow looks like this:
+ * Presentation: https://speakerdeck.com/jakewharton/the-state-of-managing-state-with-rxjava-devoxx-us-2017?slide=1
+ * Reddit comments : https://www.reddit.com/r/androiddev/comments/656ter/managing_state_with_rxjava_by_jake_wharton/
+ * More comments: https://www.reddit.com/r/androiddev/comments/7gmge6/representing_view_state_with_kotlin_data_classes/
+ *
+ * Why two States? -> https://www.reddit.com/r/androiddev/comments/7u7vci/modeling_viewmodel_states_using_kotlins_sealed/
+ *
+ * The flow roughly looks like this:
  * UI creates an Event (or Intent) and forwards it to the ViewModel
  * -> ViewModel transforms that into a Request (or Action - does not exists as an object as of now, but will as soon as the domain gets implemented)
  *    and calls the domain (UseCase, Interactor, Task, whatever)
@@ -142,8 +148,7 @@ class SelectParticipantsViewModel(private var viewState: SelectParticipantsView.
     /**
      * I use skip(1) because the Init case gets called anyway, so I would receive two "Init" states.
      * This makes the version of scan with a seed kinda useless tho. I just supplied one, because
-     * "previousState" is then of type SelectParticipantsView.State, instead of SelectParticipantsView.Result.
-     *
+     * "previousState" is then of type SelectParticipantsView.State, instead of SelectParticipantsView.Result
      */
     private val resultTransformer = ObservableTransformer<SelectParticipantsView.Result,
             SelectParticipantsView.State> { upstream: Observable<SelectParticipantsView.Result> ->
