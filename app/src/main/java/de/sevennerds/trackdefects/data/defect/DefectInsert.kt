@@ -6,9 +6,11 @@ import de.sevennerds.trackdefects.data.floor.FloorEntity
 import de.sevennerds.trackdefects.data.living_unit.LivingUnitEntity
 import de.sevennerds.trackdefects.data.room.RoomEntity
 
-data class DefectInsert(val streetAddressId: Long,
-                        val floorEntity: FloorEntity,
-                        val livingUnitEntity: LivingUnitEntity,
-                        val roomEntity: RoomEntity,
-                        val defectInfoEntity: DefectInfoEntity,
-                        val defectImageEntityList: List<DefectImageEntity>)
+data class DefectInsert(
+        val streetAddressId: Long,
+        val floorEntity: FloorEntity,
+        val livingUnitEntity: LivingUnitEntity,
+        val roomEntity: RoomEntity,
+        val defectInfoEntity: DefectInfoEntity,
+        val defectImageEntityList: List<DefectImageEntity>
+)

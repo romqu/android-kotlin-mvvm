@@ -6,7 +6,9 @@ import androidx.room.PrimaryKey
 import de.sevennerds.trackdefects.data.BaseEntity
 
 @Entity(tableName = "client")
-data class ClientEntity(@PrimaryKey(autoGenerate = true) override val id: Long,
-                        @ColumnInfo(name = "remote_id") val remoteId: Long,
-                        @ColumnInfo(name = "forename") val forename: String,
-                        @ColumnInfo(name = "surname") val surname: String) : BaseEntity
+data class ClientEntity(
+        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override val id: Long,
+        @ColumnInfo(name = "remote_id") val remoteId: Long,
+        @ColumnInfo(name = "forename") val forename: String,
+        @ColumnInfo(name = "surname") val surname: String
+) : BaseEntity

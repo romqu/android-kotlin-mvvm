@@ -6,9 +6,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FloorRepo @Inject constructor(private val floorLocalDataSource: FloorLocalDataSource,
-                                    private val localDataSource: LocalDataSource) {
-
+class FloorRepo @Inject constructor(
+        private val floorLocalDataSource: FloorLocalDataSource,
+        private val localDataSource: LocalDataSource
+) {
     fun insertOrUpdate(floorEntity: FloorEntity) =
             Single.fromCallable {
                 if (floorEntity.id == 0L){

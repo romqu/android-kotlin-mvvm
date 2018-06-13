@@ -6,11 +6,13 @@ import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
 import io.reactivex.Flowable
 import io.reactivex.Single
 
-@Database(entities = [
-    TestEntity::class],
-          version = 1)
+@Database(
+        entities = [
+            TestEntity::class
+        ],
+        version = 1
+)
 abstract class TestLocalDb: RoomDatabase() {
-
     abstract fun test(): TestLocalData
 }
 

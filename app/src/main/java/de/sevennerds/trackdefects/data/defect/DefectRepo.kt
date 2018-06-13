@@ -19,8 +19,8 @@ class DefectRepo @Inject constructor(
         private val livingUnitLocalDataSource: LivingUnitLocalDataSource,
         private val roomLocalDataSource: RoomLocalDataSource,
         private val defectInfoLocalDataSource: DefectInfoLocalDataSource,
-        private val defectImageLocalDataSource: DefectImageLocalDataSource) {
-
+        private val defectImageLocalDataSource: DefectImageLocalDataSource
+) {
     fun insert(defectInsert: DefectInsert): Single<Result<Defect>> =
 
             Single.fromCallable {
@@ -66,7 +66,6 @@ class DefectRepo @Inject constructor(
                             .copy(id = livingUnitId, floorId = floorId)
 
                     val floorNew = floor.copy(id = floorId, streetAddressId = streetAddressId)
-
 
                     Result.Success(Defect(
                             floorNew,

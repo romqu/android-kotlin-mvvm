@@ -22,33 +22,29 @@ import de.sevennerds.trackdefects.data.test.TestEntity
 import de.sevennerds.trackdefects.data.view_participant.ViewParticipantEntity
 import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalDataSource
 
-@Database(entities = [
-    ClientEntity::class,
-    DefectListEntity::class,
-    StreetAddressEntity::class,
-    ViewParticipantEntity::class,
-    FloorEntity::class,
-    LivingUnitEntity::class,
-    RoomEntity::class, DefectInfoEntity::class,
-    DefectImageEntity::class, TestEntity::class],
-          version = 1)
+@Database(
+        entities = [
+                ClientEntity::class,
+                DefectListEntity::class,
+                StreetAddressEntity::class,
+                ViewParticipantEntity::class,
+                FloorEntity::class,
+                LivingUnitEntity::class,
+                RoomEntity::class, DefectInfoEntity::class,
+                DefectImageEntity::class, TestEntity::class
+        ],
+        version = 1
+)
 abstract class LocalDataSource : RoomDatabase() {
 
     abstract fun client(): ClientLocalDataSource
-
     abstract fun defectList(): DefectListLocalDataSource
-
     abstract fun streetAddress(): StreetAddressLocalDataSource
-
     abstract fun viewParticipant(): ViewParticipantLocalDataSource
-
     abstract fun floor(): FloorLocalDataSource
-
     abstract fun livingUnit(): LivingUnitLocalDataSource
-
     abstract fun room(): RoomLocalDataSource
-
     abstract fun defectInfo(): DefectInfoLocalDataSource
-
     abstract fun defectImage(): DefectImageLocalDataSource
+
 }
