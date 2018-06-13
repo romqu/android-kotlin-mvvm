@@ -50,7 +50,7 @@ class SelectParticipantsViewModel(private var viewState: SelectParticipantsView.
                                    .compose(addParticipantsTransformer),
                            shared.ofType(
                                    SelectParticipantsView.Event.Remove::class.java)
-                                   .compose(removeContactTransformer))
+                                   .compose(removeParticipantTransformer))
         }
     }
 
@@ -112,7 +112,7 @@ class SelectParticipantsViewModel(private var viewState: SelectParticipantsView.
     /**
      * Pretty much same as above, only that it removes the selected view participant from the list
      */
-    private val removeContactTransformer = ObservableTransformer<SelectParticipantsView.Event.Remove,
+    private val removeParticipantTransformer = ObservableTransformer<SelectParticipantsView.Event.Remove,
             SelectParticipantsView.RenderState> { observable ->
 
         observable.flatMap { removeContactEvent ->
@@ -151,7 +151,7 @@ class SelectParticipantsViewModel(private var viewState: SelectParticipantsView.
      * "previousState" is then of type SelectParticipantsView.State, instead of SelectParticipantsView.Result
      */
     private val resultTransformer = ObservableTransformer<SelectParticipantsView.Result,
-            SelectParticipantsView.State> { upstream: Observable<SelectParticipantsView.Result> ->
+            SelectParticipantsView.State> { upstream  ->
 
         upstream.scan(viewState) { previousState, result ->
             when (result) {

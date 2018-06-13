@@ -17,11 +17,11 @@ import de.sevennerds.trackdefects.common.asObservable
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
 import de.sevennerds.trackdefects.presentation.select_participants_defect_list.list.SelectParticipantsListAdapter
-import de.sevennerds.trackdefects.presentation.take_ground_plan_image.navigation.TakeGroundPlanImageKey
+import de.sevennerds.trackdefects.presentation.take_ground_plan_picture.navigation.TakeGroundPlanPictureKey
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.android.synthetic.main.fragment_select_contacts.*
+import kotlinx.android.synthetic.main.fragment_select_participants.*
 
 
 /**
@@ -58,7 +58,7 @@ class SelectParticipantsFragment : BaseFragment() {
 
         isRotation = false
 
-        return inflater.inflate(R.layout.fragment_select_contacts,
+        return inflater.inflate(R.layout.fragment_select_participants,
                                 container,
                                 false)
     }
@@ -129,7 +129,7 @@ class SelectParticipantsFragment : BaseFragment() {
 
     private fun setupRecyclerView() {
 
-        with(select_contacts_rcv) {
+        with(select_participants_rcv) {
             layoutManager = LinearLayoutManager(context)
             listAdapter = SelectParticipantsListAdapter(mutableListOf())
             adapter = listAdapter
@@ -144,7 +144,7 @@ class SelectParticipantsFragment : BaseFragment() {
                 .compose(viewModel.eventTransformer)
                 .subscribe(::render)
 
-        compositeDisposable += select_contacts_fab
+        compositeDisposable += select_participants_fab
                 .clicks()
                 .subscribe {
 
@@ -162,10 +162,10 @@ class SelectParticipantsFragment : BaseFragment() {
                 .compose(viewModel.eventTransformer)
                 .subscribe(::render)
 
-        compositeDisposable += select_contacts_next_skip_btn
+        compositeDisposable += select_participants_next_skip_btn
                 .clicks()
                 .subscribe {
-                    MainActivity[context!!].navigateTo(TakeGroundPlanImageKey())
+                    MainActivity[context!!].navigateTo(TakeGroundPlanPictureKey())
                 }
     }
 
@@ -202,7 +202,7 @@ class SelectParticipantsFragment : BaseFragment() {
 
     // TODO: is suppose to change the buttons text from "Skip" to "Next"
     private fun updateButtonText(text: String) {
-        select_contacts_next_skip_btn.text = text
+        select_participants_next_skip_btn.text = text
     }
 
     private fun updateList(newParticipantModeList: List<ParticipantModel>) =

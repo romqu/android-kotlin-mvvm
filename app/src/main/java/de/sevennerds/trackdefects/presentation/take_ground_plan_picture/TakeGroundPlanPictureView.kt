@@ -1,0 +1,43 @@
+package de.sevennerds.trackdefects.presentation.take_ground_plan_picture
+
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+class TakeGroundPlanPictureView {
+
+    sealed class Event {
+
+        object TakePicture : Event()
+    }
+
+    /**
+     * Result returned by the domain
+     */
+    sealed class Result {
+
+        data class TakePicture(val imageName: String) : Result()
+    }
+
+    /**
+     * The "global" view state, kept in the ViewModel
+     */
+    data class State(val imageName: String) {
+        companion object {
+            fun initial() = State("")
+        }
+    }
+
+    /**
+     * The states the view receives and uses to render its ui, hence RenderState
+     */
+    sealed class RenderState {
+        data class TakePicture(val imageName: String) : RenderState()
+    }
+
+    /**
+     * The Parcelable version of the ViewState
+     */
+    @Parcelize
+    data class StateParcel(val imageName: String) : Parcelable
+
+}
