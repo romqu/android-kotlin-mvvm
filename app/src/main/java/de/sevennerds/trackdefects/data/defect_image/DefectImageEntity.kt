@@ -15,7 +15,7 @@ import de.sevennerds.trackdefects.data.defect_info.DefectInfoEntity
         ],
         indices = [
             Index(
-                    value = "defect_info_id",
+                    value = ["defect_info_id"],
                     name = "defect_image_defect_info_idx"
             )
         ]

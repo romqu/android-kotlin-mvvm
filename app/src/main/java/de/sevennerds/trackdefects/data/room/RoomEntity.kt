@@ -18,7 +18,7 @@ import de.sevennerds.trackdefects.data.living_unit.LivingUnitEntity
         ],
         indices = [
             Index(
-                    value = "living_unit_id",
+                    value = ["living_unit_id"],
                     name = "room_living_unit_idx"
             )
         ]

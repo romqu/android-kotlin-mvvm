@@ -17,7 +17,7 @@ import de.sevennerds.trackdefects.data.room.RoomEntity
         ],
         indices = [
             Index(
-                    value = "room_id",
+                    value = ["room_id"],
                     name = "defect_info_room_idx"
             )
         ]

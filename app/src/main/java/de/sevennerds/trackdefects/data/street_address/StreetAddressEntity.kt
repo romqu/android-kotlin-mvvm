@@ -19,7 +19,7 @@ import de.sevennerds.trackdefects.data.view_participant.ViewParticipantEntity
         ],
         indices = [
             Index(
-                    value = "defect_list_id",
+                    value = ["defect_list_id"],
                     name = "street_address_defect_list_idx"
             )
         ]

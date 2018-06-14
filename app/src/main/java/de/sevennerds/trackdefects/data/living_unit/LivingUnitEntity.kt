@@ -16,7 +16,7 @@ import de.sevennerds.trackdefects.data.floor.FloorEntity
         ],
         indices = [
             Index(
-                    value = "floor_id",
+                    value = ["floor_id"],
                     name = "living_unit_floor_idx"
             )
         ]
