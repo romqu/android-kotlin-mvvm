@@ -10,6 +10,7 @@ import com.zhuinden.simplestack.StateChange
 import com.zhuinden.simplestack.StateChanger
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
+import de.sevennerds.trackdefects.common.DATABASE_NAME
 import de.sevennerds.trackdefects.presentation.base.navigation.BaseKey
 import de.sevennerds.trackdefects.presentation.base.navigation.FragmentStateChanger
 import de.sevennerds.trackdefects.presentation.select_participants_defect_list.navigation.SelectParticipantsKey
@@ -22,6 +23,7 @@ import de.sevennerds.trackdefects.presentation.select_participants_defect_list.n
  * https://github.com/Zhuinden/simple-stack/blob/master/simple-stack-example-kotlin/src/main/kotlin/com/zhuinden/simplestackexamplekotlin/MainActivity.kt
  */
 class MainActivity : AppCompatActivity(), StateChanger {
+
 
     private lateinit var backstackDelegate: BackstackDelegate
     private lateinit var fragmentStateChanger: FragmentStateChanger

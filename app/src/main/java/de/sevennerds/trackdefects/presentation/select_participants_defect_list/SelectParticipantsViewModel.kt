@@ -74,9 +74,9 @@ class SelectParticipantsViewModel(private var viewState: SelectParticipantsView.
      * it then forwards it to the resultTransformer and uses the returned ViewState to form a RenderState for the ui
      */
     private val addParticipantsTransformer = ObservableTransformer<SelectParticipantsView.Event.Add,
-            SelectParticipantsView.RenderState> { observable ->
+            SelectParticipantsView.RenderState> { upstream ->
 
-        observable.flatMap { addParticipantsEvent ->
+        upstream.flatMap { addParticipantsEvent ->
 
             val (contactResultList, currentViewParticipantList) = addParticipantsEvent
 
