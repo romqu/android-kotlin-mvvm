@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d848d72860f7a94828bf9e4214c6bc3e",
+    "identityHash": "4af3003b8beda3d8868ece7e80686a21",
     "entities": [
       {
         "tableName": "client",
@@ -165,7 +165,7 @@
       },
       {
         "tableName": "view_participant",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `street_address_id` INTEGER NOT NULL, `forename` TEXT NOT NULL, `surname` TEXT NOT NULL, `phone_number` INTEGER NOT NULL, `e_mail` TEXT NOT NULL, `company_name` TEXT NOT NULL, FOREIGN KEY(`street_address_id`) REFERENCES `defect_list`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `street_address_id` INTEGER NOT NULL, `forename` TEXT NOT NULL, `surname` TEXT NOT NULL, `phone_number` INTEGER NOT NULL, `email` TEXT NOT NULL, `company_name` TEXT NOT NULL, FOREIGN KEY(`street_address_id`) REFERENCES `defect_list`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -205,7 +205,7 @@
           },
           {
             "fieldPath": "email",
-            "columnName": "e_mail",
+            "columnName": "email",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -365,7 +365,7 @@
         ]
       },
       {
-        "tableName": "roomEntity",
+        "tableName": "room_entity",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `living_unit_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `number` INTEGER NOT NULL, `location_description` TEXT NOT NULL, FOREIGN KEY(`living_unit_id`) REFERENCES `living_unit`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
@@ -437,7 +437,7 @@
       },
       {
         "tableName": "defect_info",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `description` TEXT NOT NULL, `measure` TEXT NOT NULL, `company_in_charge` TEXT NOT NULL, `done_till` TEXT NOT NULL, `room_id` INTEGER NOT NULL, FOREIGN KEY(`room_id`) REFERENCES `roomEntity`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remote_id` INTEGER NOT NULL, `description` TEXT NOT NULL, `measure` TEXT NOT NULL, `company_in_charge` TEXT NOT NULL, `done_till` TEXT NOT NULL, `room_id` INTEGER NOT NULL, FOREIGN KEY(`room_id`) REFERENCES `room_entity`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -500,7 +500,7 @@
         ],
         "foreignKeys": [
           {
-            "table": "roomEntity",
+            "table": "room_entity",
             "onDelete": "CASCADE",
             "onUpdate": "CASCADE",
             "columns": [
@@ -612,7 +612,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"d848d72860f7a94828bf9e4214c6bc3e\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"4af3003b8beda3d8868ece7e80686a21\")"
     ]
   }
 }

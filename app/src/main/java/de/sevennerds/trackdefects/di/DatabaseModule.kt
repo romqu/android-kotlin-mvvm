@@ -24,6 +24,7 @@ abstract class DatabaseModule {
 
     @Module
     companion object {
+
         @Provides
         @Singleton
         @JvmStatic

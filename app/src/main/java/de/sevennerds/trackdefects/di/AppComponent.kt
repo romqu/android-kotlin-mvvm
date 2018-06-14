@@ -9,8 +9,8 @@ import javax.inject.Singleton
     AppModule::class,
     ContextModule::class,
     DatabaseModule::class,
-    NetworkModule::class])
+    NetworkModule::class]
+)
 interface AppComponent {
-
     fun inject(mainActivity: MainActivity)
 }

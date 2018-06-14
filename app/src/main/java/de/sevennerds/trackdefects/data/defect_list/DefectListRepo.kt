@@ -11,10 +11,12 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DefectListRepo @Inject constructor(private val defectListLocal: DefectListLocalDataSource,
-                                         private val streetAddressLocal: StreetAddressLocalDataSource,
-                                         private val viewParticipantLocal: ViewParticipantLocalDataSource,
-                                         private val localDataSource: LocalDataSource) {
+class DefectListRepo @Inject constructor(
+        private val defectListLocal: DefectListLocalDataSource,
+        private val streetAddressLocal: StreetAddressLocalDataSource,
+        private val viewParticipantLocal: ViewParticipantLocalDataSource,
+        private val localDataSource: LocalDataSource
+) {
 
     fun insertBasic(defectListEntity: DefectListEntity): Single<Result<DefectListEntity>> =
             Single.fromCallable {
@@ -53,5 +55,4 @@ class DefectListRepo @Inject constructor(private val defectListLocal: DefectList
                     Result.Success(defectListEntityNew)
                 })
             }
-
 }
