@@ -1,13 +1,14 @@
 package de.sevennerds.trackdefects.presentation.take_ground_plan_picture
 
 import android.os.Parcelable
+import io.fotoapparat.result.PhotoResult
 import kotlinx.android.parcel.Parcelize
 
 class TakeGroundPlanPictureView {
 
     sealed class Event {
 
-        object TakePicture : Event()
+        data class TakePicture(val photoResult: PhotoResult) : Event()
     }
 
     /**

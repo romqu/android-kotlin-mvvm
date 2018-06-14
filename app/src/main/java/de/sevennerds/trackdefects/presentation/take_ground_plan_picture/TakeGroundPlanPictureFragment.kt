@@ -19,6 +19,8 @@ import kotlinx.android.synthetic.main.fragment_take_ground_plan_picture.*
 
 class TakeGroundPlanPictureFragment : BaseFragment() {
 
+    lateinit var viewModel: TakeGroundPlanPictureViewModel
+
     private val cameraConfiguration = CameraConfiguration(
             pictureResolution = highestResolution(),
             previewResolution = highestResolution(),
@@ -57,6 +59,9 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        viewModel = TakeGroundPlanPictureViewModel(
+                TakeGroundPlanPictureView.State.initial())
+
         ObjectAnimator.ofFloat(takeGroundPlanPictureTakePictureBtn, "", 360F)
                 .start()
 
@@ -93,8 +98,10 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
         takeGroundPlanPictureTakePictureBtn
                 .clicks()
                 .map {
-                    camera.takePicture()
-                }.subscribe()
+                    TakeGroundPlanPictureView.Event.TakePicture(camera.takePicture())
+                }
+                .compose(viewModel.eventTransformer)
+                .subscribe()
     }
 
 

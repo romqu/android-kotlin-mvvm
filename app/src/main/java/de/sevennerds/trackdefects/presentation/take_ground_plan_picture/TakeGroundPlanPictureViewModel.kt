@@ -5,7 +5,7 @@ import io.reactivex.ObservableTransformer
 
 class TakeGroundPlanPictureViewModel(private var viewState: TakeGroundPlanPictureView.State) {
 
-    private val eventTransformer = ObservableTransformer<TakeGroundPlanPictureView.Event,
+    val eventTransformer = ObservableTransformer<TakeGroundPlanPictureView.Event,
             TakeGroundPlanPictureView.RenderState> { upstream ->
 
         upstream.publish { shared ->
@@ -22,8 +22,12 @@ class TakeGroundPlanPictureViewModel(private var viewState: TakeGroundPlanPictur
                     TakeGroundPlanPictureView.RenderState> { upstream ->
 
                 upstream.map { takePictureEvent ->
-                    TakeGroundPlanPictureView.RenderState.TakePicture("")
+                    TakeGroundPlanPictureView.Result.TakePicture("")
                 }
+                        .compose(resultTransformer)
+                        .map { viewState ->
+                            TakeGroundPlanPictureView.RenderState.TakePicture(viewState.imageName)
+                        }
             }
 
     private val resultTransformer =
