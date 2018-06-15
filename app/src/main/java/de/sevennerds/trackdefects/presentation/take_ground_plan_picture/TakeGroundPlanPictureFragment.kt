@@ -2,6 +2,7 @@ package de.sevennerds.trackdefects.presentation.take_ground_plan_picture
 
 import android.animation.ObjectAnimator
 import android.content.pm.ActivityInfo
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,39 +12,14 @@ import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
-import io.fotoapparat.Fotoapparat
-import io.fotoapparat.configuration.CameraConfiguration
-import io.fotoapparat.parameter.ScaleType
-import io.fotoapparat.selector.*
-import kotlinx.android.synthetic.main.fragment_take_ground_plan_picture.*
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
+import kotlinx.android.synthetic.main.fragment_take_ground_plan_image.*
 
 class TakeGroundPlanPictureFragment : BaseFragment() {
 
-    lateinit var viewModel: TakeGroundPlanPictureViewModel
-
-    private val cameraConfiguration = CameraConfiguration(
-            pictureResolution = highestResolution(),
-            previewResolution = highestResolution(),
-            previewFpsRange = highestFps(),
-            focusMode = firstAvailable(
-                    continuousFocusPicture(),
-                    autoFocus()
-            ),
-            jpegQuality = manualJpegQuality(85)
-    )
-
-    private val camera by lazy {
-        Fotoapparat(
-                context = context!!,
-                cameraConfiguration = cameraConfiguration,
-                view = takeGroundPlanPictureCameraView,
-                scaleType = ScaleType.CenterCrop,
-                lensPosition = back(),
-                cameraErrorCallback = { cameraException ->
-                    Logger.e(cameraException.toString())
-                }
-        )
-    }
+    private lateinit var viewModel: TakeGroundPlanPictureViewModel
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -51,7 +27,7 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
 
         super.onCreateView(inflater, container, savedInstanceState)
 
-        return inflater.inflate(R.layout.fragment_take_ground_plan_picture,
+        return inflater.inflate(R.layout.fragment_take_ground_plan_image,
                                 container,
                                 false)
     }
@@ -65,6 +41,8 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
         ObjectAnimator.ofFloat(takeGroundPlanPictureTakePictureBtn, "", 360F)
                 .start()
 
+        setupEvents()
+
     }
 
     override fun onStart() {
@@ -77,7 +55,13 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
                     ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
         }
 
-        camera.start()
+        // camera.start()
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        // compositeDisposable.clear()
     }
 
     override fun onStop() {
@@ -90,18 +74,27 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
                     ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
 
-        camera.stop()
+        // camera.stop()
     }
 
-    fun setupEvents() {
+    private fun setupEvents() {
 
-        takeGroundPlanPictureTakePictureBtn
+
+        compositeDisposable += takeGroundPlanPictureTakePictureBtn
                 .clicks()
+                .doOnNext { Logger.d("NEXT") }
                 .map {
-                    TakeGroundPlanPictureView.Event.TakePicture(camera.takePicture())
+                    TakeGroundPlanPictureView
+                            .Event
+                            .TakePicture(
+                                    Bitmap.createBitmap(10,
+                                                        10,
+                                                        Bitmap.Config.ARGB_8888))
                 }
                 .compose(viewModel.eventTransformer)
-                .subscribe()
+
+                .doOnError { Logger.e(it.toString()) }
+                .subscribe { Logger.d("SUB") }
     }
 
 

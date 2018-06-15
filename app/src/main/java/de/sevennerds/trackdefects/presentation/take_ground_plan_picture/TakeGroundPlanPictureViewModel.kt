@@ -1,6 +1,5 @@
 package de.sevennerds.trackdefects.presentation.take_ground_plan_picture
 
-import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 
 class TakeGroundPlanPictureViewModel(private var viewState: TakeGroundPlanPictureView.State) {
@@ -8,12 +7,15 @@ class TakeGroundPlanPictureViewModel(private var viewState: TakeGroundPlanPictur
     val eventTransformer = ObservableTransformer<TakeGroundPlanPictureView.Event,
             TakeGroundPlanPictureView.RenderState> { upstream ->
 
-        upstream.publish { shared ->
+        upstream.ofType(TakeGroundPlanPictureView.Event.TakePicture::class.java)
+                .compose(takePictureEventTransformer)
+
+        /*upstream.publish { shared ->
             Observable
                     .merge(shared.ofType(TakeGroundPlanPictureView.Event.TakePicture::class.java)
                                    .compose(takePictureEventTransformer),
-                           Observable.empty())
-        }
+                           Observable.empty())*/
+
 
     }
 
@@ -22,6 +24,7 @@ class TakeGroundPlanPictureViewModel(private var viewState: TakeGroundPlanPictur
                     TakeGroundPlanPictureView.RenderState> { upstream ->
 
                 upstream.map { takePictureEvent ->
+
                     TakeGroundPlanPictureView.Result.TakePicture("")
                 }
                         .compose(resultTransformer)

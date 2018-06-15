@@ -8,17 +8,12 @@
         android:id="@+id/takeGroundPlanPictureTakePictureBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/takeGroundPlanPictureCameraView"
-        app:layout_constraintEnd_toEndOf="@+id/takeGroundPlanPictureCameraView"
-        app:layout_constraintTop_toTopOf="@+id/takeGroundPlanPictureCameraView" />
-
-    <io.fotoapparat.view.CameraView
-        android:id="@+id/takeGroundPlanPictureCameraView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </io.fotoapparat.view.CameraView>
+        android:valueType="floatType"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
