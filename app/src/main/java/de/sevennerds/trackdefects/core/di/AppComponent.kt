@@ -2,6 +2,7 @@ package de.sevennerds.trackdefects.di
 
 import dagger.Component
 import de.sevennerds.trackdefects.presentation.MainActivity
+import de.sevennerds.trackdefects.presentation.take_ground_plan_picture.TakeGroundPlanPictureFragment
 import javax.inject.Singleton
 
 @Singleton
@@ -9,8 +10,11 @@ import javax.inject.Singleton
     AppModule::class,
     ContextModule::class,
     DatabaseModule::class,
-    NetworkModule::class])
+    NetworkModule::class,
+    LruCacheModule::class])
 interface AppComponent {
 
     fun inject(mainActivity: MainActivity)
+    fun inject(takeGroundPlanPictureFragment: TakeGroundPlanPictureFragment)
+
 }
