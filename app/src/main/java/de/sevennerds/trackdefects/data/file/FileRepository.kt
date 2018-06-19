@@ -1,12 +1,12 @@
 package de.sevennerds.trackdefects.data.file
 
-import java.io.File
 import android.graphics.Bitmap
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import android.graphics.BitmapFactory
 import de.sevennerds.trackdefects.data.response.Result
 import io.reactivex.Observable
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 
 class FileRepository {
@@ -52,7 +52,7 @@ class FileRepository {
 
     }
 
-    fun save(genericFile: de.sevennerds.trackdefects.data.file.GenericFile<Bitmap>): Observable<Result<String>> {
+    fun save(genericFile: GenericFile<Bitmap>): Observable<Result<String>> {
         if (!WORKING_DIRECTORY.exists()) WORKING_DIRECTORY.mkdirs()
         if (WRITABLE) {
             val fileName = genericFile.name + JPEG_FILE_EXTENSION
@@ -70,6 +70,14 @@ class FileRepository {
         return Observable.just(
                 Result.Failure("Directory not writable.")
         )
+    }
+
+    fun lookAtMe(): Observable<Result<String>> {
+        return Observable.just("")
+                .map { Result.Success("") as Result<String> }
+                .onErrorReturn { Result.Failure("") }
+
+
     }
 
     fun saveAll(genericFileList: List<GenericFile<Bitmap>>): Observable<Result<String>> {
