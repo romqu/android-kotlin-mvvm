@@ -1,4 +1,4 @@
 package de.sevennerds.trackdefects.presentation.model
 
-class FileModel {
+data class FileModel<T>(val name: String, val data: T) {
 }

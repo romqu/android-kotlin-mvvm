@@ -1,8 +1,17 @@
 package de.sevennerds.trackdefects.presentation.take_ground_plan_picture
 
+import android.graphics.Bitmap
+import androidx.collection.LruCache
+import de.sevennerds.trackdefects.common.applySchedulers
+import de.sevennerds.trackdefects.util.getUuidV4
+import io.fotoapparat.result.adapter.rxjava2.toObservable
 import io.reactivex.ObservableTransformer
+import javax.inject.Inject
 
-class TakeGroundPlanPictureViewModel(private var viewState: TakeGroundPlanPictureView.State) {
+class TakeGroundPlanPictureViewModel @Inject constructor(
+        private val bitmapCache: LruCache<String, Bitmap>) {
+
+    private var viewState: TakeGroundPlanPictureView.State = TakeGroundPlanPictureView.State.initial()
 
     val eventTransformer = ObservableTransformer<TakeGroundPlanPictureView.Event,
             TakeGroundPlanPictureView.RenderState> { upstream ->
@@ -23,14 +32,21 @@ class TakeGroundPlanPictureViewModel(private var viewState: TakeGroundPlanPictur
             ObservableTransformer<TakeGroundPlanPictureView.Event.TakePicture,
                     TakeGroundPlanPictureView.RenderState> { upstream ->
 
-                upstream.map { takePictureEvent ->
-
-                    TakeGroundPlanPictureView.Result.TakePicture("")
+                upstream.flatMap { takePictureEvent ->
+                    takePictureEvent
+                            .photoResult
+                            .toBitmap()
+                            .toObservable()
+                            .map { bitmapPhoto ->
+                                val imageName = getUuidV4()
+                                bitmapCache.put(imageName, bitmapPhoto.bitmap)
+                                TakeGroundPlanPictureView.Result.TakePicture(imageName)
+                            }
+                            .compose(resultTransformer)
+                            .map { viewState ->
+                                TakeGroundPlanPictureView.RenderState.TakePicture(viewState.imageName)
+                            }.applySchedulers()
                 }
-                        .compose(resultTransformer)
-                        .map { viewState ->
-                            TakeGroundPlanPictureView.RenderState.TakePicture(viewState.imageName)
-                        }
             }
 
     private val resultTransformer =
@@ -40,7 +56,7 @@ class TakeGroundPlanPictureViewModel(private var viewState: TakeGroundPlanPictur
                 upstream.scan(viewState) { _, result ->
                     when (result) {
 
-                        is TakeGroundPlanPictureView.Result.TakePicture -> viewState
+                        is TakeGroundPlanPictureView.Result.TakePicture -> viewState.copy(result.imageName)
                     }
                 }.skip(1)
             }

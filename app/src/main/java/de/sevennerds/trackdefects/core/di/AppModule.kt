@@ -1,4 +1,4 @@
-package de.sevennerds.trackdefects.di
+package de.sevennerds.trackdefects.core.di
 
 import android.app.Application
 import dagger.Module

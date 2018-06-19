@@ -2,6 +2,8 @@ package de.sevennerds.trackdefects.presentation.preview_image
 
 import android.graphics.Bitmap
 import android.os.Parcelable
+import de.sevennerds.trackdefects.core.di.MessageQueue
+import de.sevennerds.trackdefects.presentation.model.FileModel
 import kotlinx.android.parcel.Parcelize
 
 class PreviewImageView {
@@ -15,7 +17,7 @@ class PreviewImageView {
 
         object AcceptImage : Event()
 
-        object LoadImage : Event()
+        class LoadImage(val imageName: String) : Event()
     }
 
     /**
@@ -26,15 +28,20 @@ class PreviewImageView {
 
         object AcceptImage : Result()
 
-        data class LoadImage(val bitmap: Bitmap) : Result()
+        data class LoadImage(val image: FileModel<Bitmap>) : Result()
     }
 
     /**
      * The "global" view state, kept in the ViewModel
      */
-    data class State(val imageName: String) {
+    data class State(val image: FileModel<Bitmap>) {
         companion object {
-            fun initial() = State("")
+            fun initial() = State(FileModel(
+                    "",
+                    Bitmap.createBitmap(
+                            10,
+                            10,
+                            Bitmap.Config.ARGB_8888)))
         }
     }
 
@@ -54,5 +61,9 @@ class PreviewImageView {
      */
     @Parcelize
     data class StateParcel(val imageName: String) : Parcelable
+
+    sealed class Message() : MessageQueue.Message {
+        class ImageName(val imageName: String) : Message()
+    }
 
 }

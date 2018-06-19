@@ -31,12 +31,11 @@ val Fragment.requireArguments
     get() = this.arguments ?: throw IllegalStateException("Arguments should exist!")
 
 fun <T> Observable<T>.applySchedulers(): Observable<T> =
-        compose(
-                { observable: Observable<T> ->
-                    observable
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                })
+        compose { observable: Observable<T> ->
+            observable
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+        }
 
 
 fun <T> T.asObservable(): Observable<T> = Observable.just<T>(this)

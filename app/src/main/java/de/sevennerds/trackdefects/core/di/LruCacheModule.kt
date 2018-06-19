@@ -1,4 +1,4 @@
-package de.sevennerds.trackdefects.di
+package de.sevennerds.trackdefects.core.di
 
 import android.graphics.Bitmap
 import androidx.collection.LruCache

@@ -5,5 +5,6 @@ import de.sevennerds.trackdefects.common.requireArguments
 import de.sevennerds.trackdefects.presentation.base.navigation.BaseKey
 
 open class BaseFragment : Fragment() {
-    fun <T : BaseKey> getKey(): T = requireArguments.getParcelable<T>("KEY")
+
+    fun <T : BaseKey> getKey(): T = requireArguments.getParcelable("KEY")
 }

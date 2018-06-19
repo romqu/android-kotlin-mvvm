@@ -8,12 +8,35 @@
         android:id="@+id/takeGroundPlanPictureTakePictureBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:valueType="floatType"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="@+id/takeGroundPlanPictureTakCameraView"
+        app:layout_constraintEnd_toEndOf="@+id/takeGroundPlanPictureTakCameraView"
+        app:layout_constraintTop_toTopOf="@+id/takeGroundPlanPictureTakCameraView" />
+
+    <io.fotoapparat.view.CameraView
+        android:id="@+id/takeGroundPlanPictureTakCameraView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </io.fotoapparat.view.CameraView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--<io.fotoapparat.view.CameraView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/takeGroundPlanPictureTakCameraView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">&lt;!&ndash;
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"&ndash;&gt;
+
+        <Button
+            android:id="@+id/takeGroundPlanPictureTakePictureBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="HEHE" />
+
+    </io.fotoapparat.view.CameraView>-->

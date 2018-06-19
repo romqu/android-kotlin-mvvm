@@ -22,6 +22,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_select_participants.*
+import kotlin.reflect.jvm.internal.impl.types.checker.KotlinTypeCheckerImpl
 
 
 /**
@@ -68,10 +69,10 @@ class SelectParticipantsFragment : BaseFragment() {
 
         viewModel = SelectParticipantsViewModel(
                 SelectParticipantsView.State(
-                        savedInstanceState
-                                ?.getParcelable<SelectParticipantsView.StateParcel>(KEY_STATE)
-                                ?.participantModelList
-                                ?: emptyList(),
+                        savedInstanceState?.run {
+                            getParcelable<SelectParticipantsView.StateParcel>(KEY_STATE)
+                                    .participantModelList
+                        } ?: emptyList(),
                         null))
 
         setup()
@@ -80,8 +81,9 @@ class SelectParticipantsFragment : BaseFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putParcelable(KEY_STATE,
-                               viewModel.getViewStateParcel())
+        // TODO: viewModel is null
+        /*outState.putParcelable(KEY_STATE,
+                               viewModel.getViewStateParcel())*/
     }
 
     override fun onPause() {
