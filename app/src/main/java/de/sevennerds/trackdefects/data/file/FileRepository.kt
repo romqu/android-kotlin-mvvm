@@ -2,6 +2,7 @@ package de.sevennerds.trackdefects.data.file
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import de.sevennerds.trackdefects.data.response.Error
 import de.sevennerds.trackdefects.data.response.Result
 import io.reactivex.Observable
 import java.io.File
@@ -74,10 +75,8 @@ class FileRepository {
 
     fun lookAtMe(): Observable<Result<String>> {
         return Observable.just("")
-                .map { Result.Success("") as Result<String> }
-                .onErrorReturn { Result.Failure("") }
-
-
+                .map { Result.success("") }
+                .onErrorReturn { Result.failure(Error.MyError("")) }
     }
 
     fun saveAll(genericFileList: List<GenericFile<Bitmap>>): Observable<Result<String>> {
