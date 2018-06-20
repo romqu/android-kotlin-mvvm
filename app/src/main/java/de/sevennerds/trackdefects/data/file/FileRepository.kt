@@ -2,6 +2,9 @@ package de.sevennerds.trackdefects.data.file
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import com.orhanobut.logger.Logger
+import de.sevennerds.trackdefects.R
+import de.sevennerds.trackdefects.common.Constants.Database.FILES_PATH
 import de.sevennerds.trackdefects.data.response.Error
 import de.sevennerds.trackdefects.data.response.Result
 import io.reactivex.Observable
@@ -29,66 +32,59 @@ class FileRepository {
      *
      */
 
-    val BITMAP = "/projects"
-    val APPLICATION_PATH = FileUtil.getExternalStorageDirectory()!!
-    val WORKING_DIRECTORY = File(APPLICATION_PATH, BITMAP)
-    val READABLE = FileUtil.isReadable()
-    val WRITABLE = FileUtil.isWritable()
     val JPEG_QUALITY = 100
     val JPEG_FILE_EXTENSION = ".jpg"
 
-    fun load(fileName: String): Observable<Result<Bitmap>> {
-        if (!READABLE) {
-            val file = File(WORKING_DIRECTORY, fileName)
-            val input = FileInputStream(file)
+    @Suppress("UNCHECKED_CAST")
+    fun load(fileName: String): Observable<Result<String>> {
+        return Observable.just(fileName)
+                .filter { FileUtil.isReadable() }
+                .map {
+                    FileInputStream(File(FILES_PATH, fileName))
+                }.map {
+                    it -> BitmapFactory.decodeStream(it)
+                    it.close()
+                    Logger.d(it.toString())
+                    Result.success(it) as Result<String>
+                }.onErrorReturn {
+                    Logger.d(it.toString())
+                    Result.failure(Error.FileNotFoundError(R.string.file_not_found.toString()))
+                }
+    }
 
-            if (!file.exists()) return Observable.just(
-                    Result.Failure("File does not exist.")
-            )
-            val bitmap = BitmapFactory.decodeStream(input)
-
-            input.close()
-            return Observable.just(Result.Success<Bitmap>(bitmap))
+    fun save(input: GenericFile<Bitmap>): Observable<Result<String>> {
+        return Observable.just(input)
+                .map {
+                    FILE -> File(FILES_PATH, FILE.name + JPEG_FILE_EXTENSION)
+                }.filter {
+                    FILE -> !FILE.exists() && FileUtil.isWritable()
+                }.map {
+                    FILE -> FileOutputStream(FILE)
+                }.map { STREAM ->
+                    input.data.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, STREAM)
+                    STREAM.flush()
+                    STREAM.close()
+                    Logger.d("FileOutputStream: " + STREAM.toString())
+                    Result.success(R.string.file_saved.toString())
+                }.onErrorReturn {
+                    Logger.d("OnErrorReturn: " + it.toString())
+                    Result.failure(Error.DuplicateFileError(it.toString()))
+                }
         }
 
-    }
-
-    fun save(genericFile: GenericFile<Bitmap>): Observable<Result<String>> {
-        if (!WORKING_DIRECTORY.exists()) WORKING_DIRECTORY.mkdirs()
-        if (WRITABLE) {
-            val fileName = genericFile.name + JPEG_FILE_EXTENSION
-            val newFile = File(WORKING_DIRECTORY, fileName)
-            if (newFile.exists()) return Observable.just(Result.Failure("Filename conflict."))
-            try {
-                val output = FileOutputStream(newFile)
-                genericFile.data.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, output)
-                output.flush()
-                output.close()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-        return Observable.just(
-                Result.Failure("Directory not writable.")
-        )
-    }
-
-    fun lookAtMe(): Observable<Result<String>> {
-        return Observable.just("")
-                .map { Result.success("") }
-                .onErrorReturn { Result.failure(Error.MyError("")) }
-    }
-
-
-
+    @Suppress("UNCHECKED_CAST")
     fun saveAll(genericFileList: List<GenericFile<Bitmap>>): Observable<Result<String>> {
-
-
-
+        return Observable.fromArray(genericFileList.map { it -> save(it) })
+                .map {
+            it -> Result.success(it) as Result<String>
+        }
     }
 
-    fun delete(file: File) {
-        file.delete()
+    fun delete(file: File): Observable<Result<String>> {
+        return Observable.just(file).map {
+            it -> it.delete()
+            Logger.d("Deleting: " + it)
+            Result.success(R.string.file_deleted.toString())
+        }.onErrorReturn { Result.failure(Error.FileNotFoundError(it.toString())) }
     }
-
 }
