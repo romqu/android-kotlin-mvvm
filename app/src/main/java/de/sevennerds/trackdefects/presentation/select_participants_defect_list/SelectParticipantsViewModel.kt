@@ -6,6 +6,7 @@ import de.sevennerds.trackdefects.presentation.base.BaseDiffCallback
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.rxkotlin.toObservable
+import javax.inject.Inject
 
 
 /**
@@ -27,7 +28,9 @@ import io.reactivex.rxkotlin.toObservable
  * "viewState" is the global State, it's mutable. But only the variable itself, not the data it holds.
  * It gets never exposed to the view, only a parcelable version of it.
  */
-class SelectParticipantsViewModel(private var viewState: SelectParticipantsView.State) {
+class SelectParticipantsViewModel @Inject constructor() {
+
+    private var viewState: SelectParticipantsView.State = SelectParticipantsView.State.initial()
 
 
     /**
@@ -61,7 +64,7 @@ class SelectParticipantsViewModel(private var viewState: SelectParticipantsView.
     private val initTransformer = ObservableTransformer<SelectParticipantsView.Event.Init,
             SelectParticipantsView.RenderState> { upstream: Observable<SelectParticipantsView.Event.Init> ->
 
-        upstream.map { SelectParticipantsView.Result.Init }
+        upstream.map { SelectParticipantsView.Result.Init(it.stateParcel) }
                 .compose(resultTransformer)
                 .map { SelectParticipantsView.RenderState.Init(it.participantModelList) }
     }
@@ -151,12 +154,16 @@ class SelectParticipantsViewModel(private var viewState: SelectParticipantsView.
      * "previousState" is then of type SelectParticipantsView.State, instead of SelectParticipantsView.Result
      */
     private val resultTransformer = ObservableTransformer<SelectParticipantsView.Result,
-            SelectParticipantsView.State> { upstream  ->
+            SelectParticipantsView.State> { upstream ->
 
         upstream.scan(viewState) { previousState, result ->
             when (result) {
 
-                is SelectParticipantsView.Result.Init -> viewState
+                is SelectParticipantsView.Result.Init -> {
+                    viewState = previousState.copy(participantModelList = result.stateParcel.participantModelList)
+                    viewState
+                }
+
 
                 is SelectParticipantsView.Result.Add -> {
                     viewState = previousState.copy(participantModelList = result.participantModelList,

@@ -19,8 +19,10 @@ import io.fotoapparat.Fotoapparat
 import io.fotoapparat.configuration.CameraConfiguration
 import io.fotoapparat.parameter.ScaleType
 import io.fotoapparat.selector.*
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_take_ground_plan_image.*
 import javax.inject.Inject
 
@@ -32,7 +34,7 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
     lateinit var messageQueue: MessageQueue
     val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    private val camera by lazy {
+    /*private val camera by lazy {
         Fotoapparat(
                 context = context!!,
                 cameraConfiguration = cameraConfiguration,
@@ -41,7 +43,9 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
                 lensPosition = back(),  // (optional) log fatal errors
                 cameraErrorCallback = { cameraException -> Logger.d(cameraException.toString()) }
         )
-    }
+    }*/
+
+    private lateinit var camera: Fotoapparat
 
     private val cameraConfiguration = CameraConfiguration(
             pictureResolution = highestResolution(), // (optional) we want to have the highest possible photo resolution
@@ -68,14 +72,21 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        Logger.d("BEFORE DI")
-
         TrackDefectsApp.get(context!!)
                 .appComponent
                 .inject(this)
 
         ObjectAnimator.ofFloat(takeGroundPlanPictureTakePictureBtn, "", 360F)
                 .start()
+
+        camera = Fotoapparat(
+                context = context!!,
+                cameraConfiguration = cameraConfiguration,
+                view = takeGroundPlanPictureTakCameraView,                   // view which will draw the camera preview
+                scaleType = ScaleType.CenterCrop,    // (optional) we want the preview to fill the view
+                lensPosition = back(),  // (optional) log fatal errors
+                cameraErrorCallback = { cameraException -> Logger.d(cameraException.toString()) }
+        )
     }
 
     override fun onStart() {
@@ -117,11 +128,15 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
 
         compositeDisposable += takeGroundPlanPictureTakePictureBtn
                 .clicks()
-                .map {
-                    TakeGroundPlanPictureView
-                            .Event
-                            .TakePicture(
-                                    camera.takePicture())
+                .flatMap {
+
+                    Observable.fromCallable {
+                        TakeGroundPlanPictureView
+                                .Event
+                                .TakePicture(
+                                        camera.takePicture())
+                    }.subscribeOn(Schedulers.io())
+
                 }
                 .compose(viewModel.eventTransformer)
                 .subscribe(::render)

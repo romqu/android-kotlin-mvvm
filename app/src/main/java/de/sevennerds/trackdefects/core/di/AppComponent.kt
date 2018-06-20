@@ -3,6 +3,7 @@ package de.sevennerds.trackdefects.core.di
 import dagger.Component
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.preview_image.PreviewImageFragment
+import de.sevennerds.trackdefects.presentation.select_participants_defect_list.SelectParticipantsFragment
 import de.sevennerds.trackdefects.presentation.take_ground_plan_picture.TakeGroundPlanPictureFragment
 import javax.inject.Singleton
 
@@ -16,6 +17,7 @@ import javax.inject.Singleton
 interface AppComponent {
 
     fun inject(mainActivity: MainActivity)
+    fun inject(selectParticipantsFragment: SelectParticipantsFragment)
     fun inject(takeGroundPlanPictureFragment: TakeGroundPlanPictureFragment)
     fun inject(previewImageFragment: PreviewImageFragment)
 

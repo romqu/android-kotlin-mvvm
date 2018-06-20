@@ -18,7 +18,7 @@ class SelectParticipantsView {
         data class Remove(val contactPosition: Int,
                           val currentParticipantModelList: List<ParticipantModel>) : Event()
 
-        object Init : Event()
+        class Init(val stateParcel: StateParcel) : Event()
     }
 
     /**
@@ -31,7 +31,7 @@ class SelectParticipantsView {
         data class Remove(val participantModelList: List<ParticipantModel>,
                           val diffResult: DiffUtil.DiffResult) : Result()
 
-        object Init : Result()
+        class Init(val stateParcel: StateParcel) : Result()
     }
 
     /**
