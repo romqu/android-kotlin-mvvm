@@ -79,8 +79,12 @@ class FileRepository {
                 .onErrorReturn { Result.failure(Error.MyError("")) }
     }
 
+
+
     fun saveAll(genericFileList: List<GenericFile<Bitmap>>): Observable<Result<String>> {
-        return ???
+
+
+
     }
 
     fun delete(file: File) {
