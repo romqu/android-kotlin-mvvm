@@ -1,5 +1,6 @@
 package de.sevennerds.trackdefects.presentation.preview_image
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.common.asObservable
 import de.sevennerds.trackdefects.core.di.MessageQueue
+import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
 import de.sevennerds.trackdefects.presentation.preview_image.navigation.PreviewImageKey
 import io.reactivex.disposables.CompositeDisposable
@@ -18,10 +20,14 @@ import javax.inject.Inject
 
 class PreviewImageFragment : BaseFragment(), MessageQueue.Receiver {
 
-    private val KEY_STATE = "KEY_STATE"
+
+    companion object {
+        private const val KEY_STATE = "KEY_STATE"
+    }
 
     @Inject
     lateinit var messageQueue: MessageQueue
+
     @Inject
     lateinit var viewModel: PreviewImageViewModel
 
@@ -29,6 +35,23 @@ class PreviewImageFragment : BaseFragment(), MessageQueue.Receiver {
 
     private var isRotation = false
 
+    private var viewStateParcel: PreviewImageView.StateParcel? = null
+
+
+    override fun onAttach(context: Context?) {
+
+        TrackDefectsApp.get(context!!)
+                .appComponent
+                .inject(this)
+
+        super.onAttach(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewStateParcel = savedInstanceState?.getParcelable(KEY_STATE)
+    }
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -46,25 +69,13 @@ class PreviewImageFragment : BaseFragment(), MessageQueue.Receiver {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        TrackDefectsApp.get(context!!)
-                .appComponent
-                .inject(this)
-
         setup()
 
-        savedInstanceState?.apply {
-            val state = getParcelable<PreviewImageView.StateParcel>(KEY_STATE)
-            init(state.imageName)
+        viewStateParcel?.run {
+            init(imageName)
         } ?: messageQueue.requestMessages(PreviewImageKey(),
                                           this)
 
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        outState.putParcelable(KEY_STATE,
-                               viewModel.getViewStateParcel())
     }
 
     override fun onPause() {
@@ -72,8 +83,20 @@ class PreviewImageFragment : BaseFragment(), MessageQueue.Receiver {
 
         isRotation = true
 
+        viewStateParcel = viewModel.getViewStateParcel()
+
         compositeDisposable.clear()
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+
+        viewStateParcel?.let {
+            outState.putParcelable(KEY_STATE, it)
+        }
+
+        super.onSaveInstanceState(outState)
+    }
+
 
     override fun onResume() {
         super.onResume()
@@ -94,9 +117,11 @@ class PreviewImageFragment : BaseFragment(), MessageQueue.Receiver {
                 .clicks()
                 .subscribe()
 
-        previewImageDismissBtn
+        compositeDisposable += previewImageDismissBtn
                 .clicks()
-                .subscribe()
+                .subscribe {
+                    MainActivity[context!!].onBackPressed()
+                }
 
     }
 

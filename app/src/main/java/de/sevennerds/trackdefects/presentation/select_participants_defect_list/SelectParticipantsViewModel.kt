@@ -94,11 +94,18 @@ class SelectParticipantsViewModel @Inject constructor() {
                     }
                     .toList()
                     .toObservable()
-                    .map { newContactModelList ->
+                    // TODO: DO IT WITH WITH RX JAVA
+                    .map { participantModelList ->
+                        participantModelList
+                                .union(currentViewParticipantList)
+                                .distinctBy { it.phoneNumber }
+                                .toList()
+                    }
+                    .map { newParticipantModelList ->
                         SelectParticipantsView.Result.Add(DiffUtil.calculateDiff(
                                 BaseDiffCallback(
                                         currentViewParticipantList,
-                                        newContactModelList)), newContactModelList)
+                                        newParticipantModelList)), newParticipantModelList)
                     }
                     // presentation
                     .compose(resultTransformer)
