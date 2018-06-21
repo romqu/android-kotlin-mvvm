@@ -1,5 +1,6 @@
 package de.sevennerds.trackdefects.presentation.feature.enter_street_address
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,14 +8,30 @@ import android.view.ViewGroup
 import com.jakewharton.rxbinding2.widget.textChanges
 import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.R
+import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_enter_street_address.*
+import javax.inject.Inject
 
 class EnterStreetAddressFragment : BaseFragment() {
 
     private val compositeDisposable = CompositeDisposable()
+
+    @Inject
+    lateinit var viewModel: EnterStreetAddressViewModel
+
+    override fun onAttach(context: Context?) {
+
+        TrackDefectsApp.get(context!!)
+                .appComponent
+                .inject(this)
+
+        super.onAttach(context)
+    }
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -33,11 +50,13 @@ class EnterStreetAddressFragment : BaseFragment() {
         compositeDisposable += enterStreetAddressStreetNameExtEditTxt
                 .textChanges()
                 .skipInitialValue()
-                .map { it.trim() }
-                .distinctUntilChanged()
+                .map { EnterStreetAddressView.Event.StreetNameTextChange(it.toString()) }
+                .compose(viewModel.eventToRenderState)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     Logger.d(it)
-                    enterStreetAddressNextBtn.isEnabled = true
+                    enterStreetAddressNextBtn.isEnabled = (it as EnterStreetAddressView.RenderState.SetButtonState).isEnabled
                 }
     }
+
 }

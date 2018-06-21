@@ -66,15 +66,8 @@ class ExampleUnitTest {
         Observable.just("text")
                 .map { TestView.Event.Test }
                 .compose(eventTransformer)
-                .test().assertValue { t: TestView.RenderState ->
-                    render(t)
-                    true
-                }
-
-        Observable.just("text")
-                .map { TestView.Event.Test2 }
-                .compose(eventTransformer)
-                .test().assertValue { t: TestView.RenderState ->
+                .test()
+                .assertValue { t: TestView.RenderState ->
                     render(t)
                     true
                 }

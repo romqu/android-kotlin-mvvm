@@ -17,7 +17,7 @@ class EnterStreetAddressView {
      */
     sealed class Result {
 
-        class StreetNameTextChange(val text: String) : Result()
+        class StreetNameTextChange(val text: String, val isNotEmpty: Boolean) : Result()
         class StreetNumberTextChange(val text: String) : Result()
         class StreetAdditionalTextChange(val text: String) : Result()
     }
@@ -43,7 +43,7 @@ class EnterStreetAddressView {
      * The states the view receives and uses to render its ui, hence RenderState
      */
     sealed class RenderState {
-        class SetButtonState(val enable: Boolean) : RenderState()
+        class SetButtonState(val isEnabled: Boolean) : RenderState()
     }
 
     /**
