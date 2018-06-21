@@ -1,4 +1,4 @@
-package de.sevennerds.trackdefects.presentation.select_participants_defect_list
+package de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list
 
 import android.os.Parcelable
 import androidx.recyclerview.widget.DiffUtil

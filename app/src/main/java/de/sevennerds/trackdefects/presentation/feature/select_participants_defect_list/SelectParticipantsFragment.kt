@@ -1,4 +1,4 @@
-package de.sevennerds.trackdefects.presentation.select_participants_defect_list
+package de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list
 
 import android.app.Activity.RESULT_OK
 import android.content.Context
@@ -18,8 +18,8 @@ import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.common.asObservable
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
-import de.sevennerds.trackdefects.presentation.select_participants_defect_list.list.SelectParticipantsListAdapter
-import de.sevennerds.trackdefects.presentation.take_ground_plan_picture.navigation.TakeGroundPlanPictureKey
+import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.list.SelectParticipantsListAdapter
+import de.sevennerds.trackdefects.presentation.feature.take_ground_plan_picture.navigation.TakeGroundPlanPictureKey
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -173,9 +173,8 @@ class SelectParticipantsFragment : BaseFragment() {
         compositeDisposable += listAdapter
                 .getOnItemClickListener()
                 .map { itemPosition ->
-                    SelectParticipantsView.Event
-                            .Remove(itemPosition,
-                                    listAdapter.getList())
+                    SelectParticipantsView.Event.Remove(itemPosition,
+                                                                                                                                        listAdapter.getList())
                 }
                 .compose(viewModel.eventTransformer)
                 .subscribe(::render)
@@ -189,10 +188,8 @@ class SelectParticipantsFragment : BaseFragment() {
 
     private fun init() {
         compositeDisposable += Observable.fromCallable {
-            SelectParticipantsView
-                    .Event
-                    .Init(state
-                                  ?: SelectParticipantsView.StateParcel(emptyList()))
+            SelectParticipantsView.Event.Init(state
+                                                                                                                                      ?: SelectParticipantsView.StateParcel(emptyList()))
         }
                 .compose(viewModel.eventTransformer)
                 .subscribe(::render)
@@ -201,9 +198,8 @@ class SelectParticipantsFragment : BaseFragment() {
     private fun contactResult(contactResultList: List<ContactResult>) {
 
         compositeDisposable +=
-                SelectParticipantsView.Event
-                        .Add(contactResultList,
-                             listAdapter.getList())
+                SelectParticipantsView.Event.Add(contactResultList,
+                                                                                                                                 listAdapter.getList())
                         .asObservable()
                         .compose(viewModel.eventTransformer)
                         .subscribe(::render)

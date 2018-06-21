@@ -1,7 +1,7 @@
-package de.sevennerds.trackdefects.presentation.select_participants_defect_list.navigation
+package de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.navigation
 
 import de.sevennerds.trackdefects.presentation.base.navigation.BaseKey
-import de.sevennerds.trackdefects.presentation.select_participants_defect_list.SelectParticipantsFragment
+import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.SelectParticipantsFragment
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize

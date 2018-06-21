@@ -1,4 +1,4 @@
-package de.sevennerds.trackdefects.presentation.preview_image
+package de.sevennerds.trackdefects.presentation.feature.preview_image
 
 import android.content.Context
 import android.os.Bundle
@@ -12,7 +12,7 @@ import de.sevennerds.trackdefects.common.asObservable
 import de.sevennerds.trackdefects.core.di.MessageQueue
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
-import de.sevennerds.trackdefects.presentation.preview_image.navigation.PreviewImageKey
+import de.sevennerds.trackdefects.presentation.feature.preview_image.navigation.PreviewImageKey
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_preview_image.*

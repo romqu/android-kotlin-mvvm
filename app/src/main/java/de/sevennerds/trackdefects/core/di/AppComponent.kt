@@ -2,9 +2,9 @@ package de.sevennerds.trackdefects.core.di
 
 import dagger.Component
 import de.sevennerds.trackdefects.presentation.MainActivity
-import de.sevennerds.trackdefects.presentation.preview_image.PreviewImageFragment
-import de.sevennerds.trackdefects.presentation.select_participants_defect_list.SelectParticipantsFragment
-import de.sevennerds.trackdefects.presentation.take_ground_plan_picture.TakeGroundPlanPictureFragment
+import de.sevennerds.trackdefects.presentation.feature.preview_image.PreviewImageFragment
+import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.SelectParticipantsFragment
+import de.sevennerds.trackdefects.presentation.feature.take_ground_plan_picture.TakeGroundPlanPictureFragment
 import javax.inject.Singleton
 
 @Singleton

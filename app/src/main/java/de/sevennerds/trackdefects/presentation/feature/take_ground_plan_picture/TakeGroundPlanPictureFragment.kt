@@ -1,4 +1,4 @@
-package de.sevennerds.trackdefects.presentation.take_ground_plan_picture
+package de.sevennerds.trackdefects.presentation.feature.take_ground_plan_picture
 
 import android.animation.ObjectAnimator
 import android.content.pm.ActivityInfo
@@ -13,8 +13,8 @@ import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.core.di.MessageQueue
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
-import de.sevennerds.trackdefects.presentation.preview_image.PreviewImageView
-import de.sevennerds.trackdefects.presentation.preview_image.navigation.PreviewImageKey
+import de.sevennerds.trackdefects.presentation.feature.preview_image.PreviewImageView
+import de.sevennerds.trackdefects.presentation.feature.preview_image.navigation.PreviewImageKey
 import io.fotoapparat.Fotoapparat
 import io.fotoapparat.configuration.CameraConfiguration
 import io.fotoapparat.parameter.ScaleType
@@ -131,10 +131,8 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
                 .flatMap {
 
                     Observable.fromCallable {
-                        TakeGroundPlanPictureView
-                                .Event
-                                .TakePicture(
-                                        camera.takePicture())
+                        TakeGroundPlanPictureView.Event.TakePicture(
+                                camera.takePicture())
                     }.subscribeOn(Schedulers.io())
 
                 }

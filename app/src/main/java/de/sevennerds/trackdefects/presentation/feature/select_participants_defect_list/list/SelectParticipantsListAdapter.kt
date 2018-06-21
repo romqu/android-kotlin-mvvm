@@ -1,4 +1,4 @@
-package de.sevennerds.trackdefects.presentation.select_participants_defect_list.list
+package de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.list
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxbinding2.view.clicks
 import de.sevennerds.trackdefects.R
-import de.sevennerds.trackdefects.presentation.select_participants_defect_list.ParticipantModel
+import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.ParticipantModel
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -23,12 +23,12 @@ class SelectParticipantsListAdapter(private val participantModelList: MutableLis
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
             ViewHolder(LayoutInflater
-                               .from(parent.context)
-                               .inflate(R.layout.item_select_contacts,
-                                        parent,
-                                        false),
-                       onItemClickSubject,
-                       compositeDisposable)
+                                                                                                                    .from(parent.context)
+                                                                                                                    .inflate(R.layout.item_select_contacts,
+                                                                                                                             parent,
+                                                                                                                             false),
+                                                                                                            onItemClickSubject,
+                                                                                                            compositeDisposable)
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =

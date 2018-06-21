@@ -12,7 +12,7 @@ import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.presentation.base.navigation.BaseKey
 import de.sevennerds.trackdefects.presentation.base.navigation.FragmentStateChanger
-import de.sevennerds.trackdefects.presentation.preview_image.navigation.EnterStreetAddressKey
+import de.sevennerds.trackdefects.presentation.feature.enter_street_address.navigation.EnterStreetAddressKey
 
 
 /**

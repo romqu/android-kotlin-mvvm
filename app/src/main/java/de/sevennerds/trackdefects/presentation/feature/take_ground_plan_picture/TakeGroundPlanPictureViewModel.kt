@@ -1,4 +1,4 @@
-package de.sevennerds.trackdefects.presentation.take_ground_plan_picture
+package de.sevennerds.trackdefects.presentation.feature.take_ground_plan_picture
 
 import android.graphics.Bitmap
 import androidx.collection.LruCache

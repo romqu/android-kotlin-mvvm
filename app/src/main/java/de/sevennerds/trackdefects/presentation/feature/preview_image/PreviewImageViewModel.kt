@@ -1,4 +1,4 @@
-package de.sevennerds.trackdefects.presentation.preview_image
+package de.sevennerds.trackdefects.presentation.feature.preview_image
 
 import android.graphics.Bitmap
 import androidx.collection.LruCache

@@ -1,7 +1,7 @@
-package de.sevennerds.trackdefects.presentation.take_ground_plan_picture.navigation
+package de.sevennerds.trackdefects.presentation.feature.take_ground_plan_picture.navigation
 
 import de.sevennerds.trackdefects.presentation.base.navigation.BaseKey
-import de.sevennerds.trackdefects.presentation.take_ground_plan_picture.TakeGroundPlanPictureFragment
+import de.sevennerds.trackdefects.presentation.feature.take_ground_plan_picture.TakeGroundPlanPictureFragment
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
