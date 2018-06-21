@@ -12,13 +12,11 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
+import java.io.FileInputStream
 
 
 @RunWith(AndroidJUnit4::class)
 class FileRepositoryInstrumentedTest {
-
-
-
 
     val fileRepository: FileRepository = FileRepository()
     val file = File(FILES_PATH)
@@ -45,13 +43,11 @@ class FileRepositoryInstrumentedTest {
                 .test()
                 .assertResult(Result.success(R.string.file_saved.toString()))
 
-        fileRepository.delete(File("example_file"))
-                .test()
-                .assertResult(Result.success(R.string.file_deleted.toString()))
+        fileRepository.delete(testFile)
+               .test()
+               .assertResult(Result.success(R.string.file_deleted.toString()))
     }
 
-
-    /*
     @Test
     fun save_file_conflict() {
 
@@ -61,44 +57,39 @@ class FileRepositoryInstrumentedTest {
 
         fileRepository.save(GenericFile(name = "example_file", data = bitmap))
                 .test()
-
-        //duplicate.assertResult(Result.failure(Error.DuplicateFileError(R.string.duplicate_file.toString())))
-
+                .assertResult(Result.failure(Error.DuplicateFileError(R.string.duplicate_file.toString())))
     }
-    */
-
 
     /*
     @Test
-    fun save_files() {
-
-    }
-
-    @Test
-    fun save_files_conflict() {
-
-    }
+    fun save_files() {}
+    */
 
     @Test
-    fun loading_file() {
-
+    @Suppress("UNCHECKED_CAST")
+    fun load_file_conflict() {
+        fileRepository.save(GenericFile(name = "example_file", data = bitmap))
+                .test()
+                .assertResult(Result.success(R.string.file_saved.toString()))
+        fileRepository.load("example_file.jpg")
+                .test()
+                .assertResult(Result.success(FileInputStream(File(FILES_PATH, "example_file.jpg"))) as Result<String>)
     }
+
+    /*
+    @Test
+    fun loading_file() {}
 
     @Test
-    fun deleting_file() {
-
-    }
+    fun deleting_file() {}
     */
 
     @Test
     fun deleting_file_not_found() {
-        fileRepository.delete(File("non_existant_example_file"))
+        fileRepository.delete(File("non_existant_example_file.jpg"))
                 .test()
-                .assertResult(Result.failure(Error.FileNotFoundError(R.string.file_not_found.toString())))
-
-        /**
-         * deleting something that doesnt exist will always succeed it seems.
-         */
+                .assertValue {
+                    it == Result.failure(Error.FileNotFoundError(R.string.file_not_found.toString()))
+                }
     }
-
 }

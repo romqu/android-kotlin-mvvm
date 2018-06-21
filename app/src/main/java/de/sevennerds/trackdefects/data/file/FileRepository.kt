@@ -46,7 +46,10 @@ class FileRepository {
                     it.close()
                     Logger.d(it.toString())
                     Result.success(it) as Result<String>
-                }.onErrorReturn {
+                }.switchIfEmpty {
+                    Result.failure(Error.FileNotFoundError(R.string.file_not_found.toString()))
+                }
+                .onErrorReturn {
                     Logger.d(it.toString())
                     Result.failure(Error.FileNotFoundError(R.string.file_not_found.toString()))
                 }
@@ -69,7 +72,7 @@ class FileRepository {
                 }.onErrorReturn {
                     Logger.d("OnErrorReturn: " + it.toString())
                     Result.failure(Error.DuplicateFileError(it.toString()))
-                }
+                }.defaultIfEmpty(Result.failure(Error.DuplicateFileError(R.string.duplicate_file.toString())))
         }
 
     @Suppress("UNCHECKED_CAST")
@@ -81,10 +84,33 @@ class FileRepository {
     }
 
     fun delete(file: File): Observable<Result<String>> {
-        return Observable.just(file).map {
-            it -> it.delete()
-            Logger.d("Deleting: " + it)
+
+        /**
+         *  If file does not exist, do not proceed to delete
+         *  instead return an FileNotFoundError
+         */
+
+        return Observable.just(file).filter {
+
+            /**
+             *  whatever is filtered out is taken
+             *  to next step .map{}
+             *  In this case, every file that exists
+             *  is proceeded to deletion step.
+             *
+             *  if expression is true proceed to next
+             */
+
+            it -> it.exists()
+        }.map {
+            it -> Logger.d("Deletion requested on: " + it)
+            Logger.d("Request exists in filesystem: " + it.exists())
+            it.delete()
             Result.success(R.string.file_deleted.toString())
-        }.onErrorReturn { Result.failure(Error.FileNotFoundError(it.toString())) }
+        }.onErrorReturn {
+            Result.failure(Error.FileNotFoundError(R.string.file_not_found.toString()))
+        }.defaultIfEmpty(
+            Result.failure(Error.FileNotFoundError(R.string.file_not_found.toString()))
+        )
     }
 }
