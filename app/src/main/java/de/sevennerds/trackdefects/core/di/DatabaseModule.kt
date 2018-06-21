@@ -1,10 +1,10 @@
-package de.sevennerds.trackdefects.di
+package de.sevennerds.trackdefects.core.di
 
 import android.content.Context
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
-import de.sevennerds.trackdefects.common.Constants
+import de.sevennerds.trackdefects.common.DATABASE_NAME
 import de.sevennerds.trackdefects.data.LocalDataSource
 import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
 import de.sevennerds.trackdefects.data.defect_image.DefectImageLocalDataSource
@@ -29,7 +29,7 @@ abstract class DatabaseModule {
         @Singleton
         @JvmStatic
         fun provideRoom(context: Context): LocalDataSource =
-                Room.databaseBuilder(context, LocalDataSource::class.java, Constants.DATABASE_NAME)
+                Room.databaseBuilder(context, LocalDataSource::class.java, DATABASE_NAME)
                         .openHelperFactory(RequerySQLiteOpenHelperFactory()).build()
 
         @Provides

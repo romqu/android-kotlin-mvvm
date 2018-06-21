@@ -1,4 +1,4 @@
-package de.sevennerds.trackdefects.presentation.select_participants_defect_list
+package de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list
 
 import android.os.Parcelable
 import androidx.recyclerview.widget.DiffUtil
@@ -18,7 +18,7 @@ class SelectParticipantsView {
         data class Remove(val contactPosition: Int,
                           val currentParticipantModelList: List<ParticipantModel>) : Event()
 
-        object Init : Event()
+        class Init(val stateParcel: StateParcel) : Event()
     }
 
     /**
@@ -31,7 +31,7 @@ class SelectParticipantsView {
         data class Remove(val participantModelList: List<ParticipantModel>,
                           val diffResult: DiffUtil.DiffResult) : Result()
 
-        object Init : Result()
+        class Init(val stateParcel: StateParcel) : Result()
     }
 
     /**

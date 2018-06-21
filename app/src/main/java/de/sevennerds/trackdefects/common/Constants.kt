@@ -1,6 +1,6 @@
-package de.sevennerds.trackdefects.common
+@file:JvmName("Constants")
 
-// const val DATABASE_NAME = "trackdefects.db"
+package de.sevennerds.trackdefects.common
 
 class Constants {
     companion object Database {

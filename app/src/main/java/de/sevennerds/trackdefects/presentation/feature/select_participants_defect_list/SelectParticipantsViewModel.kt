@@ -1,4 +1,4 @@
-package de.sevennerds.trackdefects.presentation.select_participants_defect_list
+package de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list
 
 import androidx.recyclerview.widget.DiffUtil
 import de.sevennerds.trackdefects.common.applySchedulers
@@ -6,6 +6,7 @@ import de.sevennerds.trackdefects.presentation.base.BaseDiffCallback
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.rxkotlin.toObservable
+import javax.inject.Inject
 
 
 /**
@@ -27,7 +28,9 @@ import io.reactivex.rxkotlin.toObservable
  * "viewState" is the global State, it's mutable. But only the variable itself, not the data it holds.
  * It gets never exposed to the view, only a parcelable version of it.
  */
-class SelectParticipantsViewModel(private var viewState: SelectParticipantsView.State) {
+class SelectParticipantsViewModel @Inject constructor() {
+
+    private var viewState: SelectParticipantsView.State = SelectParticipantsView.State.initial()
 
 
     /**
@@ -50,7 +53,7 @@ class SelectParticipantsViewModel(private var viewState: SelectParticipantsView.
                                    .compose(addParticipantsTransformer),
                            shared.ofType(
                                    SelectParticipantsView.Event.Remove::class.java)
-                                   .compose(removeContactTransformer))
+                                   .compose(removeParticipantTransformer))
         }
     }
 
@@ -61,7 +64,7 @@ class SelectParticipantsViewModel(private var viewState: SelectParticipantsView.
     private val initTransformer = ObservableTransformer<SelectParticipantsView.Event.Init,
             SelectParticipantsView.RenderState> { upstream: Observable<SelectParticipantsView.Event.Init> ->
 
-        upstream.map { SelectParticipantsView.Result.Init }
+        upstream.map { SelectParticipantsView.Result.Init(it.stateParcel) }
                 .compose(resultTransformer)
                 .map { SelectParticipantsView.RenderState.Init(it.participantModelList) }
     }
@@ -74,9 +77,9 @@ class SelectParticipantsViewModel(private var viewState: SelectParticipantsView.
      * it then forwards it to the resultTransformer and uses the returned ViewState to form a RenderState for the ui
      */
     private val addParticipantsTransformer = ObservableTransformer<SelectParticipantsView.Event.Add,
-            SelectParticipantsView.RenderState> { observable ->
+            SelectParticipantsView.RenderState> { upstream ->
 
-        observable.flatMap { addParticipantsEvent ->
+        upstream.flatMap { addParticipantsEvent ->
 
             val (contactResultList, currentViewParticipantList) = addParticipantsEvent
 
@@ -91,11 +94,18 @@ class SelectParticipantsViewModel(private var viewState: SelectParticipantsView.
                     }
                     .toList()
                     .toObservable()
-                    .map { newContactModelList ->
+                    // TODO: DO IT WITH WITH RX JAVA
+                    .map { participantModelList ->
+                        participantModelList
+                                .union(currentViewParticipantList)
+                                .distinctBy { it.phoneNumber }
+                                .toList()
+                    }
+                    .map { newParticipantModelList ->
                         SelectParticipantsView.Result.Add(DiffUtil.calculateDiff(
                                 BaseDiffCallback(
                                         currentViewParticipantList,
-                                        newContactModelList)), newContactModelList)
+                                        newParticipantModelList)), newParticipantModelList)
                     }
                     // presentation
                     .compose(resultTransformer)
@@ -112,7 +122,7 @@ class SelectParticipantsViewModel(private var viewState: SelectParticipantsView.
     /**
      * Pretty much same as above, only that it removes the selected view participant from the list
      */
-    private val removeContactTransformer = ObservableTransformer<SelectParticipantsView.Event.Remove,
+    private val removeParticipantTransformer = ObservableTransformer<SelectParticipantsView.Event.Remove,
             SelectParticipantsView.RenderState> { observable ->
 
         observable.flatMap { removeContactEvent ->
@@ -151,12 +161,16 @@ class SelectParticipantsViewModel(private var viewState: SelectParticipantsView.
      * "previousState" is then of type SelectParticipantsView.State, instead of SelectParticipantsView.Result
      */
     private val resultTransformer = ObservableTransformer<SelectParticipantsView.Result,
-            SelectParticipantsView.State> { upstream: Observable<SelectParticipantsView.Result> ->
+            SelectParticipantsView.State> { upstream ->
 
         upstream.scan(viewState) { previousState, result ->
             when (result) {
 
-                is SelectParticipantsView.Result.Init -> viewState
+                is SelectParticipantsView.Result.Init -> {
+                    viewState = previousState.copy(participantModelList = result.stateParcel.participantModelList)
+                    viewState
+                }
+
 
                 is SelectParticipantsView.Result.Add -> {
                     viewState = previousState.copy(participantModelList = result.participantModelList,

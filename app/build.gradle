@@ -51,7 +51,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.0-alpha3'
 
     // DO NOT UPDATE
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
     implementation 'com.google.android.material:material:1.0.0-alpha3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha3'
 
@@ -125,4 +125,7 @@ dependencies {
     // implementation 'com.asksira.android:cameraviewplus:0.9.0'
     implementation 'io.fotoapparat.fotoapparat:library:2.2.0'
     implementation 'io.fotoapparat.fotoapparat:adapter-rxjava2:2.2.0'
+
+    // TextField
+    implementation 'com.github.HITGIF:TextFieldBoxes:1.4.4'
 }

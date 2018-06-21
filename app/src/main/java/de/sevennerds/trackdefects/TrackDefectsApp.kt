@@ -7,9 +7,9 @@ import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
 import com.squareup.leakcanary.LeakCanary
-import de.sevennerds.trackdefects.di.AppComponent
-import de.sevennerds.trackdefects.di.AppModule
-import de.sevennerds.trackdefects.di.DaggerAppComponent
+import de.sevennerds.trackdefects.core.di.AppComponent
+import de.sevennerds.trackdefects.core.di.AppModule
+import de.sevennerds.trackdefects.core.di.DaggerAppComponent
 
 
 class TrackDefectsApp : Application() {

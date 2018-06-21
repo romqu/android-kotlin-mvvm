@@ -1,4 +1,4 @@
-package de.sevennerds.trackdefects.di
+package de.sevennerds.trackdefects.core.di
 
 import de.sevennerds.trackdefects.presentation.base.navigation.BaseKey
 import java.util.*
@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.inject.Inject
 import javax.inject.Singleton
+
+
 
 
 /**
@@ -16,14 +18,16 @@ import javax.inject.Singleton
 class MessageQueue @Inject
 constructor() {
 
-    private var messages: MutableMap<BaseKey, Queue<Any>> = ConcurrentHashMap()
+    internal var messages: MutableMap<BaseKey, Queue<Message>> = ConcurrentHashMap()
 
     interface Receiver {
-        fun receiveMessage(message: Any)
+        fun receiveMessage(message: Message)
     }
 
-    fun pushMessageTo(recipient: BaseKey, message: Any) {
-        var messageQueue: Queue<Any>? = messages[recipient]
+    interface Message
+
+    fun pushMessageTo(recipient: BaseKey, message: Message) {
+        var messageQueue: Queue<Message>? = messages[recipient]
         if (messageQueue == null) {
             messageQueue = ConcurrentLinkedQueue()
             messages[recipient] = messageQueue

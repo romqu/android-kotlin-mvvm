@@ -12,7 +12,7 @@ import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.presentation.base.navigation.BaseKey
 import de.sevennerds.trackdefects.presentation.base.navigation.FragmentStateChanger
-import de.sevennerds.trackdefects.presentation.select_participants_defect_list.navigation.SelectParticipantsKey
+import de.sevennerds.trackdefects.presentation.feature.enter_street_address.navigation.EnterStreetAddressKey
 
 
 /**
@@ -23,6 +23,7 @@ import de.sevennerds.trackdefects.presentation.select_participants_defect_list.n
  */
 class MainActivity : AppCompatActivity(), StateChanger {
 
+
     private lateinit var backstackDelegate: BackstackDelegate
     private lateinit var fragmentStateChanger: FragmentStateChanger
 
@@ -32,7 +33,7 @@ class MainActivity : AppCompatActivity(), StateChanger {
         backstackDelegate = BackstackDelegate(null)
         backstackDelegate.onCreate(savedInstanceState,
                                    lastCustomNonConfigurationInstance,
-                                   History.single(SelectParticipantsKey()))
+                                   History.single(EnterStreetAddressKey()))
         backstackDelegate.registerForLifecycleCallbacks(this);
 
         super.onCreate(savedInstanceState)

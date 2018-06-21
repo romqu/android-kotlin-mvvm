@@ -1,6 +1,7 @@
-package de.sevennerds.trackdefects.presentation.select_participants_defect_list
+package de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -13,15 +14,17 @@ import com.jakewharton.rxbinding2.view.clicks
 import com.wafflecopter.multicontactpicker.ContactResult
 import com.wafflecopter.multicontactpicker.MultiContactPicker
 import de.sevennerds.trackdefects.R
+import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.common.asObservable
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
-import de.sevennerds.trackdefects.presentation.select_participants_defect_list.list.SelectParticipantsListAdapter
-import de.sevennerds.trackdefects.presentation.take_ground_plan_image.navigation.TakeGroundPlanImageKey
+import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.list.SelectParticipantsListAdapter
+import de.sevennerds.trackdefects.presentation.feature.take_ground_plan_picture.navigation.TakeGroundPlanPictureKey
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.android.synthetic.main.fragment_select_contacts.*
+import kotlinx.android.synthetic.main.fragment_select_participants.*
+import javax.inject.Inject
 
 
 /**
@@ -31,13 +34,19 @@ import kotlinx.android.synthetic.main.fragment_select_contacts.*
  */
 class SelectParticipantsFragment : BaseFragment() {
 
-    private val KEY_STATE = "KEY_STATE"
-    private val CONTACT_PICKER_REQUEST = 991
+    companion object {
+        private const val KEY_STATE = "KEY_STATE"
+        private const val CONTACT_PICKER_REQUEST = 991
+    }
+
 
     private val compositeDisposable = CompositeDisposable()
 
+    @Inject
+    lateinit var viewModel: SelectParticipantsViewModel
+    private var state: SelectParticipantsView.StateParcel? = null
+
     private lateinit var listAdapter: SelectParticipantsListAdapter
-    private lateinit var viewModel: SelectParticipantsViewModel
 
     private var isRotation = false
 
@@ -50,6 +59,21 @@ class SelectParticipantsFragment : BaseFragment() {
                     .bubbleTextColor(Color.WHITE)
 
 
+    override fun onAttach(context: Context?) {
+
+        TrackDefectsApp.get(context!!)
+                .appComponent
+                .inject(this)
+
+        super.onAttach(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        state = savedInstanceState?.getParcelable(KEY_STATE)
+    }
+
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -58,7 +82,7 @@ class SelectParticipantsFragment : BaseFragment() {
 
         isRotation = false
 
-        return inflater.inflate(R.layout.fragment_select_contacts,
+        return inflater.inflate(R.layout.fragment_select_participants,
                                 container,
                                 false)
     }
@@ -66,30 +90,30 @@ class SelectParticipantsFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = SelectParticipantsViewModel(
-                SelectParticipantsView.State(
-                        savedInstanceState
-                                ?.getParcelable<SelectParticipantsView.StateParcel>(KEY_STATE)
-                                ?.participantModelList
-                                ?: emptyList(),
-                        null))
-
         setup()
+
+        init()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        outState.putParcelable(KEY_STATE,
-                               viewModel.getViewStateParcel())
-    }
 
     override fun onPause() {
         super.onPause()
 
         isRotation = true
 
+        state = viewModel.getViewStateParcel()
+
         compositeDisposable.clear()
+    }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+
+        state?.let {
+            outState.putParcelable(KEY_STATE, it)
+        }
+
+        super.onSaveInstanceState(outState)
     }
 
     override fun onResume() {
@@ -129,7 +153,7 @@ class SelectParticipantsFragment : BaseFragment() {
 
     private fun setupRecyclerView() {
 
-        with(select_contacts_rcv) {
+        with(select_participants_rcv) {
             layoutManager = LinearLayoutManager(context)
             listAdapter = SelectParticipantsListAdapter(mutableListOf())
             adapter = listAdapter
@@ -138,13 +162,7 @@ class SelectParticipantsFragment : BaseFragment() {
 
     private fun setupEvents() {
 
-        compositeDisposable += Observable.fromCallable {
-            SelectParticipantsView.Event.Init
-        }
-                .compose(viewModel.eventTransformer)
-                .subscribe(::render)
-
-        compositeDisposable += select_contacts_fab
+        compositeDisposable += select_participants_fab
                 .clicks()
                 .subscribe {
 
@@ -155,26 +173,33 @@ class SelectParticipantsFragment : BaseFragment() {
         compositeDisposable += listAdapter
                 .getOnItemClickListener()
                 .map { itemPosition ->
-                    SelectParticipantsView.Event
-                            .Remove(itemPosition,
-                                    listAdapter.getList())
+                    SelectParticipantsView.Event.Remove(itemPosition,
+                                                                                                                                        listAdapter.getList())
                 }
                 .compose(viewModel.eventTransformer)
                 .subscribe(::render)
 
-        compositeDisposable += select_contacts_next_skip_btn
+        compositeDisposable += select_participants_next_skip_btn
                 .clicks()
                 .subscribe {
-                    MainActivity[context!!].navigateTo(TakeGroundPlanImageKey())
+                    MainActivity[context!!].navigateTo(TakeGroundPlanPictureKey())
                 }
+    }
+
+    private fun init() {
+        compositeDisposable += Observable.fromCallable {
+            SelectParticipantsView.Event.Init(state
+                                                                                                                                      ?: SelectParticipantsView.StateParcel(emptyList()))
+        }
+                .compose(viewModel.eventTransformer)
+                .subscribe(::render)
     }
 
     private fun contactResult(contactResultList: List<ContactResult>) {
 
         compositeDisposable +=
-                SelectParticipantsView.Event
-                        .Add(contactResultList,
-                             listAdapter.getList())
+                SelectParticipantsView.Event.Add(contactResultList,
+                                                                                                                                 listAdapter.getList())
                         .asObservable()
                         .compose(viewModel.eventTransformer)
                         .subscribe(::render)
@@ -202,7 +227,7 @@ class SelectParticipantsFragment : BaseFragment() {
 
     // TODO: is suppose to change the buttons text from "Skip" to "Next"
     private fun updateButtonText(text: String) {
-        select_contacts_next_skip_btn.text = text
+        select_participants_next_skip_btn.text = text
     }
 
     private fun updateList(newParticipantModeList: List<ParticipantModel>) =
