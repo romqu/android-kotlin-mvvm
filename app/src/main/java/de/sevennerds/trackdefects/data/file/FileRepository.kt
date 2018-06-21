@@ -43,14 +43,13 @@ class FileRepository {
                     FileInputStream(File(FILES_PATH, fileName))
                 }.map {
                     it -> BitmapFactory.decodeStream(it)
-                    it.close()
-                    Logger.d(it.toString())
-                    Result.success(it) as Result<String>
-                }.switchIfEmpty {
-                    Result.failure(Error.FileNotFoundError(R.string.file_not_found.toString()))
-                }
-                .onErrorReturn {
-                    Logger.d(it.toString())
+                        Logger.d("DECODED STREAM: " + it.toString())
+                        it.close()
+                    Result.success(data = it) as Result<String>
+                }.defaultIfEmpty (
+                        Result.failure(Error.FileNotFoundError(R.string.file_not_found.toString()))
+                ).onErrorReturn {
+                    Logger.d("Loading file failed: " + it.toString())
                     Result.failure(Error.FileNotFoundError(R.string.file_not_found.toString()))
                 }
     }
@@ -108,7 +107,7 @@ class FileRepository {
             it.delete()
             Result.success(R.string.file_deleted.toString())
         }.onErrorReturn {
-            Result.failure(Error.FileNotFoundError(R.string.file_not_found.toString()))
+            Result.failure(Error.FileNotFoundError(it.toString()))
         }.defaultIfEmpty(
             Result.failure(Error.FileNotFoundError(R.string.file_not_found.toString()))
         )

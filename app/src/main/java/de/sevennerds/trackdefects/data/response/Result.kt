@@ -11,11 +11,15 @@ sealed class Result<out T> {
 }
 
 sealed class Error {
-    class MyError(val message: String) : Error()
-    class NetworkError(val message: String) : Error()
-    class RegistrationFailedError(val message: String) : Error()
-    class LoginFailedError(val message: String) : Error()
+    // Network failures
+    data class NetworkError(val message: String) : Error()
+    data class RegistrationFailedError(val message: String) : Error()
+    data class LoginFailedError(val message: String) : Error()
 
-    class FileNotFoundError(val message: String) : Error()
-    class DuplicateFileError(val message: String) : Error()
+    // File operation failures
+    data class FileNotFoundError(val message: String) : Error()
+    data class DuplicateFileError(val message: String) : Error()
+
+    // Feature specific failures, just extend from this class to impl.
+    abstract class FeatureError: Error()
 }
