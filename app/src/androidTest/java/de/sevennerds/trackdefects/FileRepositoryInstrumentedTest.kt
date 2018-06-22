@@ -81,6 +81,11 @@ class FileRepositoryInstrumentedTest {
                 .test()
                 .assertResult(Result.success(Unit) as Result<String>)
 
+        fileRepository.loadAll(testFileStringList)
+                .test()
+                .assertNoErrors()
+                .assertComplete()
+
         fileRepository.deleteAll(testFileList)
                 .test()
                 .assertResult(Result.success(FILES_DELETED))

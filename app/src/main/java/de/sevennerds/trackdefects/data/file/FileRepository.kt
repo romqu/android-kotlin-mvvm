@@ -60,6 +60,7 @@ class FileRepository {
                 }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun loadAll(fileNameList: List<String>): Observable<Result<String>> {
         return Observable.fromIterable(fileNameList).doOnNext {
             Logger.d("Loading file: $it")
@@ -67,7 +68,7 @@ class FileRepository {
             it -> load(it)
         }.toList().map {
             it -> if (!it.contains(Result.failure(Error.FileNotFoundError(FILE_NOT_FOUND)))) {
-                Result.success("File list of ${it.size} returning.")
+                Result.success(it) as Result<String>
             } else {
                 Result.failure(Error.FileNotFoundError(FILE_NOT_FOUND))
             }
