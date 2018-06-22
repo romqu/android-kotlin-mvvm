@@ -17,6 +17,8 @@ sealed class Error {
     data class LoginFailedError(val message: String) : Error()
 
     // File operation failures
+    data class SavingFiles(val message: String) : Error()
+    data class DeletionFailed(val message: String) : Error()
     data class FileNotFoundError(val message: String) : Error()
     data class DuplicateFileError(val message: String) : Error()
 
