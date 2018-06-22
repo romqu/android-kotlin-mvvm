@@ -1,18 +1,5 @@
 <resources>
     <string name="app_name">TrackDefects</string>
     <string name="action_settings">Settings</string>
-
     <string name="skip_next_btn">NEXT</string>
-
-    // File operations
-    <string name="directory_not_readable">Directory not readable.</string>
-    <string name="directory_not_writable">Directory not writable.</string>
-    <string name="file_saved">File successfully saved.</string>
-    <string name="file_deleted">File successfully deleted.</string>
-    <string name="duplicate_file">Duplicate file.</string>
-    <string name="file_not_found">File not found.</string>
-
-    // Network failure
-    <string name="network_not_available">Network not available.</string>
-    <string name="network_request_failed">Network request failed.</string>
 </resources>

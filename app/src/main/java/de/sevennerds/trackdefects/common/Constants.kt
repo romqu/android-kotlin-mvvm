@@ -1,16 +1,35 @@
 package de.sevennerds.trackdefects.common
 
-import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.data.file.FileUtil
 
 class Constants {
     companion object Database {
-        // Database
+
+        /**
+         * DATABASE
+         */
+
         const val DATABASE_NAME = "trackdefects.db"
         const val DATABASE_VERSION = 1
 
-        // Local File Storage
         val APPLICATION_EXTERNAL_ROOT = FileUtil.getExternalStorageDirectory() + "/TrackDefects"
         val FILES_PATH = APPLICATION_EXTERNAL_ROOT + "/projects"
+
+
+        /**
+         * COMMON ERROR MESSAGE STRINGS
+         */
+
+        // File operations
+        const val DIRECTORY_NOT_READABLE = "Directory not readable."
+        const val DIRECTORY_NOT_WRITABLE = "Directory not writable."
+        const val FILE_SAVED = "File successfully saved"
+        const val FILE_DELETED = "File successfully deleted"
+        const val DUPLICATE_FILE = "Duplicate file."
+        const val FILE_NOT_FOUND = "File not found."
+
+        // Network failure
+        const val NETWORK_NOT_AVAILABLE = "Network not available."
+        const val NETWORK_REQUEST_FAILED = "Network request failed."
     }
 }

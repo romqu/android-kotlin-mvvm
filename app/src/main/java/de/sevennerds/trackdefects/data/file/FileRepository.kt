@@ -1,10 +1,12 @@
 package de.sevennerds.trackdefects.data.file
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import com.orhanobut.logger.Logger
-import de.sevennerds.trackdefects.R
+import de.sevennerds.trackdefects.common.Constants.Database.DUPLICATE_FILE
 import de.sevennerds.trackdefects.common.Constants.Database.FILES_PATH
+import de.sevennerds.trackdefects.common.Constants.Database.FILE_DELETED
+import de.sevennerds.trackdefects.common.Constants.Database.FILE_NOT_FOUND
+import de.sevennerds.trackdefects.common.Constants.Database.FILE_SAVED
 import de.sevennerds.trackdefects.data.response.Error
 import de.sevennerds.trackdefects.data.response.Result
 import io.reactivex.Observable
@@ -40,15 +42,16 @@ class FileRepository {
         return Observable.just(fileName)
                 .filter {
                     FileUtil.isReadable()
+                }.flatMap {
+                    BitmapUtil.fileInputStreamToBitmap(FileInputStream(File(FILES_PATH, it)))
                 }.map {
-                    it -> BitmapFactory.decodeStream(FileInputStream(File(FILES_PATH, it)))
-                        Logger.d("Decoded stream: " + it.toString())
+                    Logger.d("Loading " + it)
                     Result.success(data = it) as Result<String>
                 }.defaultIfEmpty (
-                        Result.failure(Error.FileNotFoundError(R.string.file_not_found.toString()))
+                        Result.failure(Error.FileNotFoundError(FILE_NOT_FOUND))
                 ).onErrorReturn {
                     Logger.d("Loading file failed: " + it.toString())
-                    Result.failure(Error.FileNotFoundError(R.string.file_not_found.toString()))
+                    Result.failure(Error.FileNotFoundError(FILE_NOT_FOUND))
                 }
     }
 
@@ -65,11 +68,11 @@ class FileRepository {
                     it.flush()
                     it.close()
                     Logger.d("FileOutputStream: " + it.toString())
-                    Result.success(R.string.file_saved.toString())
+                    Result.success(FILE_SAVED)
                 }.onErrorReturn {
                     Logger.d("OnErrorReturn: " + it.toString())
                     Result.failure(Error.DuplicateFileError(it.toString()))
-                }.defaultIfEmpty(Result.failure(Error.DuplicateFileError(R.string.duplicate_file.toString())))
+                }.defaultIfEmpty(Result.failure(Error.DuplicateFileError(DUPLICATE_FILE)))
         }
 
     @Suppress("UNCHECKED_CAST")
@@ -106,11 +109,11 @@ class FileRepository {
             it -> Logger.d("Deletion requested on: " + it)
             Logger.d("Request exists in filesystem: " + it.exists())
             it.delete()
-            Result.success(R.string.file_deleted.toString())
+            Result.success(FILE_DELETED)
         }.onErrorReturn {
             Result.failure(Error.FileNotFoundError(it.toString()))
         }.defaultIfEmpty(
-            Result.failure(Error.FileNotFoundError(R.string.file_not_found.toString()))
+            Result.failure(Error.FileNotFoundError(FILE_NOT_FOUND))
         )
     }
 }
