@@ -44,17 +44,21 @@ class FileRepository {
                     FileUtil.isReadable()
                 }.flatMap {
                     BitmapUtil.fileInputStreamToBitmap(FileInputStream(File(FILES_PATH, it)))
-                }.map {
+                }.doOnNext {
                     Logger.d("Loading " + it)
+                }.map {
                     Result.success(data = it) as Result<String>
                 }.defaultIfEmpty (
                         Result.failure(Error.FileNotFoundError(FILE_NOT_FOUND))
-                ).onErrorReturn {
+                ).doOnError {
                     Logger.d("Loading file failed: " + it.toString())
+                }.onErrorReturn {
                     Result.failure(Error.FileNotFoundError(FILE_NOT_FOUND))
                 }
+
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun save(input: GenericFile<Bitmap>): Observable<Result<String>> {
         return Observable.just(input)
                 .map {
@@ -64,16 +68,20 @@ class FileRepository {
                 }.map {
                     it -> FileOutputStream(it)
                 }.map { it ->
-                    input.data.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, it)
-                    it.flush()
-                    it.close()
+                    it.use {
+                        input.data.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, it)
+                        Result.success(Unit) as Result<String>
+                    }
+                }.doOnNext {
                     Logger.d("FileOutputStream: " + it.toString())
-                    Result.success(FILE_SAVED)
-                }.onErrorReturn {
+                }.doOnError {
                     Logger.d("OnErrorReturn: " + it.toString())
+                }.onErrorReturn {
                     Result.failure(Error.DuplicateFileError(it.toString()))
                 }.defaultIfEmpty(Result.failure(Error.DuplicateFileError(DUPLICATE_FILE)))
-        }
+
+
+    }
 
     @Suppress("UNCHECKED_CAST")
     fun saveAll(genericFileList: List<GenericFile<Bitmap>>): Observable<Result<String>> {
@@ -105,10 +113,12 @@ class FileRepository {
              */
 
             it -> it.exists()
-        }.map {
-            it -> Logger.d("Deletion requested on: " + it)
+
+        }.doOnNext {
             Logger.d("Request exists in filesystem: " + it.exists())
-            it.delete()
+            Logger.d("Deletion requested on: " + it)
+        }.map {
+            it -> it.delete()
             Result.success(FILE_DELETED)
         }.onErrorReturn {
             Result.failure(Error.FileNotFoundError(it.toString()))
