@@ -1,6 +1,7 @@
 package de.sevennerds.trackdefects.data.client
 
 import de.sevennerds.trackdefects.R
+import de.sevennerds.trackdefects.common.Constants.Database.NETWORK_REQUEST_FAILED
 import de.sevennerds.trackdefects.data.client.net.ClientNetDataSource
 import de.sevennerds.trackdefects.data.response.Error
 import de.sevennerds.trackdefects.data.response.LoginResponse
@@ -21,7 +22,7 @@ class ClientRepo @Inject constructor(private val clientNet: ClientNetDataSource)
                         } else {
                             Result.failure(Error.NetworkError(responseNet.errors.toString()))
                         }
-                    } ?: Result.failure(Error.NetworkError(R.string.network_request_failed.toString())) }
+                    } ?: Result.failure(Error.NetworkError(NETWORK_REQUEST_FAILED)) }
                     .onErrorReturn { t: Throwable -> Result.failure(Error.LoginFailedError(t.toString())) }
 
     fun register(registrationData: RegistrationData): Single<Result<RegistrationResponse>> =
@@ -32,6 +33,6 @@ class ClientRepo @Inject constructor(private val clientNet: ClientNetDataSource)
                         } else {
                             Result.failure(Error.NetworkError(responseNet.errors.toString()))
                         }
-                    } ?: Result.failure(Error.NetworkError(R.string.network_request_failed.toString())) }
+                    } ?: Result.failure(Error.NetworkError(NETWORK_REQUEST_FAILED)) }
                     .onErrorReturn { t: Throwable -> Result.failure(Error.RegistrationFailedError(t.toString())) }
 }
