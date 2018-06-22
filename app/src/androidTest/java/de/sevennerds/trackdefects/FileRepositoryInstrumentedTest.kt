@@ -1,24 +1,20 @@
 package de.sevennerds.trackdefects
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.test.runner.AndroidJUnit4
 import de.sevennerds.trackdefects.common.Constants.Database.DUPLICATE_FILE
 import de.sevennerds.trackdefects.common.Constants.Database.FILES_PATH
 import de.sevennerds.trackdefects.common.Constants.Database.FILE_DELETED
 import de.sevennerds.trackdefects.common.Constants.Database.FILE_NOT_FOUND
-import de.sevennerds.trackdefects.common.Constants.Database.FILE_SAVED
 import de.sevennerds.trackdefects.data.file.FileRepository
-import de.sevennerds.trackdefects.data.file.GenericFile
+import de.sevennerds.trackdefects.data.file.FileEntity
 import de.sevennerds.trackdefects.data.response.Error
 import de.sevennerds.trackdefects.data.response.Result
 import org.junit.After
-import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
-import java.io.FileInputStream
 
 
 @RunWith(AndroidJUnit4::class)
@@ -45,7 +41,7 @@ class FileRepositoryInstrumentedTest {
     @Test
     @Suppress("UNCHECKED_CAST")
     fun save_file() {
-        fileRepository.save(GenericFile(name = "example_file", data = bitmap))
+        fileRepository.save(FileEntity(name = "example_file", data = bitmap))
                 .test()
                 .assertResult(Result.success(Unit) as Result<String>)
         fileRepository.delete(testFile)
@@ -56,10 +52,10 @@ class FileRepositoryInstrumentedTest {
     @Test
     @Suppress("UNCHECKED_CAST")
     fun save_file_conflict() {
-        fileRepository.save(GenericFile(name = "example_file", data = bitmap))
+        fileRepository.save(FileEntity(name = "example_file", data = bitmap))
                 .test()
                 .assertResult(Result.success(Unit) as Result<String>)
-        fileRepository.save(GenericFile(name = "example_file", data = bitmap))
+        fileRepository.save(FileEntity(name = "example_file", data = bitmap))
                 .test()
                 .assertResult(Result.failure(Error.DuplicateFileError(DUPLICATE_FILE)))
         fileRepository.delete(testFile)
@@ -70,7 +66,7 @@ class FileRepositoryInstrumentedTest {
     @Test
     @Suppress("UNCHECKED_CAST")
     fun file_loaded() {
-        fileRepository.save(GenericFile(name = "example_file", data = bitmap))
+        fileRepository.save(FileEntity(name = "example_file", data = bitmap))
                 .test()
                 .assertResult(Result.success(Unit) as Result<String>)
         fileRepository.load("example_file.jpg")

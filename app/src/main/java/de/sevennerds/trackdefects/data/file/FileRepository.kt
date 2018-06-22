@@ -6,7 +6,6 @@ import de.sevennerds.trackdefects.common.Constants.Database.DUPLICATE_FILE
 import de.sevennerds.trackdefects.common.Constants.Database.FILES_PATH
 import de.sevennerds.trackdefects.common.Constants.Database.FILE_DELETED
 import de.sevennerds.trackdefects.common.Constants.Database.FILE_NOT_FOUND
-import de.sevennerds.trackdefects.common.Constants.Database.FILE_SAVED
 import de.sevennerds.trackdefects.data.response.Error
 import de.sevennerds.trackdefects.data.response.Result
 import io.reactivex.Observable
@@ -59,7 +58,7 @@ class FileRepository {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun save(input: GenericFile<Bitmap>): Observable<Result<String>> {
+    fun save(input: FileEntity<Bitmap>): Observable<Result<String>> {
         return Observable.just(input)
                 .map {
                     it -> File(FILES_PATH, it.name + JPEG_FILE_EXTENSION)
@@ -84,9 +83,9 @@ class FileRepository {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun saveAll(genericFileList: List<GenericFile<Bitmap>>): Observable<Result<String>> {
+    fun saveAll(fileEntityList: List<FileEntity<Bitmap>>): Observable<Result<String>> {
         return Observable.fromArray(
-                genericFileList.map {
+                fileEntityList.map {
                     it -> save(it)
                 }
         ).map {

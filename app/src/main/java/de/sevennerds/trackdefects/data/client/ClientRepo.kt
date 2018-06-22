@@ -1,6 +1,5 @@
 package de.sevennerds.trackdefects.data.client
 
-import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.common.Constants.Database.NETWORK_REQUEST_FAILED
 import de.sevennerds.trackdefects.data.client.net.ClientNetDataSource
 import de.sevennerds.trackdefects.data.response.Error
