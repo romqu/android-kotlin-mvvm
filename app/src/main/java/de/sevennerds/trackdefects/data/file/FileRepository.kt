@@ -38,13 +38,11 @@ class FileRepository {
     @Suppress("UNCHECKED_CAST")
     fun load(fileName: String): Observable<Result<String>> {
         return Observable.just(fileName)
-                .filter { FileUtil.isReadable() }
-                .map {
-                    FileInputStream(File(FILES_PATH, fileName))
+                .filter {
+                    FileUtil.isReadable()
                 }.map {
-                    it -> BitmapFactory.decodeStream(it)
-                        Logger.d("DECODED STREAM: " + it.toString())
-                        it.close()
+                    it -> BitmapFactory.decodeStream(FileInputStream(File(FILES_PATH, it)))
+                        Logger.d("Decoded stream: " + it.toString())
                     Result.success(data = it) as Result<String>
                 }.defaultIfEmpty (
                         Result.failure(Error.FileNotFoundError(R.string.file_not_found.toString()))
@@ -57,16 +55,16 @@ class FileRepository {
     fun save(input: GenericFile<Bitmap>): Observable<Result<String>> {
         return Observable.just(input)
                 .map {
-                    FILE -> File(FILES_PATH, FILE.name + JPEG_FILE_EXTENSION)
+                    it -> File(FILES_PATH, it.name + JPEG_FILE_EXTENSION)
                 }.filter {
-                    FILE -> !FILE.exists() && FileUtil.isWritable()
+                    it -> !it.exists() && FileUtil.isWritable()
                 }.map {
-                    FILE -> FileOutputStream(FILE)
-                }.map { STREAM ->
-                    input.data.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, STREAM)
-                    STREAM.flush()
-                    STREAM.close()
-                    Logger.d("FileOutputStream: " + STREAM.toString())
+                    it -> FileOutputStream(it)
+                }.map { it ->
+                    input.data.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, it)
+                    it.flush()
+                    it.close()
+                    Logger.d("FileOutputStream: " + it.toString())
                     Result.success(R.string.file_saved.toString())
                 }.onErrorReturn {
                     Logger.d("OnErrorReturn: " + it.toString())
@@ -76,8 +74,11 @@ class FileRepository {
 
     @Suppress("UNCHECKED_CAST")
     fun saveAll(genericFileList: List<GenericFile<Bitmap>>): Observable<Result<String>> {
-        return Observable.fromArray(genericFileList.map { it -> save(it) })
-                .map {
+        return Observable.fromArray(
+                genericFileList.map {
+                    it -> save(it)
+                }
+        ).map {
             it -> Result.success(it) as Result<String>
         }
     }

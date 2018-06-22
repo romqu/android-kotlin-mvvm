@@ -69,9 +69,8 @@ class FileRepositoryInstrumentedTest {
                 .assertResult(Result.success(R.string.file_saved.toString()))
         fileRepository.load("example_file.jpg")
                 .test()
-                .assertResult(
-                       Result.success(data = FileInputStream(testFile)) as Result<String>
-                )
+                .assertNoErrors()
+                .assertComplete()
     }
 
     @Test
