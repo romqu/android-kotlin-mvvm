@@ -2,6 +2,7 @@ package de.sevennerds.trackdefects.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import de.sevennerds.trackdefects.common.Constants
 import de.sevennerds.trackdefects.data.client.ClientEntity
 import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
 import de.sevennerds.trackdefects.data.defect_image.DefectImageEntity
@@ -33,7 +34,7 @@ import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalData
                 RoomEntity::class, DefectInfoEntity::class,
                 DefectImageEntity::class, TestEntity::class
         ],
-        version = 1
+        version = Constants.DATABASE_VERSION
 )
 abstract class LocalDataSource : RoomDatabase() {
 

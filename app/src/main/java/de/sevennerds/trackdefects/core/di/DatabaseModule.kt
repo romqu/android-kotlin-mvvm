@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
-import de.sevennerds.trackdefects.common.DATABASE_NAME
+import de.sevennerds.trackdefects.common.Constants.Database.DATABASE_NAME
 import de.sevennerds.trackdefects.data.LocalDataSource
 import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
 import de.sevennerds.trackdefects.data.defect_image.DefectImageLocalDataSource
