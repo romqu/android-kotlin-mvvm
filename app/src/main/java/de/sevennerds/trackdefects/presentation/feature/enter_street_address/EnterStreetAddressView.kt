@@ -27,7 +27,7 @@ class EnterStreetAddressView {
      */
     data class State(val streetName: String,
                      val streetNumber: String,
-                     val streetAddition: String,
+                     val streetAdditional: String,
                      val isButtonEnabled: Boolean) {
 
         companion object {
@@ -44,6 +44,7 @@ class EnterStreetAddressView {
      */
     sealed class RenderState {
         class SetButtonState(val isEnabled: Boolean) : RenderState()
+        object Nothing : RenderState()
     }
 
     /**

@@ -41,6 +41,8 @@ class MainActivity : AppCompatActivity(), StateChanger {
 
         TrackDefectsApp.get(this).appComponent.inject(this)
 
+
+
         fragmentStateChanger = FragmentStateChanger(supportFragmentManager, R.id.fragment_container)
         backstackDelegate.setStateChanger(this)
     }

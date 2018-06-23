@@ -21,8 +21,11 @@ class TrackDefectsApp : Application() {
                 .build()
     }
 
+
+
     override fun onCreate() {
         super.onCreate()
+
 
         initLeakCanary()
         initLogger()
