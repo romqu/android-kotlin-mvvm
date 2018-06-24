@@ -5,9 +5,7 @@ import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSour
 import de.sevennerds.trackdefects.data.response.Result
 import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSourceDao
 import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalDataSourceDao
-import io.reactivex.Observable
 import io.reactivex.Single
-import java.util.concurrent.Callable
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,8 +17,12 @@ class DefectListRepository @Inject constructor(
         private val localDataSource: LocalDataSource
 ) {
 
-    fun insert(): Observable<Result<String>> {
-        return Observable.just(Result.success("asdf"))
+    fun insert(defectListEntity: DefectListEntity): Single<Result<String>> {
+        return Single.fromCallable {
+            localDataSource.runInTransaction {
+
+            }
+        }
     }
 
     /*

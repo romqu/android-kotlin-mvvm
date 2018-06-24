@@ -5,5 +5,4 @@ import de.sevennerds.trackdefects.data.BaseLocalDataSource
 
 @Dao
 abstract class FloorPlanLocalDataSourceDao: BaseLocalDataSource<FloorPlanEntity> {
-
 }
