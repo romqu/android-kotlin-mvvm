@@ -21,10 +21,6 @@ class Constants {
          * COMMON ERROR MESSAGE STRINGS
          */
 
-        // File Path
-        const val PHOTO_PATH = "/storage/emulated/0/TrackDefects/projects/photos/"
-        const val FLOOR_PLAN_PATH = "/storage/emulated/0/TrackDefects/projects/floorplan/"
-
         // File operations
         const val DIRECTORY_NOT_READABLE = "Directory not readable."
         const val DIRECTORY_NOT_WRITABLE = "Directory not writable."
@@ -44,7 +40,5 @@ class Constants {
         // Database
         const val DATABASE_TRANSACTION_FAILED = "Something went wrong."
         const val DATABASE_TRANSACTION_SUCCEEDED = "Database transaction succeeded."
-
-
     }
 }
