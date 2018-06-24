@@ -47,13 +47,21 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.0.0-alpha3'
-    // DO NOT UPDATE
+
     implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
     implementation 'com.google.android.material:material:1.0.0-alpha3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha3'
     testImplementation 'junit:junit:4.12'
+
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha3'
+
+    // test
+    testImplementation "com.google.truth:truth:0.40"
+    testImplementation "org.assertj:assertj-core:3.10.0"
+    implementation 'org.jetbrains.spek:spek-api:1.1.5'
+    testImplementation "io.mockk:mockk:1.8.4"
+
     // android ktx
     implementation 'androidx.core:core-ktx:1.0.0-alpha3'
     // LeakCanary
