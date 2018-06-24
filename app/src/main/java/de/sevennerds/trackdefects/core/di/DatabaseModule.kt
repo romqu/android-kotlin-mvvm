@@ -9,12 +9,12 @@ import de.sevennerds.trackdefects.data.LocalDataSource
 import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
 import de.sevennerds.trackdefects.data.defect_image.DefectImageLocalDataSource
 import de.sevennerds.trackdefects.data.defect_info.DefectInfoLocalDataSource
-import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSource
+import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSourceDao
 import de.sevennerds.trackdefects.data.floor.FloorLocalDataSource
 import de.sevennerds.trackdefects.data.living_unit.LivingUnitLocalDataSource
 import de.sevennerds.trackdefects.data.room.RoomLocalDataSource
-import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSource
-import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalDataSource
+import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSourceDao
+import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalDataSourceDao
 import io.requery.android.database.sqlite.RequerySQLiteOpenHelperFactory
 import javax.inject.Singleton
 
@@ -41,19 +41,19 @@ abstract class DatabaseModule {
         @Provides
         @Singleton
         @JvmStatic
-        fun provideDefectListLocalDataSource(localDataSource: LocalDataSource): DefectListLocalDataSource =
+        fun provideDefectListLocalDataSource(localDataSource: LocalDataSource): DefectListLocalDataSourceDao =
                 localDataSource.defectList()
 
         @Provides
         @Singleton
         @JvmStatic
-        fun provideStreetAddressLocalDataSource(localDataSource: LocalDataSource): StreetAddressLocalDataSource =
+        fun provideStreetAddressLocalDataSource(localDataSource: LocalDataSource): StreetAddressLocalDataSourceDao =
                 localDataSource.streetAddress()
 
         @Provides
         @Singleton
         @JvmStatic
-        fun provideViewParticipantLocalDataSource(localDataSource: LocalDataSource): ViewParticipantLocalDataSource =
+        fun provideViewParticipantLocalDataSource(localDataSource: LocalDataSource): ViewParticipantLocalDataSourceDao =
                 localDataSource.viewParticipant()
 
         @Provides

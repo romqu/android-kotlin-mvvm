@@ -22,6 +22,10 @@ sealed class Error {
     data class FileNotFoundError(val message: String) : Error()
     data class DuplicateFileError(val message: String) : Error()
 
+    // Database operation failures
+    data class DatabaseError(val message: String) : Error()
+
+
     // Feature specific failures, just extend from this class to impl.
     abstract class FeatureError: Error()
 }

@@ -9,7 +9,7 @@ import de.sevennerds.trackdefects.data.defect_list.local.relation.DefectListWith
 import io.reactivex.Flowable
 
 @Dao
-abstract class DefectListLocalDataSource : BaseLocalDataSource<DefectListEntity> {
+abstract class DefectListLocalDataSourceDao : BaseLocalDataSource<DefectListEntity> {
 
     @Transaction
     @Query("SELECT * FROM defect_list")

@@ -33,8 +33,12 @@ class Constants {
         const val SAVING_FILES_FAILED = "Saving files failed."
         const val SAVING_FILE_FAILED = "Saving file failed."
 
-        // Network failure
+        // Network
         const val NETWORK_NOT_AVAILABLE = "Network not available."
         const val NETWORK_REQUEST_FAILED = "Network request failed."
+
+        // Database
+        const val DATABASE_TRANSACTION_FAILED = "Something went wrong."
+        const val DATABASE_TRANSACTION_SUCCEEDED = "Database transaction succeeded."
     }
 }
