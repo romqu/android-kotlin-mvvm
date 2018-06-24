@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
+import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
+import de.sevennerds.trackdefects.common.asObservable
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -23,6 +25,8 @@ class EnterStreetAddressFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModel: EnterStreetAddressViewModel
+    private var state: EnterStreetAddressView.StateParcel? = null
+    private var isRotation = false
 
     override fun onAttach(context: Context?) {
 
@@ -33,11 +37,19 @@ class EnterStreetAddressFragment : BaseFragment() {
         super.onAttach(context)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val stateParcel = savedInstanceState?.getParcelable<EnterStreetAddressView.StateParcel>("KEY")
+    }
+
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
         super.onCreateView(inflater, container, savedInstanceState)
+
+        isRotation = false
 
         return inflater.inflate(R.layout.fragment_enter_street_address,
                                 container,
@@ -49,10 +61,61 @@ class EnterStreetAddressFragment : BaseFragment() {
 
         enterStreetAddressNextBtn.isEnabled = false
 
+        setupEvents()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putParcelable("KEY", state)
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        isRotation = true
+
+        val renderState = EnterStreetAddressView.Event.Restart
+                .asObservable()
+                .compose(viewModel.eventToRenderState)
+                .blockingLast()
+
+        render(renderState)
+
+        compositeDisposable.clear()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (isRotation) {
+            setupEvents()
+            isRotation = false
+        }
+    }
+
+    private fun setupEvents() {
+
         compositeDisposable += enterStreetAddressStreetNameExtEditTxt
                 .textChanges()
                 .skipInitialValue()
                 .map { EnterStreetAddressView.Event.StreetNameTextChange(it.toString()) }
+                .compose(viewModel.eventToRenderState)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(::render)
+
+        compositeDisposable += enterStreetAddressNumberExtEditTxt
+                .textChanges()
+                .skipInitialValue()
+                .map { EnterStreetAddressView.Event.StreetNumberTextChange(it.toString()) }
+                .compose(viewModel.eventToRenderState)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(::render)
+
+        compositeDisposable += enterStreetAddressAdditionalExtEditTxt
+                .textChanges()
+                .skipInitialValue()
+                .map { EnterStreetAddressView.Event.StreetAdditionalTextChange(it.toString()) }
                 .compose(viewModel.eventToRenderState)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::render)
@@ -64,6 +127,7 @@ class EnterStreetAddressFragment : BaseFragment() {
                 .subscribe {}
     }
 
+
     private fun render(renderState: EnterStreetAddressView.RenderState) =
 
             when (renderState) {
@@ -73,6 +137,9 @@ class EnterStreetAddressFragment : BaseFragment() {
 
                 is EnterStreetAddressView.RenderState.Nothing -> {
                 }
+
+                is EnterStreetAddressView.RenderState.Restart ->
+                    state = renderState.stateParcel
             }
 
 

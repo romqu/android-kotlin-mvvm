@@ -10,6 +10,7 @@ class EnterStreetAddressView {
         class StreetNameTextChange(val text: String) : Event()
         class StreetNumberTextChange(val text: String) : Event()
         class StreetAdditionalTextChange(val text: String) : Event()
+        object Restart : Event()
     }
 
     /**
@@ -20,6 +21,7 @@ class EnterStreetAddressView {
         class StreetNameTextChange(val text: String, val isNotEmpty: Boolean) : Result()
         class StreetNumberTextChange(val text: String) : Result()
         class StreetAdditionalTextChange(val text: String) : Result()
+        object Restart : Result()
     }
 
     /**
@@ -28,14 +30,16 @@ class EnterStreetAddressView {
     data class State(val streetName: String,
                      val streetNumber: String,
                      val streetAdditional: String,
-                     val isButtonEnabled: Boolean) {
+                     val isButtonEnabled: Boolean,
+                     val currentResult: Result?) {
 
         companion object {
             fun initial() = State(
                     "",
                     "",
                     "",
-                    false)
+                    false,
+                    currentResult = null)
         }
     }
 
@@ -45,11 +49,15 @@ class EnterStreetAddressView {
     sealed class RenderState {
         class SetButtonState(val isEnabled: Boolean) : RenderState()
         object Nothing : RenderState()
+        data class Restart(val stateParcel: StateParcel) : RenderState()
     }
 
     /**
      * The Parcelable version of the ViewState
      */
     @Parcelize
-    data class StateParcel(val imageName: String) : Parcelable
+    data class StateParcel(val streetName: String,
+                           val streetNumber: String,
+                           val streetAdditional: String,
+                           val isButtonEnabled: Boolean) : Parcelable
 }
