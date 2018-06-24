@@ -7,7 +7,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class EnterStreetAddressKey(val tag: String) : BaseKey() {
-    constructor() : this("EnterStreetAddressKey")
+    constructor() : this("CreateDefectListSummary")
 
     override fun createFragment() = EnterStreetAddressFragment()
 }
