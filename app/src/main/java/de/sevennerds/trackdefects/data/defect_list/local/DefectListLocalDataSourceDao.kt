@@ -10,10 +10,7 @@ import io.reactivex.Flowable
 
 @Dao
 abstract class DefectListLocalDataSourceDao : BaseLocalDataSource<DefectListEntity> {
-
     @Transaction
     @Query("SELECT * FROM defect_list")
     abstract fun getDefectListWithRelations(): Flowable<List<DefectListWithStreetAddress>>
-
-
 }

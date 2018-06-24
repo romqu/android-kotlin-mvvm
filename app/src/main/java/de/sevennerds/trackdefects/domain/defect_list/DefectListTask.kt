@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 
 class DefectListTask @Inject constructor(
-        private val defectListRepository: DefectListRepository,
+        private val defectListRepository: DefectListRepository
 ) {
 
     fun insertDefectList(defectListEntity: DefectListEntity): Observable<Result<String>> {

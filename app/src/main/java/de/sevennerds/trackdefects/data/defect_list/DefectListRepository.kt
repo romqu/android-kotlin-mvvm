@@ -1,29 +1,34 @@
 package de.sevennerds.trackdefects.data.defect_list
 
+import de.sevennerds.trackdefects.common.Constants
 import de.sevennerds.trackdefects.data.LocalDataSource
 import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSourceDao
 import de.sevennerds.trackdefects.data.response.Result
 import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSourceDao
 import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalDataSourceDao
 import io.reactivex.Single
+import java.util.concurrent.Callable
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class DefectListRepository @Inject constructor(
         private val defectListLocalDao: DefectListLocalDataSourceDao,
-        private val streetAddressLocalDao: StreetAddressLocalDataSourceDao,
-        private val viewParticipantLocalDao: ViewParticipantLocalDataSourceDao,
         private val localDataSource: LocalDataSource
 ) {
 
-    fun insert(defectListEntity: DefectListEntity): Single<Result<String>> {
+    fun insert(defectListEntity: DefectListEntity): Single<Result<Long>> {
         return Single.fromCallable {
-            localDataSource.runInTransaction {
-
-            }
+            localDataSource.runInTransaction (
+                Callable {
+                    val defectListEntityId = defectListLocalDao.insert(defectListEntity)
+                    Result.Success(defectListEntityId)
+                }
+            )
         }
     }
+
+
 
     /*
     fun insertBasic(defectListEntity: DefectListEntity): Single<Result<DefectListEntity>> =
