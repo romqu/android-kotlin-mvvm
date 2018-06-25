@@ -5,9 +5,7 @@ import de.sevennerds.trackdefects.common.Constants
 import de.sevennerds.trackdefects.data.defect_list.DefectListEntity
 import de.sevennerds.trackdefects.data.response.Error
 import de.sevennerds.trackdefects.data.response.Result
-import io.reactivex.Flowable
 import io.reactivex.Observable
-import io.reactivex.Single
 import javax.inject.Inject
 
 class DefectListManager @Inject constructor(
