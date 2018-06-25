@@ -1,52 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/createDefectListSummaryGroundPlanImgView"
         android:layout_width="wrap_content"
-        android:layout_height="261dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/createDefectListSummaryStreetAddressTextFieldBoxes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/backgrounds/scenic[16]" />
 
     <studio.carbonylgroup.textfieldboxes.TextFieldBoxes
-        android:id="@+id/enterStreetAddressStreetNameTextFieldBoxes"
+        android:id="@+id/createDefectListSummaryStreetAddressTextFieldBoxes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        app:hasClearButton="true"
-        app:labelText="Street Name"
+        android:layout_marginBottom="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:labelText="Street Address"
+        app:layout_constraintBottom_toTopOf="@+id/createDefectListSummaryParticipantsTextFieldBoxes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView">
+        app:layout_constraintTop_toBottomOf="@+id/createDefectListSummaryGroundPlanImgView">
 
         <studio.carbonylgroup.textfieldboxes.ExtendedEditText
-            android:id="@+id/enterStreetAddressStreetNameExtEditTxt"
+            android:id="@+id/createDefectListSummaryStreetAddressExtEditTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:imeOptions="actionNext"
-            android:inputType="text" />
+            android:ellipsize="end"
+            android:maxLines="1" />
+
+    </studio.carbonylgroup.textfieldboxes.TextFieldBoxes>
+
+    <studio.carbonylgroup.textfieldboxes.TextFieldBoxes
+        android:id="@+id/createDefectListSummaryParticipantsTextFieldBoxes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:labelText="Participants"
+        app:layout_constraintBottom_toTopOf="@+id/createDefectListSummarySaveBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/createDefectListSummaryStreetAddressTextFieldBoxes">
+
+        <studio.carbonylgroup.textfieldboxes.ExtendedEditText
+            android:id="@+id/createDefectListSummaryParticipantsExtEditTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1" />
 
     </studio.carbonylgroup.textfieldboxes.TextFieldBoxes>
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/createDefectListSummarySaveBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:text="Save"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/createDefectListSummaryParticipantsTextFieldBoxes" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

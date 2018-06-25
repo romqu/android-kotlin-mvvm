@@ -1,10 +1,10 @@
 package de.sevennerds.trackdefects
 
 import com.google.common.truth.Truth
-import de.sevennerds.trackdefects.common.asObservable
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import org.junit.Test
+import java.util.concurrent.TimeUnit
 
 
 class UnitTest {
@@ -14,9 +14,32 @@ class UnitTest {
             TestView.State(text1 = "text1", text2 = "text2")
 
     @Test
+    fun test1() {
+
+        /*val longOperationObservable = Observable.fromCallable {
+            println("Doing some heavy work")
+
+            Thread.sleep(500)
+            "done"
+        }*/
+
+        val longOperationObservable = Observable
+                .interval(1, TimeUnit.SECONDS)
+                .map { "emit" }
+
+        longOperationObservable.doOnNext { println(it + 1)  }
+                .test().dispose()
+
+        longOperationObservable.doOnNext { println(it + 2)  }
+                .test().await(10, TimeUnit.SECONDS)
+
+        // longOperationObservable.connect()
+    }
+
+    @Test
     fun test() {
 
-        "text1".asObservable()
+        /*"text1".asObservable()
                 .map { TestView.Event.Event1(it) }
                 .compose(eventToRenderStateTransformer)
                 .test()
@@ -32,7 +55,21 @@ class UnitTest {
                 .assertValue { renderState ->
                     render(renderState)
                     true
-                }
+                }*/
+
+        val r = Observable.merge(Observable.fromCallable { "text1" }
+                                          .map { TestView.Event.Event1(it) }
+                                          .compose(eventToRenderStateTransformer),
+                                 Observable.fromCallable { "text11" }
+                                         .map { TestView.Event.Event1(it) }
+                                         .compose(eventToRenderStateTransformer),
+                                  Observable.fromCallable { "text2" }
+                                          .map { TestView.Event.Event2(it) }
+                                          .compose(eventToRenderStateTransformer)
+        ).test().await()
+
+        println(r)
+
     }
 
     private val eventToRenderStateTransformer =
@@ -92,20 +129,24 @@ class UnitTest {
                 upstream.scan(TestView.State.initial()) { previousState, result ->
                     when (result) {
 
-                        is TestView.Result.Result1 ->
+                        is TestView.Result.Result1 -> {
+                            println("State: $previousState")
                             previousState.copy(text1 = result.text1)
+                        }
+
 
                         is TestView.Result.Result2 -> {
 
-                            Truth.assertThat(previousState.copy(text2 = result.text2))
+                            println("State: $previousState")
 
-                                    .isEqualTo(expectedViewState)
+                            /*Truth.assertThat(previousState.copy(text2 = result.text2))
+
+                                    .isEqualTo(expectedViewState)*/
 
                             previousState.copy(text2 = result.text2)
                         }
                     }
                 }.skip(1)
-                        .doOnNext { println("Next Scan: $it") }
             }
 
 

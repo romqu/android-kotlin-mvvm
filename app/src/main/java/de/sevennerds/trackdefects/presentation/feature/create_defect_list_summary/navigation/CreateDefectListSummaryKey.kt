@@ -5,8 +5,8 @@ import de.sevennerds.trackdefects.presentation.feature.create_defect_list_summar
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class CreateDefectListSummary(val tag: String) : BaseKey() {
-    constructor() : this("CreateDefectListSummary")
+data class CreateDefectListSummaryKey(val tag: String) : BaseKey() {
+    constructor() : this("CreateDefectListSummaryKey")
 
     override fun createFragment() = CreateDefectListSummaryFragment()
 }

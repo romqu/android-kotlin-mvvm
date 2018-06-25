@@ -6,7 +6,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class PreviewImageKey(val tag: String) : BaseKey() {
-    constructor() : this("CreateDefectListSummary")
+    constructor() : this("CreateDefectListSummaryKey")
 
     override fun createFragment() = PreviewImageFragment()
 }

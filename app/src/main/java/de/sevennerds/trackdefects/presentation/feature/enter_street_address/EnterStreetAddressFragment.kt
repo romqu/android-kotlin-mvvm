@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.jakewharton.rxbinding2.view.clicks
-import com.jakewharton.rxbinding2.widget.textChanges
+import com.jakewharton.rxbinding2.widget.afterTextChangeEvents
 import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
-import de.sevennerds.trackdefects.common.asObservable
+import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
+import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.navigation.SelectParticipantsKey
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -25,8 +27,9 @@ class EnterStreetAddressFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModel: EnterStreetAddressViewModel
-    private var state: EnterStreetAddressView.StateParcel? = null
+    private var stateParcel: EnterStreetAddressView.StateParcel? = null
     private var isRotation = false
+
 
     override fun onAttach(context: Context?) {
 
@@ -40,7 +43,9 @@ class EnterStreetAddressFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val stateParcel = savedInstanceState?.getParcelable<EnterStreetAddressView.StateParcel>("KEY")
+        savedInstanceState?.let {
+            stateParcel = it.getParcelable(KEY_STATE_PARCEL)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -67,20 +72,13 @@ class EnterStreetAddressFragment : BaseFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putParcelable("KEY", state)
+        outState.putParcelable(KEY_STATE_PARCEL, stateParcel)
     }
 
     override fun onPause() {
         super.onPause()
 
         isRotation = true
-
-        val renderState = EnterStreetAddressView.Event.Restart
-                .asObservable()
-                .compose(viewModel.eventToRenderState)
-                .blockingLast()
-
-        render(renderState)
 
         compositeDisposable.clear()
     }
@@ -96,35 +94,39 @@ class EnterStreetAddressFragment : BaseFragment() {
 
     private fun setupEvents() {
 
-        compositeDisposable += enterStreetAddressStreetNameExtEditTxt
-                .textChanges()
-                .skipInitialValue()
-                .map { EnterStreetAddressView.Event.StreetNameTextChange(it.toString()) }
+        compositeDisposable += Observable
+                .merge(enterStreetAddressStreetNameExtEditTxt
+                               .afterTextChangeEvents()
+                               .skipInitialValue()
+                               .map {
+                                   EnterStreetAddressView.Event
+                                           .StreetNameTextChange(it.view().text.toString())
+                               },
+                       enterStreetAddressNumberExtEditTxt
+                               .afterTextChangeEvents()
+                               .skipInitialValue()
+                               .map {
+                                   EnterStreetAddressView.Event
+                                           .StreetNumberTextChange(it.view().text.toString())
+                               },
+                       enterStreetAddressAdditionalExtEditTxt
+                               .afterTextChangeEvents()
+                               .skipInitialValue()
+                               .map {
+                                   EnterStreetAddressView.Event
+                                           .StreetAdditionalTextChange(it.view().text.toString())
+                               }
+                )
                 .compose(viewModel.eventToRenderState)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::render)
-
-        compositeDisposable += enterStreetAddressNumberExtEditTxt
-                .textChanges()
-                .skipInitialValue()
-                .map { EnterStreetAddressView.Event.StreetNumberTextChange(it.toString()) }
-                .compose(viewModel.eventToRenderState)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::render)
-
-        compositeDisposable += enterStreetAddressAdditionalExtEditTxt
-                .textChanges()
-                .skipInitialValue()
-                .map { EnterStreetAddressView.Event.StreetAdditionalTextChange(it.toString()) }
-                .compose(viewModel.eventToRenderState)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::render)
-
-
 
         compositeDisposable += enterStreetAddressNextBtn
                 .clicks()
-                .subscribe {}
+                .subscribe {
+                    MainActivity[requireContext()]
+                            .navigateTo(SelectParticipantsKey())
+                }
     }
 
 
@@ -132,15 +134,22 @@ class EnterStreetAddressFragment : BaseFragment() {
 
             when (renderState) {
 
-                is EnterStreetAddressView.RenderState.SetButtonState ->
-                    enterStreetAddressNextBtn.isEnabled = renderState.isEnabled
+                is EnterStreetAddressView.RenderState.SetButtonState -> {
 
-                is EnterStreetAddressView.RenderState.Nothing -> {
+                    with(renderState) {
+                        updateStateParcel(stateParcel)
+                        enterStreetAddressNextBtn.isEnabled = isEnabled
+                    }
                 }
 
-                is EnterStreetAddressView.RenderState.Restart ->
-                    state = renderState.stateParcel
+                is EnterStreetAddressView.RenderState.Nothing -> {
+                    updateStateParcel(renderState.stateParcel)
+                }
             }
+
+    private fun updateStateParcel(stateParcel: EnterStreetAddressView.StateParcel) {
+        this.stateParcel = stateParcel
+    }
 
 
 /*    private fun requestRuntimePermissions() {

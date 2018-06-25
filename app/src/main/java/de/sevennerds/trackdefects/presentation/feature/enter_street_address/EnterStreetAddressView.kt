@@ -10,7 +10,6 @@ class EnterStreetAddressView {
         class StreetNameTextChange(val text: String) : Event()
         class StreetNumberTextChange(val text: String) : Event()
         class StreetAdditionalTextChange(val text: String) : Event()
-        object Restart : Event()
     }
 
     /**
@@ -21,7 +20,6 @@ class EnterStreetAddressView {
         class StreetNameTextChange(val text: String, val isNotEmpty: Boolean) : Result()
         class StreetNumberTextChange(val text: String) : Result()
         class StreetAdditionalTextChange(val text: String) : Result()
-        object Restart : Result()
     }
 
     /**
@@ -46,10 +44,9 @@ class EnterStreetAddressView {
     /**
      * The states the view receives and uses to render its ui, hence RenderState
      */
-    sealed class RenderState {
-        class SetButtonState(val isEnabled: Boolean) : RenderState()
-        object Nothing : RenderState()
-        data class Restart(val stateParcel: StateParcel) : RenderState()
+    sealed class RenderState() {
+        class SetButtonState(val isEnabled: Boolean, val stateParcel: StateParcel) : RenderState()
+        class Nothing(val stateParcel: StateParcel) : RenderState()
     }
 
     /**
