@@ -10,6 +10,7 @@ class EnterStreetAddressView {
         class StreetNameTextChange(val text: String) : Event()
         class StreetNumberTextChange(val text: String) : Event()
         class StreetAdditionalTextChange(val text: String) : Event()
+        object Next: Event()
     }
 
     /**
@@ -20,6 +21,7 @@ class EnterStreetAddressView {
         class StreetNameTextChange(val text: String, val isNotEmpty: Boolean) : Result()
         class StreetNumberTextChange(val text: String) : Result()
         class StreetAdditionalTextChange(val text: String) : Result()
+        object Next : Result()
     }
 
     /**
@@ -47,6 +49,7 @@ class EnterStreetAddressView {
     sealed class RenderState() {
         class SetButtonState(val isEnabled: Boolean, val stateParcel: StateParcel) : RenderState()
         class Nothing(val stateParcel: StateParcel) : RenderState()
+        object Next: RenderState()
     }
 
     /**

@@ -105,6 +105,10 @@ class EnterStreetAddressViewModel @Inject constructor() {
                         is EnterStreetAddressView.Result.StreetAdditionalTextChange -> {
                             previousState.copy(streetAdditional = result.text)
                         }
+
+                        is EnterStreetAddressView.Result.Next -> {
+                            previousState
+                        }
                     }
 
                 }.skip(1)
