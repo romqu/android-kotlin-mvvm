@@ -9,14 +9,14 @@ import javax.inject.Singleton
 
 @Singleton
 class StreetAddressRepository @Inject constructor(
-        private val streetAddressLocalDataSourceDao: StreetAddressLocalDataSourceDao,
+        private val streetAddressLocalDataSource: StreetAddressLocalDataSource,
         private val localDataSource: LocalDataSource
 ) {
     fun insert(streetAddressEntity: StreetAddressEntity): Single<Result<Long>> {
         return Single.fromCallable {
             localDataSource.runInTransaction (
                     Callable {
-                        val streetAddressEntityId = streetAddressLocalDataSourceDao.insert(streetAddressEntity)
+                        val streetAddressEntityId = streetAddressLocalDataSource.insert(streetAddressEntity)
                         Result.Success(streetAddressEntityId)
                     }
             )

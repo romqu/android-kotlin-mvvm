@@ -9,14 +9,14 @@ import javax.inject.Singleton
 
 @Singleton
 class ViewParticipantRepository @Inject constructor(
-        private val viewParticipantLocalDataSourceDao: ViewParticipantLocalDataSourceDao,
+        private val viewParticipantLocalDataSource: ViewParticipantLocalDataSource,
         private val localDataSource: LocalDataSource
 ) {
     fun insert(viewParticipantEntity: ViewParticipantEntity): Single<Result<Long>> {
         return Single.fromCallable {
             localDataSource.runInTransaction (
                     Callable {
-                        val viewParticipantEntityId = viewParticipantLocalDataSourceDao.insert(viewParticipantEntity)
+                        val viewParticipantEntityId = viewParticipantLocalDataSource.insert(viewParticipantEntity)
                         Result.Success(viewParticipantEntityId)
                     }
             )

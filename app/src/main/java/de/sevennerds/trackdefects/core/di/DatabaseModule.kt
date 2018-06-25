@@ -9,16 +9,15 @@ import de.sevennerds.trackdefects.data.LocalDataSource
 import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
 import de.sevennerds.trackdefects.data.defect_image.DefectImageLocalDataSource
 import de.sevennerds.trackdefects.data.defect_info.DefectInfoLocalDataSource
-import de.sevennerds.trackdefects.data.defect_list.DefectListRepository
-import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSourceDao
+import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSource
 import de.sevennerds.trackdefects.data.floor.FloorLocalDataSource
-import de.sevennerds.trackdefects.data.floor_plan.FloorPlanLocalDataSourceDao
+import de.sevennerds.trackdefects.data.floor_plan.FloorPlanLocalDataSource
 import de.sevennerds.trackdefects.data.floor_plan.FloorplanRepository
 import de.sevennerds.trackdefects.data.living_unit.LivingUnitLocalDataSource
 import de.sevennerds.trackdefects.data.room.RoomLocalDataSource
-import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSourceDao
+import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSource
 import de.sevennerds.trackdefects.data.street_address.StreetAddressRepository
-import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalDataSourceDao
+import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalDataSource
 import de.sevennerds.trackdefects.data.view_participant.ViewParticipantRepository
 import io.requery.android.database.sqlite.RequerySQLiteOpenHelperFactory
 import javax.inject.Singleton
@@ -46,19 +45,19 @@ abstract class DatabaseModule {
         @Provides
         @Singleton
         @JvmStatic
-        fun provideDefectListLocalDataSource(localDataSource: LocalDataSource): DefectListLocalDataSourceDao =
+        fun provideDefectListLocalDataSource(localDataSource: LocalDataSource): DefectListLocalDataSource =
                 localDataSource.defectList()
 
         @Provides
         @Singleton
         @JvmStatic
-        fun provideStreetAddressLocalDataSource(localDataSource: LocalDataSource): StreetAddressLocalDataSourceDao =
+        fun provideStreetAddressLocalDataSource(localDataSource: LocalDataSource): StreetAddressLocalDataSource =
                 localDataSource.streetAddress()
 
         @Provides
         @Singleton
         @JvmStatic
-        fun provideViewParticipantLocalDataSource(localDataSource: LocalDataSource): ViewParticipantLocalDataSourceDao =
+        fun provideViewParticipantLocalDataSource(localDataSource: LocalDataSource): ViewParticipantLocalDataSource =
                 localDataSource.viewParticipant()
 
         @Provides
@@ -94,22 +93,22 @@ abstract class DatabaseModule {
         @Provides
         @Singleton
         @JvmStatic
-        fun provideFloorPlanRepository(localDataSource: LocalDataSource, floorPlanLocalDataSourceDao: FloorPlanLocalDataSourceDao): FloorplanRepository {
-            return FloorplanRepository(floorPlanLocalDataSourceDao, localDataSource)
+        fun provideFloorPlanRepository(localDataSource: LocalDataSource, floorPlanLocalDataSource: FloorPlanLocalDataSource): FloorplanRepository {
+            return FloorplanRepository(floorPlanLocalDataSource, localDataSource)
         }
 
         @Provides
         @Singleton
         @JvmStatic
-        fun provideViewParticipantRepository(localDataSource: LocalDataSource, ViewParticipantLocalDataSourceDao: ViewParticipantLocalDataSourceDao): ViewParticipantRepository {
-            return ViewParticipantRepository(ViewParticipantLocalDataSourceDao, localDataSource)
+        fun provideViewParticipantRepository(localDataSource: LocalDataSource, ViewParticipantLocalDataSource: ViewParticipantLocalDataSource): ViewParticipantRepository {
+            return ViewParticipantRepository(ViewParticipantLocalDataSource, localDataSource)
         }
 
         @Provides
         @Singleton
         @JvmStatic
-        fun provideStreetAddressRepository(localDataSource: LocalDataSource, StreetAddressLocalDataSourceDao: StreetAddressLocalDataSourceDao): StreetAddressRepository {
-            return StreetAddressRepository(StreetAddressLocalDataSourceDao, localDataSource)
+        fun provideStreetAddressRepository(localDataSource: LocalDataSource, StreetAddressLocalDataSource: StreetAddressLocalDataSource): StreetAddressRepository {
+            return StreetAddressRepository(StreetAddressLocalDataSource, localDataSource)
         }
     }
 

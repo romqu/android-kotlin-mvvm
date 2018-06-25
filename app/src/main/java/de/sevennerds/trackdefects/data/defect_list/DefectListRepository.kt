@@ -1,11 +1,8 @@
 package de.sevennerds.trackdefects.data.defect_list
 
-import de.sevennerds.trackdefects.common.Constants
 import de.sevennerds.trackdefects.data.LocalDataSource
-import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSourceDao
+import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSource
 import de.sevennerds.trackdefects.data.response.Result
-import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSourceDao
-import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalDataSourceDao
 import io.reactivex.Single
 import java.util.concurrent.Callable
 import javax.inject.Inject
@@ -13,7 +10,7 @@ import javax.inject.Singleton
 
 @Singleton
 class DefectListRepository @Inject constructor(
-        private val defectListLocalDao: DefectListLocalDataSourceDao,
+        private val defectListLocal: DefectListLocalDataSource,
         private val localDataSource: LocalDataSource
 ) {
 
@@ -21,7 +18,7 @@ class DefectListRepository @Inject constructor(
         return Single.fromCallable {
             localDataSource.runInTransaction (
                 Callable {
-                    val defectListEntityId = defectListLocalDao.insert(defectListEntity)
+                    val defectListEntityId = defectListLocal.insert(defectListEntity)
                     Result.Success(defectListEntityId)
                 }
             )
@@ -40,7 +37,7 @@ class DefectListRepository @Inject constructor(
                 var defectListEntityNew: DefectListEntity
 
                 localDataSource.runInTransaction(Callable {
-                    val defectListId = defectListLocalDao.insert(defectListEntity)
+                    val defectListId = defectListLocal.insert(defectListEntity)
 
                     val streetAddressId = streetAddressLocalDao.insert(streetAddress
                             .copy(defectListId = defectListId))

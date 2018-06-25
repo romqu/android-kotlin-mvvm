@@ -10,7 +10,7 @@ import de.sevennerds.trackdefects.data.defect_image.DefectImageLocalDataSource
 import de.sevennerds.trackdefects.data.defect_info.DefectInfoEntity
 import de.sevennerds.trackdefects.data.defect_info.DefectInfoLocalDataSource
 import de.sevennerds.trackdefects.data.defect_list.DefectListEntity
-import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSourceDao
+import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSource
 import de.sevennerds.trackdefects.data.floor.FloorEntity
 import de.sevennerds.trackdefects.data.floor.FloorLocalDataSource
 import de.sevennerds.trackdefects.data.living_unit.LivingUnitEntity
@@ -18,10 +18,10 @@ import de.sevennerds.trackdefects.data.living_unit.LivingUnitLocalDataSource
 import de.sevennerds.trackdefects.data.room.RoomEntity
 import de.sevennerds.trackdefects.data.room.RoomLocalDataSource
 import de.sevennerds.trackdefects.data.street_address.StreetAddressEntity
-import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSourceDao
+import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSource
 import de.sevennerds.trackdefects.data.test.TestEntity
 import de.sevennerds.trackdefects.data.view_participant.ViewParticipantEntity
-import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalDataSourceDao
+import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalDataSource
 
 @Database(
         entities = [
@@ -39,9 +39,9 @@ import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalData
 abstract class LocalDataSource : RoomDatabase() {
 
     abstract fun client(): ClientLocalDataSource
-    abstract fun defectList(): DefectListLocalDataSourceDao
-    abstract fun streetAddress(): StreetAddressLocalDataSourceDao
-    abstract fun viewParticipant(): ViewParticipantLocalDataSourceDao
+    abstract fun defectList(): DefectListLocalDataSource
+    abstract fun streetAddress(): StreetAddressLocalDataSource
+    abstract fun viewParticipant(): ViewParticipantLocalDataSource
     abstract fun floor(): FloorLocalDataSource
     abstract fun livingUnit(): LivingUnitLocalDataSource
     abstract fun room(): RoomLocalDataSource
