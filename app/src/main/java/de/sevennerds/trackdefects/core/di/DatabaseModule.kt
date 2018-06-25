@@ -9,12 +9,17 @@ import de.sevennerds.trackdefects.data.LocalDataSource
 import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
 import de.sevennerds.trackdefects.data.defect_image.DefectImageLocalDataSource
 import de.sevennerds.trackdefects.data.defect_info.DefectInfoLocalDataSource
+import de.sevennerds.trackdefects.data.defect_list.DefectListRepository
 import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSourceDao
 import de.sevennerds.trackdefects.data.floor.FloorLocalDataSource
+import de.sevennerds.trackdefects.data.floor_plan.FloorPlanLocalDataSourceDao
+import de.sevennerds.trackdefects.data.floor_plan.FloorplanRepository
 import de.sevennerds.trackdefects.data.living_unit.LivingUnitLocalDataSource
 import de.sevennerds.trackdefects.data.room.RoomLocalDataSource
 import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSourceDao
+import de.sevennerds.trackdefects.data.street_address.StreetAddressRepository
 import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalDataSourceDao
+import de.sevennerds.trackdefects.data.view_participant.ViewParticipantRepository
 import io.requery.android.database.sqlite.RequerySQLiteOpenHelperFactory
 import javax.inject.Singleton
 
@@ -86,6 +91,26 @@ abstract class DatabaseModule {
         fun provideDefectImageLocalDataSource(localDataSource: LocalDataSource): DefectImageLocalDataSource =
                 localDataSource.defectImage()
 
+        @Provides
+        @Singleton
+        @JvmStatic
+        fun provideFloorPlanRepository(localDataSource: LocalDataSource, floorPlanLocalDataSourceDao: FloorPlanLocalDataSourceDao): FloorplanRepository {
+            return FloorplanRepository(floorPlanLocalDataSourceDao, localDataSource)
+        }
+
+        @Provides
+        @Singleton
+        @JvmStatic
+        fun provideViewParticipantRepository(localDataSource: LocalDataSource, ViewParticipantLocalDataSourceDao: ViewParticipantLocalDataSourceDao): ViewParticipantRepository {
+            return ViewParticipantRepository(ViewParticipantLocalDataSourceDao, localDataSource)
+        }
+
+        @Provides
+        @Singleton
+        @JvmStatic
+        fun provideStreetAddressRepository(localDataSource: LocalDataSource, StreetAddressLocalDataSourceDao: StreetAddressLocalDataSourceDao): StreetAddressRepository {
+            return StreetAddressRepository(StreetAddressLocalDataSourceDao, localDataSource)
+        }
     }
 
 }
