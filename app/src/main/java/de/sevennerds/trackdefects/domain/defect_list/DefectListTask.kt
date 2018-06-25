@@ -15,50 +15,40 @@ class DefectListTask @Inject constructor(
         private val defectListRepository: DefectListRepository
 ) {
 
-    fun insertDefectList(defectListEntity: DefectListEntity): Observable<Result<String>> {
+    fun insert(defectListEntity: DefectListEntity): Observable<Result<DefectListEntity>> =
 
-        /**
-         *      Dont be fooled by the name, its not actually a LIST.
-         *      > git blame romqu
-         */
+            /**
+             *      Dont be fooled by the name, its not actually a LIST.
+             *      > git blame romqu
+             */
 
-        return Observable.just(defectListEntity).doOnNext {
-            Logger.d("Saving $it")
-        }.flatMapSingle { it ->
-            defectListRepository.insert(it)
-        }.toList()
-                .toObservable()
-                .map { it ->
-                    if (it.contains(Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED)))) {
+            Observable.just(defectListEntity)
+                    .doOnNext {
+                        Logger.d("Saving $it")
+                    }.map { it ->
+                        defectListRepository.insert(it)
+                        Result.success(it)
+                    }.doOnError {
+                        Logger.d(DATABASE_TRANSACTION_FAILED)
+                    }.onErrorReturn {
                         Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
-                    } else {
-                        Result.success(DATABASE_TRANSACTION_SUCCEEDED)
                     }
-                }.doOnError {
-                    Logger.d(DATABASE_TRANSACTION_FAILED)
-                }.onErrorReturn {
-                    Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
-                }
-    }
 
-    fun insertDefectListAll(defectListEntityList: List<DefectListEntity>): Observable<Result<String>> {
-        return Observable.fromIterable(defectListEntityList)
-                .doOnNext {
-                    Logger.d("Saving $it")
-                }.flatMap { it ->
-                    insertDefectList(it)
-                }.toList()
-                .toObservable()
-                .map {
-                    if (it.contains(Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED)))) {
+    @Suppress("UNCHECKED_CAST")
+    fun insertAll(defectListEntityList: List<DefectListEntity>): Observable<Result<DefectListEntity>> =
+            Observable.fromIterable(defectListEntityList)
+                    .doOnNext {
+                        Logger.d("Saving $it")
+                    }.flatMap { it ->
+                        insert(it)
+                    }.toList()
+                    .toObservable()
+                    .map { it ->
+                        Result.success(it) as Result<DefectListEntity>
+                    }.doOnError {
+                        Logger.d(DATABASE_TRANSACTION_FAILED)
+                    }.onErrorReturn {
                         Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
-                    } else {
-                        Result.success(DATABASE_TRANSACTION_SUCCEEDED)
                     }
-                }.doOnError {
-                    Logger.d(DATABASE_TRANSACTION_FAILED)
-                }.onErrorReturn { it ->
-                    Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
-                }
-    }
+
 }

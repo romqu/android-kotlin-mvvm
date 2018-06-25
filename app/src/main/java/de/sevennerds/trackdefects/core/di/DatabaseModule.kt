@@ -12,7 +12,7 @@ import de.sevennerds.trackdefects.data.defect_info.DefectInfoLocalDataSource
 import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSource
 import de.sevennerds.trackdefects.data.floor.FloorLocalDataSource
 import de.sevennerds.trackdefects.data.floor_plan.FloorPlanLocalDataSource
-import de.sevennerds.trackdefects.data.floor_plan.FloorplanRepository
+import de.sevennerds.trackdefects.data.floor_plan.FloorPlanRepository
 import de.sevennerds.trackdefects.data.living_unit.LivingUnitLocalDataSource
 import de.sevennerds.trackdefects.data.room.RoomLocalDataSource
 import de.sevennerds.trackdefects.data.street_address.StreetAddressLocalDataSource
@@ -93,22 +93,22 @@ abstract class DatabaseModule {
         @Provides
         @Singleton
         @JvmStatic
-        fun provideFloorPlanRepository(localDataSource: LocalDataSource, floorPlanLocalDataSource: FloorPlanLocalDataSource): FloorplanRepository {
-            return FloorplanRepository(floorPlanLocalDataSource, localDataSource)
+        fun provideFloorPlanRepository(localDataSource: LocalDataSource, floorPlanLocalDataSource: FloorPlanLocalDataSource): FloorPlanRepository {
+            return FloorPlanRepository(floorPlanLocalDataSource, localDataSource)
         }
 
         @Provides
         @Singleton
         @JvmStatic
-        fun provideViewParticipantRepository(localDataSource: LocalDataSource, ViewParticipantLocalDataSource: ViewParticipantLocalDataSource): ViewParticipantRepository {
-            return ViewParticipantRepository(ViewParticipantLocalDataSource, localDataSource)
+        fun provideViewParticipantRepository(ViewParticipantLocalDataSource: ViewParticipantLocalDataSource): ViewParticipantRepository {
+            return ViewParticipantRepository(ViewParticipantLocalDataSource)
         }
 
         @Provides
         @Singleton
         @JvmStatic
-        fun provideStreetAddressRepository(localDataSource: LocalDataSource, StreetAddressLocalDataSource: StreetAddressLocalDataSource): StreetAddressRepository {
-            return StreetAddressRepository(StreetAddressLocalDataSource, localDataSource)
+        fun provideStreetAddressRepository(StreetAddressLocalDataSource: StreetAddressLocalDataSource): StreetAddressRepository {
+            return StreetAddressRepository(StreetAddressLocalDataSource)
         }
     }
 

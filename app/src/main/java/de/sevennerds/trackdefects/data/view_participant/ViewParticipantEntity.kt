@@ -22,9 +22,17 @@ import de.sevennerds.trackdefects.data.defect_list.DefectListEntity
         ]
 )
 data class ViewParticipantEntity(
+
+        /**
+         * @remoteId -- The backend primary key of the object
+         * @defectListId -- FK relation with parent object DefectList
+         * @streetAddressId -- FK relation with parent object StreetAddressEntity
+         */
+
         @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long,
         @ColumnInfo(name = "remote_id") val remoteId: Long,
-        @ColumnInfo(name = "street_address_id") val streetAddressId: Long,
+        @ColumnInfo(name = "defect_list_id") val defectListId: Long,
+        //@ColumnInfo(name = "street_address_id") val streetAddressId: Long, // Ignored for now because we dont have welldefined customer requirements.
         @ColumnInfo(name = "forename") val forename: String,
         @ColumnInfo(name = "surname") val surname: String,
         @ColumnInfo(name = "phone_number") val phoneNumber: Int,
