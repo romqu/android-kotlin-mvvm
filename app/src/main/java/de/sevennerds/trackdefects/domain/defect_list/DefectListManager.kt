@@ -26,16 +26,14 @@ class DefectListManager @Inject constructor(
          *          - InsetViewParticipant (CHILD)
          */
 
-        /** Question here is if its ugly to do like four .map{} blah
-         *  for each modell
-         */
-
-
         return Observable.just(defectListEntity).doOnNext {
             Logger.d("Saving $it")
         }.map {
             it -> defectListTask.insertDefectList(it)
-            Result.success(Constants.DATABASE_TRANSACTION_SUCCEEDED) as Result<String>
+            floorPlanTask.insertFloorPlanEntity(it.floorPlanEntity)
+            streetAddressTask.insertStreetAddressEntity(it.streetAddressEntity)
+            viewParticipantTask.insertViewParticipantEntity(it.viewParticipantEntity)
+            Result.success(Constants.DATABASE_TRANSACTION_SUCCEEDED)
         }.doOnError {
             Logger.d("oh shit")
         }.onErrorReturn {
