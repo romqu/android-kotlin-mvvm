@@ -2,6 +2,8 @@ package de.sevennerds.trackdefects.domain.defect_list
 
 import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.common.Constants
+import de.sevennerds.trackdefects.common.Constants.Database.DATABASE_TRANSACTION_FAILED
+import de.sevennerds.trackdefects.common.Constants.Database.DATABASE_TRANSACTION_SUCCEEDED
 import de.sevennerds.trackdefects.data.defect_list.DefectListEntity
 import de.sevennerds.trackdefects.data.response.Error
 import de.sevennerds.trackdefects.data.response.Result
@@ -28,16 +30,16 @@ class DefectListManager @Inject constructor(
 
         return Observable.just(defectListEntity).doOnNext {
             Logger.d("Saving $it")
-        }.map {
-            it -> defectListTask.insertDefectList(it)
+        }.map { it ->
+            defectListTask.insertDefectList(it)
             floorPlanTask.insertFloorPlanEntity(it.floorPlanEntity)
             streetAddressTask.insertStreetAddressEntity(it.streetAddressEntity)
             viewParticipantTask.insertViewParticipantEntity(it.viewParticipantEntity)
-            Result.success(Constants.DATABASE_TRANSACTION_SUCCEEDED)
+            Result.success(DATABASE_TRANSACTION_SUCCEEDED)
         }.doOnError {
             Logger.d("oh shit")
         }.onErrorReturn {
-            Result.failure(Error.DatabaseError(Constants.DATABASE_TRANSACTION_FAILED))
+            Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
         }
     }
 
@@ -49,19 +51,21 @@ class DefectListManager @Inject constructor(
 
         return Observable.fromIterable(defectListEntityList).doOnNext {
             Logger.d("List is $it")
-        }.flatMap {
-            it -> insert(it)
-        }.toList().toObservable().map{
-            if (it.contains(Result.failure(Error.DatabaseError(Constants.DATABASE_TRANSACTION_FAILED)))) {
-                Result.failure(Error.DatabaseError(Constants.DATABASE_TRANSACTION_FAILED))
-            } else {
-                Result.success(Constants.DATABASE_TRANSACTION_SUCCEEDED)
-            }
-        }.doOnError {
-            Logger.d(Constants.DATABASE_TRANSACTION_FAILED)
-        }.onErrorReturn {
-            Result.failure(Error.DatabaseError(Constants.DATABASE_TRANSACTION_FAILED))
-        }
+        }.flatMap { it ->
+            insert(it)
+        }.toList()
+                .toObservable()
+                .map {
+                    if (it.contains(Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED)))) {
+                        Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
+                    } else {
+                        Result.success(DATABASE_TRANSACTION_SUCCEEDED)
+                    }
+                }.doOnError {
+                    Logger.d(DATABASE_TRANSACTION_FAILED)
+                }.onErrorReturn {
+                    Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
+                }
     }
 
 }

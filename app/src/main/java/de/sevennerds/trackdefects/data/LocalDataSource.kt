@@ -37,7 +37,6 @@ import de.sevennerds.trackdefects.data.view_participant.ViewParticipantLocalData
         version = Constants.DATABASE_VERSION
 )
 abstract class LocalDataSource : RoomDatabase() {
-
     abstract fun client(): ClientLocalDataSource
     abstract fun defectList(): DefectListLocalDataSource
     abstract fun streetAddress(): StreetAddressLocalDataSource
@@ -47,5 +46,4 @@ abstract class LocalDataSource : RoomDatabase() {
     abstract fun room(): RoomLocalDataSource
     abstract fun defectInfo(): DefectInfoLocalDataSource
     abstract fun defectImage(): DefectImageLocalDataSource
-
 }

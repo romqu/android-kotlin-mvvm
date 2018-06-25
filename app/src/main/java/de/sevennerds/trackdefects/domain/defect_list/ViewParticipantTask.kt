@@ -16,28 +16,11 @@ class ViewParticipantTask @Inject constructor(
     fun insertViewParticipantEntity(viewParticipantEntity: ViewParticipantEntity): Observable<Result<String>> {
         return Observable.just(viewParticipantEntity).doOnNext {
             Logger.d("Saving $it")
-        }.flatMapSingle {
-            it -> viewParticipantRepository.insert(it)
-        }.toList().toObservable().map {
-            it -> if (it.contains(Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED)))) {
-            Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
-        } else {
-            Result.success(DATABASE_TRANSACTION_SUCCEEDED)
-        }
-        }.doOnError {
-            Logger.d(DATABASE_TRANSACTION_FAILED)
-        }.onErrorReturn {
-            Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
-        }
-    }
-
-    fun insertViewParticipantEntityAll(viewParticipantEntityList: List<ViewParticipantEntity>): Observable<Result<String>> {
-        return Observable.fromIterable(viewParticipantEntityList)
-                .doOnNext {
-                    Logger.d("Saving $it")
-                }.flatMap {
-                    it -> insertViewParticipantEntity(it)
-                }.toList().toObservable().map {
+        }.flatMapSingle { it ->
+            viewParticipantRepository.insert(it)
+        }.toList()
+                .toObservable()
+                .map { it ->
                     if (it.contains(Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED)))) {
                         Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
                     } else {
@@ -46,7 +29,28 @@ class ViewParticipantTask @Inject constructor(
                 }.doOnError {
                     Logger.d(DATABASE_TRANSACTION_FAILED)
                 }.onErrorReturn {
-                    it -> Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
+                    Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
+                }
+    }
+
+    fun insertViewParticipantEntityAll(viewParticipantEntityList: List<ViewParticipantEntity>): Observable<Result<String>> {
+        return Observable.fromIterable(viewParticipantEntityList)
+                .doOnNext {
+                    Logger.d("Saving $it")
+                }.flatMap { it ->
+                    insertViewParticipantEntity(it)
+                }.toList()
+                .toObservable()
+                .map {
+                    if (it.contains(Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED)))) {
+                        Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
+                    } else {
+                        Result.success(DATABASE_TRANSACTION_SUCCEEDED)
+                    }
+                }.doOnError {
+                    Logger.d(DATABASE_TRANSACTION_FAILED)
+                }.onErrorReturn { it ->
+                    Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
                 }
     }
 }

@@ -14,7 +14,7 @@ class StreetAddressRepository @Inject constructor(
 ) {
     fun insert(streetAddressEntity: StreetAddressEntity): Single<Result<Long>> {
         return Single.fromCallable {
-            localDataSource.runInTransaction (
+            localDataSource.runInTransaction(
                     Callable {
                         val streetAddressEntityId = streetAddressLocalDataSource.insert(streetAddressEntity)
                         Result.Success(streetAddressEntityId)

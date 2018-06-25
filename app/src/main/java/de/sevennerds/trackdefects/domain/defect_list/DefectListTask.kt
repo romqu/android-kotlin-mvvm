@@ -24,28 +24,11 @@ class DefectListTask @Inject constructor(
 
         return Observable.just(defectListEntity).doOnNext {
             Logger.d("Saving $it")
-        }.flatMapSingle {
-            it -> defectListRepository.insert(it)
-        }.toList().toObservable().map {
-            it -> if (it.contains(Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED)))) {
-            Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
-            } else {
-                Result.success(DATABASE_TRANSACTION_SUCCEEDED)
-            }
-        }.doOnError {
-            Logger.d(DATABASE_TRANSACTION_FAILED)
-        }.onErrorReturn {
-            Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
-        }
-    }
-
-    fun insertDefectListAll(defectListEntityList: List<DefectListEntity>): Observable<Result<String>> {
-        return Observable.fromIterable(defectListEntityList)
-                .doOnNext {
-                    Logger.d("Saving $it")
-                }.flatMap {
-                    it -> insertDefectList(it)
-                }.toList().toObservable().map {
+        }.flatMapSingle { it ->
+            defectListRepository.insert(it)
+        }.toList()
+                .toObservable()
+                .map { it ->
                     if (it.contains(Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED)))) {
                         Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
                     } else {
@@ -54,7 +37,28 @@ class DefectListTask @Inject constructor(
                 }.doOnError {
                     Logger.d(DATABASE_TRANSACTION_FAILED)
                 }.onErrorReturn {
-                    it -> Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
+                    Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
+                }
+    }
+
+    fun insertDefectListAll(defectListEntityList: List<DefectListEntity>): Observable<Result<String>> {
+        return Observable.fromIterable(defectListEntityList)
+                .doOnNext {
+                    Logger.d("Saving $it")
+                }.flatMap { it ->
+                    insertDefectList(it)
+                }.toList()
+                .toObservable()
+                .map {
+                    if (it.contains(Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED)))) {
+                        Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
+                    } else {
+                        Result.success(DATABASE_TRANSACTION_SUCCEEDED)
+                    }
+                }.doOnError {
+                    Logger.d(DATABASE_TRANSACTION_FAILED)
+                }.onErrorReturn { it ->
+                    Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
                 }
     }
 }

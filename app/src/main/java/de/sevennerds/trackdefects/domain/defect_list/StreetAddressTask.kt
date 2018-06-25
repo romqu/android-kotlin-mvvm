@@ -16,28 +16,11 @@ class StreetAddressTask @Inject constructor(
     fun insertStreetAddressEntity(streetAddressEntity: StreetAddressEntity): Observable<Result<String>> {
         return Observable.just(streetAddressEntity).doOnNext {
             Logger.d("Saving $it")
-        }.flatMapSingle {
-            it -> streetAddressRepository.insert(it)
-        }.toList().toObservable().map {
-            it -> if (it.contains(Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED)))) {
-            Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
-            } else {
-                Result.success(DATABASE_TRANSACTION_SUCCEEDED)
-        }
-        }.doOnError {
-            Logger.d(DATABASE_TRANSACTION_FAILED)
-        }.onErrorReturn {
-            Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
-        }
-    }
-
-    fun insertStreetAddressEntityAll(streetAddressEntityList: List<StreetAddressEntity>): Observable<Result<String>> {
-        return Observable.fromIterable(streetAddressEntityList)
-                .doOnNext {
-                    Logger.d("Saving $it")
-                }.flatMap {
-                    it -> insertStreetAddressEntity(it)
-                }.toList().toObservable().map {
+        }.flatMapSingle { it ->
+            streetAddressRepository.insert(it)
+        }.toList()
+                .toObservable()
+                .map { it ->
                     if (it.contains(Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED)))) {
                         Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
                     } else {
@@ -46,7 +29,28 @@ class StreetAddressTask @Inject constructor(
                 }.doOnError {
                     Logger.d(DATABASE_TRANSACTION_FAILED)
                 }.onErrorReturn {
-                    it -> Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
+                    Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
+                }
+    }
+
+    fun insertStreetAddressEntityAll(streetAddressEntityList: List<StreetAddressEntity>): Observable<Result<String>> {
+        return Observable.fromIterable(streetAddressEntityList)
+                .doOnNext {
+                    Logger.d("Saving $it")
+                }.flatMap { it ->
+                    insertStreetAddressEntity(it)
+                }.toList()
+                .toObservable()
+                .map {
+                    if (it.contains(Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED)))) {
+                        Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
+                    } else {
+                        Result.success(DATABASE_TRANSACTION_SUCCEEDED)
+                    }
+                }.doOnError {
+                    Logger.d(DATABASE_TRANSACTION_FAILED)
+                }.onErrorReturn { it ->
+                    Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
                 }
     }
 }

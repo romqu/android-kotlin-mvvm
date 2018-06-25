@@ -14,7 +14,7 @@ class ViewParticipantRepository @Inject constructor(
 ) {
     fun insert(viewParticipantEntity: ViewParticipantEntity): Single<Result<Long>> {
         return Single.fromCallable {
-            localDataSource.runInTransaction (
+            localDataSource.runInTransaction(
                     Callable {
                         val viewParticipantEntityId = viewParticipantLocalDataSource.insert(viewParticipantEntity)
                         Result.Success(viewParticipantEntityId)

@@ -14,7 +14,7 @@ class FloorplanRepository @Inject constructor(
 ) {
     fun insert(floorPlanEntity: FloorPlanEntity): Single<Result<Long>> {
         return Single.fromCallable {
-            localDataSource.runInTransaction (
+            localDataSource.runInTransaction(
                     Callable {
                         val floorPlanEntityId = floorPlanLocalDataSource.insert(floorPlanEntity)
                         Result.Success(floorPlanEntityId)
