@@ -62,7 +62,7 @@ class PreviewImageView {
     @Parcelize
     data class StateParcel(val imageName: String) : Parcelable
 
-    sealed class Message() : MessageQueue.Message {
+    sealed class Message : MessageQueue.Message {
         class ImageName(val imageName: String) : Message()
     }
 

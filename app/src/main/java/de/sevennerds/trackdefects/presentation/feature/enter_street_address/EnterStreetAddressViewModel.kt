@@ -1,5 +1,6 @@
 package de.sevennerds.trackdefects.presentation.feature.enter_street_address
 
+import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.SelectParticipantsView
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.schedulers.Schedulers
@@ -7,6 +8,8 @@ import javax.inject.Inject
 
 class EnterStreetAddressViewModel @Inject constructor() {
 
+    // entry point for the view
+    // ---------------------------------------------------------------------------------------------
     val eventToRenderState = ObservableTransformer<EnterStreetAddressView.Event,
             EnterStreetAddressView.RenderState> { upstream ->
 
@@ -22,12 +25,18 @@ class EnterStreetAddressViewModel @Inject constructor() {
                                     .compose(eventStreetNumberTextChangeToResult),
                             shared.ofType(EnterStreetAddressView.Event
                                                   .StreetAdditionalTextChange::class.java)
-                                    .compose(eventStreetAdditionalTextChangeToResult))
+                                    .compose(eventStreetAdditionalTextChangeToResult),
+                            shared.ofType(EnterStreetAddressView.Event
+                                                  .Next::class.java)
+                                    .compose(eventNextToResult))
                             .compose(resultToViewState)
                             .compose(viewStateToRenderState)
                 }
     }
 
+
+    // domain logic
+    // ---------------------------------------------------------------------------------------------
     private val eventStreetNameTextChangeToResult =
             ObservableTransformer<EnterStreetAddressView.Event.StreetNameTextChange,
                     EnterStreetAddressView.Result> { upstream ->
@@ -55,35 +64,18 @@ class EnterStreetAddressViewModel @Inject constructor() {
                         .map { EnterStreetAddressView.Result.StreetAdditionalTextChange(it) }
             }
 
+    private val eventNextToResult =
+            ObservableTransformer<EnterStreetAddressView.Event.Next,
+                    EnterStreetAddressView.Result> { upstream ->
 
-    private val viewStateToRenderState = ObservableTransformer<EnterStreetAddressView.State,
-            EnterStreetAddressView.RenderState> { upstream ->
-
-        upstream.map { viewState ->
-            when (viewState.currentResult) {
-
-                is EnterStreetAddressView.Result.StreetNameTextChange -> {
-                    EnterStreetAddressView.RenderState
-                            .SetButtonState(viewState.isButtonEnabled,
-                                            viewStateToParcelState(viewState))
-                }
-
-                is EnterStreetAddressView.Result.StreetNumberTextChange -> {
-                    EnterStreetAddressView.RenderState.Nothing(viewStateToParcelState(viewState))
-                }
-
-                is EnterStreetAddressView.Result.StreetAdditionalTextChange -> TODO()
-
-                null ->
-                    EnterStreetAddressView.RenderState.Nothing(viewStateToParcelState(viewState))
+                upstream.map { EnterStreetAddressView.Result.Next }
             }
-        }
-    }
 
+    // view and render and parcel state
+    // ---------------------------------------------------------------------------------------------
     private val resultToViewState =
             ObservableTransformer<EnterStreetAddressView.Result,
                     EnterStreetAddressView.State> { upstream ->
-
 
                 upstream.scan(EnterStreetAddressView.State.initial())
                 { previousState,
@@ -103,16 +95,53 @@ class EnterStreetAddressViewModel @Inject constructor() {
                         }
 
                         is EnterStreetAddressView.Result.StreetAdditionalTextChange -> {
-                            previousState.copy(streetAdditional = result.text)
+                            previousState.copy(streetAdditional = result.text,
+                                               currentResult = result)
                         }
 
                         is EnterStreetAddressView.Result.Next -> {
-                            previousState
+                            previousState.copy(currentResult = result)
                         }
                     }
 
                 }.skip(1)
             }
+
+    private val viewStateToRenderState = ObservableTransformer<EnterStreetAddressView.State,
+            EnterStreetAddressView.RenderState> { upstream ->
+
+        upstream.map { viewState ->
+            when (viewState.currentResult) {
+
+                is EnterStreetAddressView.Result.StreetNameTextChange -> {
+                    EnterStreetAddressView.RenderState
+                            .SetButtonState(viewState.isButtonEnabled,
+                                            viewStateToParcelState(viewState))
+                }
+
+                is EnterStreetAddressView.Result.StreetNumberTextChange -> {
+                    EnterStreetAddressView.RenderState.Nothing(viewStateToParcelState(viewState))
+                }
+
+                is EnterStreetAddressView.Result.StreetAdditionalTextChange ->
+                    EnterStreetAddressView.RenderState.Nothing(viewStateToParcelState(viewState))
+
+                is EnterStreetAddressView.Result.Next ->
+
+                    with(viewState) {
+                        EnterStreetAddressView.RenderState.Next(
+                                SelectParticipantsView.Message
+                                        .StreetAddress(streetName,
+                                                       streetNumber,
+                                                       streetAdditional))
+                    }
+
+                null ->
+                    EnterStreetAddressView.RenderState.Nothing(viewStateToParcelState(viewState))
+
+            }
+        }
+    }
 
     private fun viewStateToParcelState(viewState: EnterStreetAddressView.State) =
             with(viewState) {

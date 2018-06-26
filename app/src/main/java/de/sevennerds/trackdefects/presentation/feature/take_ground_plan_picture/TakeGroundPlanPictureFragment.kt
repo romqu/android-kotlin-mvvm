@@ -125,7 +125,6 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
 
     private fun setupEvents() {
 
-
         compositeDisposable += takeGroundPlanPictureTakePictureBtn
                 .clicks()
                 .flatMap {

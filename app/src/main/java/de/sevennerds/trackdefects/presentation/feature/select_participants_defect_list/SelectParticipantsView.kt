@@ -3,6 +3,7 @@ package de.sevennerds.trackdefects.presentation.feature.select_participants_defe
 import android.os.Parcelable
 import androidx.recyclerview.widget.DiffUtil
 import com.wafflecopter.multicontactpicker.ContactResult
+import de.sevennerds.trackdefects.core.di.MessageQueue
 import kotlinx.android.parcel.Parcelize
 
 class SelectParticipantsView {
@@ -38,9 +39,10 @@ class SelectParticipantsView {
      * The "global" view state, kept in the ViewModel
      */
     data class State(val participantModelList: List<ParticipantModel>,
-                     val diffResult: DiffUtil.DiffResult?) {
+                     val diffResult: DiffUtil.DiffResult?,
+                     val render: RenderState) {
         companion object {
-            fun initial() = State(emptyList(), null)
+            fun initial() = State(emptyList(), null, RenderState.None)
         }
     }
 
@@ -55,6 +57,18 @@ class SelectParticipantsView {
                           val diffResult: DiffUtil.DiffResult) : RenderState()
 
         data class Init(val participantModelList: List<ParticipantModel>) : RenderState()
+
+        object None: RenderState()
+    }
+
+    sealed class RenderStateTest {
+        data class Add(val participantModelList: List<ParticipantModel>,
+                       val diffResult: DiffUtil.DiffResult) : RenderStateTest()
+
+        data class Remove(val participantModelList: List<ParticipantModel>,
+                          val diffResult: DiffUtil.DiffResult) : RenderStateTest()
+
+        data class Init(val participantModelList: List<ParticipantModel>) : RenderStateTest()
     }
 
     /**
@@ -62,6 +76,14 @@ class SelectParticipantsView {
      */
     @Parcelize
     data class StateParcel(val participantModelList: List<ParticipantModel>) : Parcelable
+
+    sealed class Message : MessageQueue.Message {
+
+        class StreetAddress(val streetName: String,
+                            val streetNumber: String,
+                            val streetAdditional: String) : Message()
+    }
+
 
 }
 

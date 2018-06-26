@@ -10,6 +10,7 @@ import com.jakewharton.rxbinding2.widget.afterTextChangeEvents
 import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
+import de.sevennerds.trackdefects.core.di.MessageQueue
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
 import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.navigation.SelectParticipantsKey
@@ -27,6 +28,10 @@ class EnterStreetAddressFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModel: EnterStreetAddressViewModel
+
+    @Inject
+    lateinit var messageQueue: MessageQueue
+
     private var stateParcel: EnterStreetAddressView.StateParcel? = null
     private var isRotation = false
 
@@ -115,18 +120,14 @@ class EnterStreetAddressFragment : BaseFragment() {
                                .map {
                                    EnterStreetAddressView.Event
                                            .StreetAdditionalTextChange(it.view().text.toString())
-                               }
+                               },
+                       enterStreetAddressNextBtn
+                               .clicks()
+                               .map { EnterStreetAddressView.Event.Next }
                 )
                 .compose(viewModel.eventToRenderState)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::render)
-
-        compositeDisposable += enterStreetAddressNextBtn
-                .clicks()
-                .subscribe {
-                    MainActivity[requireContext()]
-                            .navigateTo(SelectParticipantsKey())
-                }
     }
 
 
@@ -144,6 +145,17 @@ class EnterStreetAddressFragment : BaseFragment() {
 
                 is EnterStreetAddressView.RenderState.Nothing -> {
                     updateStateParcel(renderState.stateParcel)
+                }
+
+                is EnterStreetAddressView.RenderState.Next -> {
+
+                    messageQueue.pushMessageTo(
+                            SelectParticipantsKey(),
+                            renderState.message
+                    )
+
+                    MainActivity[requireContext()]
+                            .navigateTo(SelectParticipantsKey())
                 }
             }
 

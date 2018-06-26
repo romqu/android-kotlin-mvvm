@@ -28,7 +28,13 @@ import javax.inject.Inject
  * "viewState" is the global State, it's mutable. But only the variable itself, not the data it holds.
  * It gets never exposed to the view, only a parcelable version of it.
  */
-class SelectParticipantsViewModel @Inject constructor() {
+
+abstract class ViewModel<EVENT, RENDER_STATE> {
+    protected abstract val eventToRenderState: ObservableTransformer<EVENT, RENDER_STATE>
+}
+
+class SelectParticipantsViewModel @Inject constructor() :
+        ViewModel<SelectParticipantsView.Event, SelectParticipantsView.RenderState>() {
 
     private var viewState: SelectParticipantsView.State = SelectParticipantsView.State.initial()
 
@@ -40,7 +46,7 @@ class SelectParticipantsViewModel @Inject constructor() {
      * I'm not entirely sure how it works ^^
      * It makes use of what was presented here: https://speakerdeck.com/jakewharton/the-state-of-managing-state-with-rxjava-devoxx-us-2017?slide=180
      */
-    val eventTransformer = ObservableTransformer<SelectParticipantsView.Event,
+    override val eventToRenderState = ObservableTransformer<SelectParticipantsView.Event,
             SelectParticipantsView.RenderState> { observable ->
 
         observable.publish { shared ->
@@ -67,6 +73,17 @@ class SelectParticipantsViewModel @Inject constructor() {
         upstream.map { SelectParticipantsView.Result.Init(it.stateParcel) }
                 .compose(resultTransformer)
                 .map { SelectParticipantsView.RenderState.Init(it.participantModelList) }
+    }
+
+    private val eventInitToResult = ObservableTransformer<SelectParticipantsView.Event.Init,
+            SelectParticipantsView.Result> { upstream: Observable<SelectParticipantsView.Event.Init> ->
+
+        upstream.map { SelectParticipantsView.Result.Init(it.stateParcel) }
+    }
+
+    private val resultToViewState = ObservableTransformer<SelectParticipantsView.Result,
+            SelectParticipantsView.State> {
+
     }
 
 

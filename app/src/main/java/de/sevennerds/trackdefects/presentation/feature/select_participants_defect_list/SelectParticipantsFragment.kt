@@ -11,11 +11,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxbinding2.view.clicks
+import com.orhanobut.logger.Logger
 import com.wafflecopter.multicontactpicker.ContactResult
 import com.wafflecopter.multicontactpicker.MultiContactPicker
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.common.asObservable
+import de.sevennerds.trackdefects.core.di.MessageQueue
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
 import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.list.SelectParticipantsListAdapter
@@ -32,7 +34,11 @@ import javax.inject.Inject
  * Accesses the ViewModel via compose(eventTransformer)
  * Renders the state
  */
-class SelectParticipantsFragment : BaseFragment() {
+
+class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
+
+    @Inject
+    lateinit var messageQueue: MessageQueue
 
     companion object {
         private const val KEY_STATE = "KEY_STATE"
@@ -91,6 +97,9 @@ class SelectParticipantsFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
 
         setup()
+
+        messageQueue.requestMessages(getKey(),
+                                     this)
 
         init()
     }
@@ -174,7 +183,7 @@ class SelectParticipantsFragment : BaseFragment() {
                 .getOnItemClickListener()
                 .map { itemPosition ->
                     SelectParticipantsView.Event.Remove(itemPosition,
-                                                                                                                                        listAdapter.getList())
+                                                        listAdapter.getList())
                 }
                 .compose(viewModel.eventTransformer)
                 .subscribe(::render)
@@ -189,7 +198,7 @@ class SelectParticipantsFragment : BaseFragment() {
     private fun init() {
         compositeDisposable += Observable.fromCallable {
             SelectParticipantsView.Event.Init(state
-                                                                                                                                      ?: SelectParticipantsView.StateParcel(emptyList()))
+                                                      ?: SelectParticipantsView.StateParcel(emptyList()))
         }
                 .compose(viewModel.eventTransformer)
                 .subscribe(::render)
@@ -199,7 +208,7 @@ class SelectParticipantsFragment : BaseFragment() {
 
         compositeDisposable +=
                 SelectParticipantsView.Event.Add(contactResultList,
-                                                                                                                                 listAdapter.getList())
+                                                 listAdapter.getList())
                         .asObservable()
                         .compose(viewModel.eventTransformer)
                         .subscribe(::render)
@@ -241,4 +250,11 @@ class SelectParticipantsFragment : BaseFragment() {
                 addAllToList(newParticipantModeList)
                 diffResult?.dispatchUpdatesTo(this) ?: notifyDataSetChanged()
             }
+
+    override fun receiveMessage(message: MessageQueue.Message) {
+        when (message) {
+            is SelectParticipantsView.Message.StreetAddress ->
+                Logger.d(message.streetName)
+        }
+    }
 }

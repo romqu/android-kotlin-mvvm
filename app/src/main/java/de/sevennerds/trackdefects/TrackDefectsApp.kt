@@ -26,7 +26,6 @@ class TrackDefectsApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-
         initLeakCanary()
         initLogger()
         initStetho()

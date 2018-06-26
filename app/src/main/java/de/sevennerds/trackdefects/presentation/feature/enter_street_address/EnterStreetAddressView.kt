@@ -1,6 +1,7 @@
 package de.sevennerds.trackdefects.presentation.feature.enter_street_address
 
 import android.os.Parcelable
+import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.SelectParticipantsView
 import kotlinx.android.parcel.Parcelize
 
 class EnterStreetAddressView {
@@ -49,7 +50,7 @@ class EnterStreetAddressView {
     sealed class RenderState() {
         class SetButtonState(val isEnabled: Boolean, val stateParcel: StateParcel) : RenderState()
         class Nothing(val stateParcel: StateParcel) : RenderState()
-        object Next: RenderState()
+        class Next(val message: SelectParticipantsView.Message.StreetAddress): RenderState()
     }
 
     /**
