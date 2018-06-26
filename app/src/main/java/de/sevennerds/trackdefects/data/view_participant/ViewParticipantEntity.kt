@@ -7,21 +7,20 @@ import de.sevennerds.trackdefects.data.defect_list.DefectListEntity
         tableName = "view_participant",
         foreignKeys = [
             ForeignKey(
-                entity = DefectListEntity::class,
-                parentColumns = ["id"],
-                childColumns = ["street_address_id"],
-                onDelete = ForeignKey.CASCADE,
-                onUpdate = ForeignKey.CASCADE
+                    entity = DefectListEntity::class,
+                    parentColumns = ["id"],
+                    childColumns = ["street_address_id"],
+                    onDelete = ForeignKey.CASCADE,
+                    onUpdate = ForeignKey.CASCADE
             )
         ],
         indices = [
             Index(
-                    value = ["street_address_id"],
-                    name = "view_participant_street_address_idx"
+                    "email"
             )
         ]
 )
-data class ViewParticipantEntity(
+data class ViewParticipantEntity @JvmOverloads constructor(
 
         /**
          * @remoteId -- The backend primary key of the object
@@ -29,10 +28,10 @@ data class ViewParticipantEntity(
          * @streetAddressId -- FK relation with parent object StreetAddressEntity
          */
 
-        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long,
-        @ColumnInfo(name = "remote_id") val remoteId: Long,
-        @ColumnInfo(name = "defect_list_id") val defectListId: Long,
-        //@ColumnInfo(name = "street_address_id") val streetAddressId: Long, // Ignored for now because we dont have welldefined customer requirements.
+        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long = -1L,
+        @ColumnInfo(name = "remote_id") val remoteId: Long = -1L,
+        @ColumnInfo(name = "defect_list_id") val defectListId: Long = -1L,
+        @ColumnInfo(name = "street_address_id") val streetAddressId: Long = -1L, // Ignored for now because we dont have welldefined customer requirements.
         @ColumnInfo(name = "forename") val forename: String,
         @ColumnInfo(name = "surname") val surname: String,
         @ColumnInfo(name = "phone_number") val phoneNumber: Int,

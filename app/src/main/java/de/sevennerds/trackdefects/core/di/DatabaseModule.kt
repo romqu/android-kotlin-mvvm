@@ -9,6 +9,7 @@ import de.sevennerds.trackdefects.data.LocalDataSource
 import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
 import de.sevennerds.trackdefects.data.defect_image.DefectImageLocalDataSource
 import de.sevennerds.trackdefects.data.defect_info.DefectInfoLocalDataSource
+import de.sevennerds.trackdefects.data.defect_list.DefectListRepository
 import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSource
 import de.sevennerds.trackdefects.data.floor.FloorLocalDataSource
 import de.sevennerds.trackdefects.data.floor_plan.FloorPlanLocalDataSource
@@ -69,6 +70,12 @@ abstract class DatabaseModule {
         @Provides
         @Singleton
         @JvmStatic
+        fun provideFloorPlanLocalDataSrouce(localDataSource: LocalDataSource): FloorPlanLocalDataSource
+        = localDataSource.floorPlan
+
+        @Provides
+        @Singleton
+        @JvmStatic
         fun provideLivingUnitLocalDataSource(localDataSource: LocalDataSource): LivingUnitLocalDataSource =
                 localDataSource.livingUnit()
 
@@ -93,23 +100,39 @@ abstract class DatabaseModule {
         @Provides
         @Singleton
         @JvmStatic
-        fun provideFloorPlanRepository(floorPlanLocalDataSource: FloorPlanLocalDataSource): FloorPlanRepository {
-            return FloorPlanRepository(floorPlanLocalDataSource)
-        }
+        fun provideDefectListRepository(
+                defectListLocalDataSource: DefectListLocalDataSource,
+                localDataSource: LocalDataSource,
+                floorPlanRepository: FloorPlanRepository,
+                streetAddressRepository: StreetAddressRepository,
+                viewParticipantRepository: ViewParticipantRepository
+        ): DefectListRepository =
+                DefectListRepository(
+                        defectListLocalDataSource,
+                        localDataSource,
+                        streetAddressRepository,
+                        viewParticipantRepository,
+                        floorPlanRepository
+                )
 
         @Provides
         @Singleton
         @JvmStatic
-        fun provideViewParticipantRepository(viewParticipantLocalDataSource: ViewParticipantLocalDataSource): ViewParticipantRepository {
-            return ViewParticipantRepository(viewParticipantLocalDataSource)
-        }
+        fun provideFloorPlanRepository(floorPlanLocalDataSource: FloorPlanLocalDataSource): FloorPlanRepository =
+                FloorPlanRepository(floorPlanLocalDataSource)
 
         @Provides
         @Singleton
         @JvmStatic
-        fun provideStreetAddressRepository(streetAddressLocalDataSource: StreetAddressLocalDataSource): StreetAddressRepository {
-            return StreetAddressRepository(streetAddressLocalDataSource)
-        }
+        fun provideViewParticipantRepository(viewParticipantLocalDataSource: ViewParticipantLocalDataSource): ViewParticipantRepository =
+                ViewParticipantRepository(viewParticipantLocalDataSource)
+
+        @Provides
+        @Singleton
+        @JvmStatic
+        fun provideStreetAddressRepository(streetAddressLocalDataSource: StreetAddressLocalDataSource): StreetAddressRepository =
+            StreetAddressRepository(streetAddressLocalDataSource)
+
     }
 
 }

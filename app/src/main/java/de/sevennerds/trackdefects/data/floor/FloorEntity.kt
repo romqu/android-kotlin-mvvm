@@ -18,8 +18,7 @@ import de.sevennerds.trackdefects.data.street_address.StreetAddressEntity
         ],
         indices = [
             Index(
-                    value = ["street_address_id"],
-                    name = "floor_street_address_idx"
+                    "street_address_id"
             )
         ]
 )

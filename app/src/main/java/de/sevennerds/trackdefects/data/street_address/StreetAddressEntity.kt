@@ -19,16 +19,16 @@ import de.sevennerds.trackdefects.data.view_participant.ViewParticipantEntity
         ],
         indices = [
             Index(
-                    value = ["defect_list_id"],
-                    name = "street_address_defect_list_idx"
+                    "defect_list_id"
             )
         ]
 )
 data class StreetAddressEntity @JvmOverloads constructor(
-        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long,
-        @ColumnInfo(name = "remote_id") val remoteId: Long,
-        @ColumnInfo(name = "defect_list_id") val defectListId: Long,
+        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long = -1L,
+        @ColumnInfo(name = "remote_id") val remoteId: Long = -1L,
+        @ColumnInfo(name = "defect_list_id") val defectListId: Long = -1L,
         @ColumnInfo(name = "name") val name: String,
+        @ColumnInfo(name = "city") val city: String,
         @ColumnInfo(name = "postal_code") val postalCode: Int,
         @ColumnInfo(name = "number") val number: Int,
         @ColumnInfo(name = "additional") val additional: String,
