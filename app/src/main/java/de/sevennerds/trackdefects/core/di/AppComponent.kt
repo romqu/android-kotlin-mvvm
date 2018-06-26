@@ -9,12 +9,15 @@ import de.sevennerds.trackdefects.presentation.feature.take_ground_plan_picture.
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [
-    AppModule::class,
-    ContextModule::class,
-    DatabaseModule::class,
-    NetworkModule::class,
-    LruCacheModule::class])
+@Component(
+        modules = [
+            AppModule::class,
+            ContextModule::class,
+            DatabaseModule::class,
+            NetworkModule::class,
+            LruCacheModule::class
+        ]
+)
 interface AppComponent {
 
     fun inject(mainActivity: MainActivity)

@@ -93,22 +93,22 @@ abstract class DatabaseModule {
         @Provides
         @Singleton
         @JvmStatic
-        fun provideFloorPlanRepository(localDataSource: LocalDataSource, floorPlanLocalDataSource: FloorPlanLocalDataSource): FloorPlanRepository {
-            return FloorPlanRepository(floorPlanLocalDataSource, localDataSource)
+        fun provideFloorPlanRepository(floorPlanLocalDataSource: FloorPlanLocalDataSource): FloorPlanRepository {
+            return FloorPlanRepository(floorPlanLocalDataSource)
         }
 
         @Provides
         @Singleton
         @JvmStatic
-        fun provideViewParticipantRepository(ViewParticipantLocalDataSource: ViewParticipantLocalDataSource): ViewParticipantRepository {
-            return ViewParticipantRepository(ViewParticipantLocalDataSource)
+        fun provideViewParticipantRepository(viewParticipantLocalDataSource: ViewParticipantLocalDataSource): ViewParticipantRepository {
+            return ViewParticipantRepository(viewParticipantLocalDataSource)
         }
 
         @Provides
         @Singleton
         @JvmStatic
-        fun provideStreetAddressRepository(StreetAddressLocalDataSource: StreetAddressLocalDataSource): StreetAddressRepository {
-            return StreetAddressRepository(StreetAddressLocalDataSource)
+        fun provideStreetAddressRepository(streetAddressLocalDataSource: StreetAddressLocalDataSource): StreetAddressRepository {
+            return StreetAddressRepository(streetAddressLocalDataSource)
         }
     }
 

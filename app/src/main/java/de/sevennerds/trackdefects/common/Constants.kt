@@ -7,6 +7,11 @@ class Constants {
     companion object Database {
 
         /**
+         * API
+         */
+        const val BASE_API_URL = "http://10.0.2.2:3000/"
+
+        /**
          * DATABASE
          */
 
