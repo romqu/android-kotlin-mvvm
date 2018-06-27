@@ -29,15 +29,12 @@ import javax.inject.Inject
  * It gets never exposed to the view, only a parcelable version of it.
  */
 
-abstract class ViewModel<EVENT, RENDER_STATE> {
-    protected abstract val eventToRenderState: ObservableTransformer<EVENT, RENDER_STATE>
+abstract class ViewModel<EVENT, STATE> {
+    abstract val eventToRenderState: ObservableTransformer<EVENT, STATE>
 }
 
 class SelectParticipantsViewModel @Inject constructor() :
-        ViewModel<SelectParticipantsView.Event, SelectParticipantsView.RenderState>() {
-
-    private var viewState: SelectParticipantsView.State = SelectParticipantsView.State.initial()
-
+        ViewModel<SelectParticipantsView.Event, SelectParticipantsView.State>() {
 
     /**
      * This transformer is used by the the view (here Fragment).
@@ -47,32 +44,21 @@ class SelectParticipantsViewModel @Inject constructor() :
      * It makes use of what was presented here: https://speakerdeck.com/jakewharton/the-state-of-managing-state-with-rxjava-devoxx-us-2017?slide=180
      */
     override val eventToRenderState = ObservableTransformer<SelectParticipantsView.Event,
-            SelectParticipantsView.RenderState> { observable ->
+            SelectParticipantsView.State> { observable ->
 
         observable.publish { shared ->
             Observable
                     .merge(shared.ofType(
                             SelectParticipantsView.Event.Init::class.java)
-                                   .compose(initTransformer),
+                                   .compose(eventInitToResult),
                            shared.ofType(
                                    SelectParticipantsView.Event.Add::class.java)
-                                   .compose(addParticipantsTransformer),
+                                   .compose(eventAddParticipantsToResult),
                            shared.ofType(
                                    SelectParticipantsView.Event.Remove::class.java)
-                                   .compose(removeParticipantTransformer))
+                                   .compose(eventRemoveParticipantToResult))
+                    .compose(resultToViewState)
         }
-    }
-
-
-    /**
-     * returns the initial render state, which only consists of a list
-     */
-    private val initTransformer = ObservableTransformer<SelectParticipantsView.Event.Init,
-            SelectParticipantsView.RenderState> { upstream: Observable<SelectParticipantsView.Event.Init> ->
-
-        upstream.map { SelectParticipantsView.Result.Init(it.stateParcel) }
-                .compose(resultToViewState)
-                .map { SelectParticipantsView.RenderState.Init(it.participantModelList) }
     }
 
     private val eventInitToResult = ObservableTransformer<SelectParticipantsView.Event.Init,
@@ -142,91 +128,6 @@ class SelectParticipantsViewModel @Inject constructor() :
 
 
     /**
-     * it receives the people selected from the contact picker plus the current view participant list,
-     * maps them into a ParticipantModel, calculates the Diff with DiffUtil
-     * and turn that into a Result (comes from the domain layer)
-     * it then forwards it to the resultToViewState and uses the returned ViewState to form a RenderState for the ui
-     */
-    private val addParticipantsTransformer = ObservableTransformer<SelectParticipantsView.Event.Add,
-            SelectParticipantsView.RenderState> { upstream ->
-
-        upstream.flatMap { addParticipantsEvent ->
-
-            val (contactResultList, currentViewParticipantList) = addParticipantsEvent
-
-            contactResultList
-                    // domain layer
-                    .toObservable()
-                    .map { contactResult ->
-                        ParticipantModel(
-                                contactResult.displayName,
-                                contactResult.phoneNumbers.firstOrNull() ?: "",
-                                contactResult.emails.firstOrNull() ?: "")
-                    }
-                    .toList()
-                    .toObservable()
-                    // TODO: DO IT WITH WITH RX JAVA
-                    .map { participantModelList ->
-                        participantModelList
-                                .union(currentViewParticipantList)
-                                .distinctBy { it.phoneNumber }
-                                .toList()
-                    }
-                    .map { newParticipantModelList ->
-                        SelectParticipantsView.Result.Add(DiffUtil.calculateDiff(
-                                BaseDiffCallback(
-                                        currentViewParticipantList,
-                                        newParticipantModelList)), newParticipantModelList)
-                    }
-                    // presentation
-                    .compose(resultToViewState)
-                    .map { viewState ->
-                        SelectParticipantsView.RenderState.Add(
-                                viewState.participantModelList,
-                                viewState.diffResult!!)
-                    }
-                    .applySchedulers()
-        }
-
-    }
-
-    /**
-     * Pretty much same as above, only that it removes the selected view participant from the list
-     */
-    private val removeParticipantTransformer = ObservableTransformer<SelectParticipantsView.Event.Remove,
-            SelectParticipantsView.RenderState> { observable ->
-
-        observable.flatMap { removeContactEvent ->
-
-            val (contactPosition, currentContactModelList) = removeContactEvent
-
-            currentContactModelList
-                    .toObservable()
-                    // domain
-                    .filter { contactModel ->
-                        contactModel != currentContactModelList[contactPosition]
-                    }
-                    .toList()
-                    .toObservable()
-                    .map { newContactModelList ->
-                        SelectParticipantsView.Result.Remove(
-                                newContactModelList,
-                                DiffUtil.calculateDiff(
-                                        BaseDiffCallback(currentContactModelList,
-                                                         newContactModelList)))
-                    }
-                    .compose(resultToViewState)
-                    .map { viewState ->
-                        SelectParticipantsView.RenderState.Remove(
-                                viewState.participantModelList,
-                                viewState.diffResult!!)
-                    }
-                    .applySchedulers()
-        }
-    }
-
-
-    /**
      * I use skip(1) because the Init case gets called anyway, so I would receive two "Init" states.
      * This makes the version of scan with a seed kinda useless tho. I just supplied one, because
      * "previousState" is then of type SelectParticipantsView.State, instead of SelectParticipantsView.Result
@@ -234,37 +135,30 @@ class SelectParticipantsViewModel @Inject constructor() :
     private val resultToViewState = ObservableTransformer<SelectParticipantsView.Result,
             SelectParticipantsView.State> { upstream ->
 
-        upstream.scan(SelectParticipantsView.State.initial()) { previousState, result ->
+        upstream.scan(SelectParticipantsView.State.initial()) { previousState,
+                                                                result ->
 
             when (result) {
 
                 is SelectParticipantsView.Result.Init -> {
-                    viewState = previousState.copy(participantModelList = result.stateParcel.participantModelList)
-                    viewState
+
+                    previousState.copy(participantModelList = result.stateParcel.participantModelList,
+                                       renderState = SelectParticipantsView.RenderState.Init)
                 }
 
 
                 is SelectParticipantsView.Result.Add -> {
-                    viewState = previousState.copy(participantModelList = result.participantModelList,
-                                                   diffResult = result.diffResult)
-                    viewState
+                    previousState.copy(participantModelList = result.participantModelList,
+                                       renderState = SelectParticipantsView.RenderState.Add(result.diffResult))
                 }
 
                 is SelectParticipantsView.Result.Remove -> {
-                    viewState = previousState.copy(participantModelList = result.participantModelList,
-                                                   diffResult = result.diffResult)
-                    viewState
+                    previousState.copy(participantModelList = result.participantModelList,
+                                       renderState = SelectParticipantsView.RenderState.Remove(result.diffResult))
                 }
             }
         }.skip(1)
     }
-
-    /**
-     * The parcel version of the view state, because some (well, for now one) attributes are not needed
-     * DiffResult in this case, which is not parcelable anyway.
-     */
-    fun getViewStateParcel(): SelectParticipantsView.StateParcel =
-            SelectParticipantsView.StateParcel(viewState.participantModelList)
 
 }
 

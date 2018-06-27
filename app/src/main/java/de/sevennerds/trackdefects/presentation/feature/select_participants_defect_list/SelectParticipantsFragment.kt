@@ -110,8 +110,6 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
 
         isRotation = true
 
-        state = viewModel.getViewStateParcel()
-
         compositeDisposable.clear()
     }
 
@@ -157,7 +155,7 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
     }
 
     private fun setupActionBar() {
-        MainActivity[context!!].supportActionBar?.title = "Teilnehmer"
+        MainActivity[requireContext()].supportActionBar?.title = "Teilnehmer"
     }
 
     private fun setupRecyclerView() {
@@ -170,6 +168,8 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
     }
 
     private fun setupEvents() {
+
+        Observable.merge()
 
         compositeDisposable += select_participants_fab
                 .clicks()
@@ -185,13 +185,13 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
                     SelectParticipantsView.Event.Remove(itemPosition,
                                                         listAdapter.getList())
                 }
-                .compose(viewModel.eventTransformer)
+                .compose(viewModel.eventToRenderState)
                 .subscribe(::render)
 
         compositeDisposable += select_participants_next_skip_btn
                 .clicks()
                 .subscribe {
-                    MainActivity[context!!].navigateTo(TakeGroundPlanPictureKey())
+                    MainActivity[requireContext()].navigateTo(TakeGroundPlanPictureKey())
                 }
     }
 
@@ -200,7 +200,7 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
             SelectParticipantsView.Event.Init(state
                                                       ?: SelectParticipantsView.StateParcel(emptyList()))
         }
-                .compose(viewModel.eventTransformer)
+                .compose(viewModel.eventToRenderState)
                 .subscribe(::render)
     }
 
@@ -210,26 +210,28 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
                 SelectParticipantsView.Event.Add(contactResultList,
                                                  listAdapter.getList())
                         .asObservable()
-                        .compose(viewModel.eventTransformer)
+                        .compose(viewModel.eventToRenderState)
                         .subscribe(::render)
     }
 
-    private fun render(renderState: SelectParticipantsView.RenderState) {
+    private fun render(viewState: SelectParticipantsView.State) {
 
-        return when (renderState) {
+        return when (viewState.renderState) {
 
             is SelectParticipantsView.RenderState.Init ->
-                updateList(renderState.participantModelList)
+                updateList(viewState.participantModelList)
 
             is SelectParticipantsView.RenderState.Add -> {
 
-                updateList(renderState.participantModelList,
-                           renderState.diffResult)
+                updateList(viewState.participantModelList,
+                           viewState.renderState.diffResult)
             }
 
             is SelectParticipantsView.RenderState.Remove -> {
-                updateList(renderState.participantModelList,
-                           renderState.diffResult)
+                updateList(viewState.participantModelList,
+                           viewState.renderState.diffResult)
+            }
+            SelectParticipantsView.RenderState.None -> {
             }
         }
     }
