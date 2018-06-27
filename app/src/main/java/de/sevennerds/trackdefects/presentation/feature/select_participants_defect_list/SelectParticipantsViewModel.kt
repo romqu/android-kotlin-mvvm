@@ -71,7 +71,7 @@ class SelectParticipantsViewModel @Inject constructor() :
             SelectParticipantsView.RenderState> { upstream: Observable<SelectParticipantsView.Event.Init> ->
 
         upstream.map { SelectParticipantsView.Result.Init(it.stateParcel) }
-                .compose(resultTransformer)
+                .compose(resultToViewState)
                 .map { SelectParticipantsView.RenderState.Init(it.participantModelList) }
     }
 
@@ -140,17 +140,12 @@ class SelectParticipantsViewModel @Inject constructor() :
         }
     }
 
-    private val resultToViewState = ObservableTransformer<SelectParticipantsView.Result,
-            SelectParticipantsView.State> {
-
-    }
-
 
     /**
      * it receives the people selected from the contact picker plus the current view participant list,
      * maps them into a ParticipantModel, calculates the Diff with DiffUtil
      * and turn that into a Result (comes from the domain layer)
-     * it then forwards it to the resultTransformer and uses the returned ViewState to form a RenderState for the ui
+     * it then forwards it to the resultToViewState and uses the returned ViewState to form a RenderState for the ui
      */
     private val addParticipantsTransformer = ObservableTransformer<SelectParticipantsView.Event.Add,
             SelectParticipantsView.RenderState> { upstream ->
@@ -184,7 +179,7 @@ class SelectParticipantsViewModel @Inject constructor() :
                                         newParticipantModelList)), newParticipantModelList)
                     }
                     // presentation
-                    .compose(resultTransformer)
+                    .compose(resultToViewState)
                     .map { viewState ->
                         SelectParticipantsView.RenderState.Add(
                                 viewState.participantModelList,
@@ -220,7 +215,7 @@ class SelectParticipantsViewModel @Inject constructor() :
                                         BaseDiffCallback(currentContactModelList,
                                                          newContactModelList)))
                     }
-                    .compose(resultTransformer)
+                    .compose(resultToViewState)
                     .map { viewState ->
                         SelectParticipantsView.RenderState.Remove(
                                 viewState.participantModelList,
@@ -236,10 +231,11 @@ class SelectParticipantsViewModel @Inject constructor() :
      * This makes the version of scan with a seed kinda useless tho. I just supplied one, because
      * "previousState" is then of type SelectParticipantsView.State, instead of SelectParticipantsView.Result
      */
-    private val resultTransformer = ObservableTransformer<SelectParticipantsView.Result,
+    private val resultToViewState = ObservableTransformer<SelectParticipantsView.Result,
             SelectParticipantsView.State> { upstream ->
 
-        upstream.scan(viewState) { previousState, result ->
+        upstream.scan(SelectParticipantsView.State.initial()) { previousState, result ->
+
             when (result) {
 
                 is SelectParticipantsView.Result.Init -> {
