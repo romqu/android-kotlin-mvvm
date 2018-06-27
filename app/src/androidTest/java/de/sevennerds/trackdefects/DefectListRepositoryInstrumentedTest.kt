@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.test.InstrumentationRegistry
 import androidx.test.filters.LargeTest
 import androidx.test.runner.AndroidJUnit4
+import de.sevennerds.trackdefects.core.di.AppComponent
 import de.sevennerds.trackdefects.core.di.AppModule
 import de.sevennerds.trackdefects.core.di.DaggerAppComponent
 import de.sevennerds.trackdefects.data.defect_list.DefectListEntity
@@ -20,12 +21,16 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class DefectListRepositoryInstrumentedTest {
 
-    private val cmp = DaggerAppComponent.builder()
-            .appModule(
-                    AppModule(
-                            InstrumentationRegistry.getTargetContext().applicationContext as Application
-                    )
-            ).build()
+    private val cmp: AppComponent by lazy {
+        DaggerAppComponent
+                .builder()
+                .appModule(
+                        AppModule(
+                                InstrumentationRegistry.getTargetContext().applicationContext as Application
+                        )
+                )
+                .build()
+    }
 
     @Before
     fun setup() {
@@ -72,8 +77,6 @@ class DefectListRepositoryInstrumentedTest {
         )
 
         val defectListEntity = DefectListEntity(
-                -1L,
-                -1L,
                 "kaput fenster",
                 "2017-10-03T03:20:11.687+02:00",
                 floorPlanEntity,
@@ -84,7 +87,7 @@ class DefectListRepositoryInstrumentedTest {
         cmp.defectRepository().insert(defectListEntity)
                 .test()
                 .assertResult(
-                    Result.success(defectListEntity)
+                        Result.success(defectListEntity)
                 )
     }
 

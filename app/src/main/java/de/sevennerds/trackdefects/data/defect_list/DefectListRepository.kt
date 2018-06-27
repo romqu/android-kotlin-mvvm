@@ -27,32 +27,55 @@ class DefectListRepository @Inject constructor(
     fun insert(defectListEntity: DefectListEntity): Single<Result<DefectListEntity>> =
             Single.fromCallable {
 
-                val streetAddressEntity = defectListEntity.streetAddressEntity
-                val viewParticipantEntity = defectListEntity.viewParticipantEntity
-                val floorPlanEntity = defectListEntity.floorPlanEntity
-
                 localDataSource.runInTransaction(Callable {
 
                     val defectListId = defectListLocalDataSource.insert(defectListEntity)
+
+                    val streetAddressEntity = defectListEntity.streetAddressEntity!!.copy(
+                            defectListId = defectListId
+                    )
+                    val streetAddressEntityId = streetAddressRepository.insert(streetAddressEntity)
+
+
+                    val viewParticipantEntity = defectListEntity.viewParticipantEntity!!.copy(
+                            defectListId = defectListId
+                    )
+
+                    val viewParticipantEntityId = viewParticipantRepository.insert(viewParticipantEntity)
+
+                    
+                    val id: Long = when (viewParticipantEntityId) {
+                        is Result.Success<Long> -> viewParticipantEntityId.data
+                        //is Result.Failure<> -> 0L
+                        else -> 0L
+                    }
+
+                    val floorPlanEntity = defectListEntity.floorPlanEntity!!.copy(
+                            defectListId = defectListId
+                    )
+
+                    val floorPlanEntityId = floorPlanRepository.insert(floorPlanEntity)
+
+
+                    val newStreetAddressEntity = streetAddressEntity.copy(
+                            id = streetAddressEntityId
+                    )
+
+                    val newViewParticipantEntity = viewParticipantEntity.copy(
+                            id = viewParticipantEntityId
+                    )
+
+                    val newFloorPlanEntity = floorPlanEntity.copy(
+                            id = floorPlanEntityId
+                    )
+
+                    // we add the newfloorplan shit and view here aswell then we win
                     val newDefectListEntity = defectListEntity.copy(
-                            id = defectListId
+                            id = defectListId,
+                            floorPlanEntity = newFloorPlanEntity,
+                            viewParticipantEntity = newViewParticipantEntity,
+                            streetAddressEntity = newStreetAddressEntity
                     )
-
-                    val newStreetAddressEntity = streetAddressEntity!!.copy(
-                            defectListId = defectListId
-                    )
-                    streetAddressRepository.insert(newStreetAddressEntity)
-
-                    val newViewParticipantEntity = viewParticipantEntity!!.copy(
-                            defectListId = defectListId
-                    )
-
-                    viewParticipantRepository.insert(newViewParticipantEntity)
-
-                    val newFloorPlanEntity = floorPlanEntity!!.copy(
-                            defectListId = defectListId
-                    )
-                    floorPlanRepository.insert(newFloorPlanEntity)
                     Result.Success(newDefectListEntity)
                 })
             }

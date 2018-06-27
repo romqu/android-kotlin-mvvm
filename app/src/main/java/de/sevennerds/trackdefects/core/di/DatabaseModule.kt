@@ -35,7 +35,8 @@ abstract class DatabaseModule(private val context: Context) {
         @JvmStatic
         fun provideRoom(context: Context): LocalDataSource =
                 Room.databaseBuilder(context, LocalDataSource::class.java, DATABASE_NAME)
-                        .openHelperFactory(RequerySQLiteOpenHelperFactory()).build()
+                        .openHelperFactory(RequerySQLiteOpenHelperFactory())
+                        .build()
 
         @Provides
         @Singleton
