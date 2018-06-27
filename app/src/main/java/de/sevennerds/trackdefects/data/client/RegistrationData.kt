@@ -7,5 +7,5 @@ import com.squareup.moshi.JsonClass
 data class RegistrationData(
         @Json(name = "login_credentials") val loginCredentials: LoginCredentials,
         @Json(name = "client") val client: Client
-){
+) {
 }

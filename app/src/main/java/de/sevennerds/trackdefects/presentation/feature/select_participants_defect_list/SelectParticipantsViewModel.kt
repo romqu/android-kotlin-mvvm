@@ -47,13 +47,13 @@ class SelectParticipantsViewModel @Inject constructor() {
             Observable
                     .merge(shared.ofType(
                             SelectParticipantsView.Event.Init::class.java)
-                                   .compose(initTransformer),
-                           shared.ofType(
-                                   SelectParticipantsView.Event.Add::class.java)
-                                   .compose(addParticipantsTransformer),
-                           shared.ofType(
-                                   SelectParticipantsView.Event.Remove::class.java)
-                                   .compose(removeParticipantTransformer))
+                            .compose(initTransformer),
+                            shared.ofType(
+                                    SelectParticipantsView.Event.Add::class.java)
+                                    .compose(addParticipantsTransformer),
+                            shared.ofType(
+                                    SelectParticipantsView.Event.Remove::class.java)
+                                    .compose(removeParticipantTransformer))
         }
     }
 
@@ -142,7 +142,7 @@ class SelectParticipantsViewModel @Inject constructor() {
                                 newContactModelList,
                                 DiffUtil.calculateDiff(
                                         BaseDiffCallback(currentContactModelList,
-                                                         newContactModelList)))
+                                                newContactModelList)))
                     }
                     .compose(resultTransformer)
                     .map { viewState ->
@@ -174,13 +174,13 @@ class SelectParticipantsViewModel @Inject constructor() {
 
                 is SelectParticipantsView.Result.Add -> {
                     viewState = previousState.copy(participantModelList = result.participantModelList,
-                                                   diffResult = result.diffResult)
+                            diffResult = result.diffResult)
                     viewState
                 }
 
                 is SelectParticipantsView.Result.Remove -> {
                     viewState = previousState.copy(participantModelList = result.participantModelList,
-                                                   diffResult = result.diffResult)
+                            diffResult = result.diffResult)
                     viewState
                 }
             }

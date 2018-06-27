@@ -15,7 +15,6 @@ import io.reactivex.Observable
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.util.stream.Collectors
 
 
 class FileRepository {
@@ -51,7 +50,7 @@ class FileRepository {
                     Logger.d("Loading: $it")
                 }.map {
                     Result.success(data = it) as Result<String>
-                }.defaultIfEmpty (
+                }.defaultIfEmpty(
                         Result.failure(Error.FileNotFoundError(FILE_NOT_FOUND))
                 ).doOnError {
                     Logger.d("Loading file failed: $it")
@@ -64,30 +63,30 @@ class FileRepository {
     fun loadAll(fileNameList: List<String>): Observable<Result<String>> {
         return Observable.fromIterable(fileNameList).doOnNext {
             Logger.d("Loading file: $it")
-        }.flatMap {
-            it -> load(it)
-        }.toList().map {
-            it -> if (!it.contains(Result.failure(Error.FileNotFoundError(FILE_NOT_FOUND)))) {
+        }.flatMap { it ->
+            load(it)
+        }.toList().map { it ->
+            if (!it.contains(Result.failure(Error.FileNotFoundError(FILE_NOT_FOUND)))) {
                 Result.success(it) as Result<String>
             } else {
                 Result.failure(Error.FileNotFoundError(FILE_NOT_FOUND))
             }
         }.toObservable().onErrorReturn {
             Result.failure(Error.FileNotFoundError(FILE_NOT_FOUND))
-        }.doOnError {
-            it -> Logger.d("Error: $it")
+        }.doOnError { it ->
+            Logger.d("Error: $it")
         }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun save(input: FileEntity<Bitmap>): Observable<Result<String>> {
         return Observable.just(input)
-                .map {
-                    it -> File(FILES_PATH, it.name + JPEG_FILE_EXTENSION)
-                }.filter {
-                    it -> !it.exists() && FileUtil.isWritable()
-                }.map {
-                    it -> FileOutputStream(it)
+                .map { it ->
+                    File(FILES_PATH, it.name + JPEG_FILE_EXTENSION)
+                }.filter { it ->
+                    !it.exists() && FileUtil.isWritable()
+                }.map { it ->
+                    FileOutputStream(it)
                 }.map { it ->
                     it.use {
                         input.data.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, it)
@@ -104,18 +103,18 @@ class FileRepository {
 
     @Suppress("UNCHECKED_CAST")
     fun saveAll(fileEntityList: List<FileEntity<Bitmap>>): Observable<Result<String>> {
-        return Observable.fromIterable(fileEntityList).doOnNext {
-            it -> Logger.d("Saving file: $it")
-        }.flatMap {
-            it -> save(it)
-        }.toList().toObservable().map {
-                it -> if (it.contains(Result.failure(Error.DuplicateFileError(DUPLICATE_FILE)))) {
-                    Result.failure(Error.DuplicateFileError(DUPLICATE_FILE))
-                } else {
-                    Result.success(Unit) as Result<String>
-                }
-        }.doOnError {
-            it -> Logger.d("Error occured: $it")
+        return Observable.fromIterable(fileEntityList).doOnNext { it ->
+            Logger.d("Saving file: $it")
+        }.flatMap { it ->
+            save(it)
+        }.toList().toObservable().map { it ->
+            if (it.contains(Result.failure(Error.DuplicateFileError(DUPLICATE_FILE)))) {
+                Result.failure(Error.DuplicateFileError(DUPLICATE_FILE))
+            } else {
+                Result.success(Unit) as Result<String>
+            }
+        }.doOnError { it ->
+            Logger.d("Error occured: $it")
         }.onErrorReturn {
             Result.failure(Error.SavingFiles(SAVING_FILES_FAILED))
         }
@@ -139,18 +138,19 @@ class FileRepository {
              *  if expression is true proceed to next
              */
 
-            it -> it.exists()
+            it ->
+            it.exists()
 
         }.doOnNext {
             Logger.d("Request exists in filesystem: ${it.exists()}")
             Logger.d("Deletion requested on: $it")
-        }.map {
-            it -> it.delete()
+        }.map { it ->
+            it.delete()
             Result.success(FILE_DELETED)
         }.onErrorReturn {
             Result.failure(Error.FileNotFoundError(it.toString()))
         }.defaultIfEmpty(
-            Result.failure(Error.FileNotFoundError(FILE_NOT_FOUND))
+                Result.failure(Error.FileNotFoundError(FILE_NOT_FOUND))
         )
     }
 
@@ -158,18 +158,18 @@ class FileRepository {
     fun deleteAll(fileList: List<File>): Observable<Result<String>> {
         return Observable.fromIterable(fileList).doOnNext {
             Logger.d("Saving file: $it")
-        }.flatMap {
-            it -> delete(it)
-        }.toList().toObservable().map {
-            it -> if (it.contains(Result.failure(Error.FileNotFoundError(FILE_NOT_FOUND)))) {
+        }.flatMap { it ->
+            delete(it)
+        }.toList().toObservable().map { it ->
+            if (it.contains(Result.failure(Error.FileNotFoundError(FILE_NOT_FOUND)))) {
                 Result.failure(Error.DeletionFailed(DELETION_FAILED))
             } else {
                 Result.success(FILES_DELETED)
             }
         }.doOnError {
             Logger.d("Error: $it")
-        }.onErrorReturn {
-            it -> Result.failure(Error.DeletionFailed(it.toString()))
+        }.onErrorReturn { it ->
+            Result.failure(Error.DeletionFailed(it.toString()))
         }
     }
 }

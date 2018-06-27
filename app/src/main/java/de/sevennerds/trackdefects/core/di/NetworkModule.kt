@@ -4,7 +4,6 @@ import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import de.sevennerds.trackdefects.common.Constants.Database.BASE_API_URL
-import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
 import de.sevennerds.trackdefects.data.client.net.ClientNetDataSource
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory

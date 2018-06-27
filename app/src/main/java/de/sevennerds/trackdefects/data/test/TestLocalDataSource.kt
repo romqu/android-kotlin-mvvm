@@ -1,9 +1,6 @@
 package de.sevennerds.trackdefects.data.test
 
 import androidx.room.*
-import de.sevennerds.trackdefects.data.client.ClientEntity
-import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
-import io.reactivex.Flowable
 import io.reactivex.Single
 
 @Database(
@@ -12,7 +9,7 @@ import io.reactivex.Single
         ],
         version = 1
 )
-abstract class TestLocalDb: RoomDatabase() {
+abstract class TestLocalDb : RoomDatabase() {
     abstract fun test(): TestLocalData
 }
 

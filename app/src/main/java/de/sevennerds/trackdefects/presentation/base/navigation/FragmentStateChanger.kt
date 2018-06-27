@@ -15,15 +15,15 @@ class FragmentStateChanger(
             when (stateChange.direction) {
                 StateChange.FORWARD -> {
                     setCustomAnimations(R.anim.slide_in_from_right,
-                                        R.anim.slide_out_to_left,
-                                        R.anim.slide_in_from_right,
-                                        R.anim.slide_out_to_left)
+                            R.anim.slide_out_to_left,
+                            R.anim.slide_in_from_right,
+                            R.anim.slide_out_to_left)
                 }
                 StateChange.BACKWARD -> {
                     setCustomAnimations(R.anim.slide_in_from_left,
-                                        R.anim.slide_out_to_right,
-                                        R.anim.slide_in_from_left,
-                                        R.anim.slide_out_to_right)
+                            R.anim.slide_out_to_right,
+                            R.anim.slide_in_from_left,
+                            R.anim.slide_out_to_right)
                 }
             }
 

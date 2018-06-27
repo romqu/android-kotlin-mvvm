@@ -2,7 +2,6 @@ package de.sevennerds.trackdefects.domain.defect_list
 
 import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.common.Constants.Database.DATABASE_TRANSACTION_FAILED
-import de.sevennerds.trackdefects.common.Constants.Database.DATABASE_TRANSACTION_SUCCEEDED
 import de.sevennerds.trackdefects.data.defect_list.DefectListEntity
 import de.sevennerds.trackdefects.data.defect_list.DefectListRepository
 import de.sevennerds.trackdefects.data.response.Error

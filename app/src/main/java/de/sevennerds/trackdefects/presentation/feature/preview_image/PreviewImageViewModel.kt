@@ -19,8 +19,8 @@ class PreviewImageViewModel @Inject constructor(
         upstream.publish { shared ->
             Observable
                     .merge(shared.ofType(PreviewImageView.Event.LoadImage::class.java)
-                                   .compose(loadImageEventTransformer),
-                           Observable.empty())
+                            .compose(loadImageEventTransformer),
+                            Observable.empty())
         }
 
 
@@ -34,7 +34,7 @@ class PreviewImageViewModel @Inject constructor(
                         .map { loadImageEvent ->
                             PreviewImageView.Result.LoadImage(
                                     FileModel(loadImageEvent.imageName,
-                                              bitmapCache.get(loadImageEvent.imageName)))
+                                            bitmapCache.get(loadImageEvent.imageName)))
                         }.compose(resultTransformer)
                         .map { viewState ->
                             PreviewImageView.RenderState.LoadImage(viewState.image.data)

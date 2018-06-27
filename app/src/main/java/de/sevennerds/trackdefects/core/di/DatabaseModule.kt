@@ -70,8 +70,7 @@ abstract class DatabaseModule {
         @Provides
         @Singleton
         @JvmStatic
-        fun provideFloorPlanLocalDataSrouce(localDataSource: LocalDataSource): FloorPlanLocalDataSource
-        = localDataSource.floorPlan
+        fun provideFloorPlanLocalDataSrouce(localDataSource: LocalDataSource): FloorPlanLocalDataSource = localDataSource.floorPlan()
 
         @Provides
         @Singleton
@@ -131,7 +130,7 @@ abstract class DatabaseModule {
         @Singleton
         @JvmStatic
         fun provideStreetAddressRepository(streetAddressLocalDataSource: StreetAddressLocalDataSource): StreetAddressRepository =
-            StreetAddressRepository(streetAddressLocalDataSource)
+                StreetAddressRepository(streetAddressLocalDataSource)
 
     }
 

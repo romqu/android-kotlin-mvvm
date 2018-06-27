@@ -23,12 +23,12 @@ class SelectParticipantsListAdapter(private val participantModelList: MutableLis
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
             ViewHolder(LayoutInflater
-                                                                                                                    .from(parent.context)
-                                                                                                                    .inflate(R.layout.item_select_contacts,
-                                                                                                                             parent,
-                                                                                                                             false),
-                                                                                                            onItemClickSubject,
-                                                                                                            compositeDisposable)
+                    .from(parent.context)
+                    .inflate(R.layout.item_select_contacts,
+                            parent,
+                            false),
+                    onItemClickSubject,
+                    compositeDisposable)
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
@@ -52,9 +52,9 @@ class SelectParticipantsListAdapter(private val participantModelList: MutableLis
     fun clearList() = participantModelList.clear()
 
     fun getOnItemClickListener(): Observable<Int> =
-        onItemClickSubject
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .toObservable()
+            onItemClickSubject
+                    .toFlowable(BackpressureStrategy.BUFFER)
+                    .toObservable()
 }
 
 class ViewHolder(view: View,

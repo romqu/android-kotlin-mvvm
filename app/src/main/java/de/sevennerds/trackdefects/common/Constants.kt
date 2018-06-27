@@ -1,4 +1,5 @@
 @file:JvmName("Constants")
+
 package de.sevennerds.trackdefects.common
 
 import de.sevennerds.trackdefects.data.file.FileUtil

@@ -65,8 +65,8 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
         super.onCreateView(inflater, container, savedInstanceState)
 
         return inflater.inflate(R.layout.fragment_take_ground_plan_image,
-                                container,
-                                false)
+                container,
+                false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -146,9 +146,9 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
                 is TakeGroundPlanPictureView.RenderState.TakePicture -> {
                     messageQueue
                             .pushMessageTo(PreviewImageKey(),
-                                           PreviewImageView
-                                                   .Message
-                                                   .ImageName(renderState.imageName))
+                                    PreviewImageView
+                                            .Message
+                                            .ImageName(renderState.imageName))
 
                     MainActivity[context!!].navigateTo(PreviewImageKey())
                 }

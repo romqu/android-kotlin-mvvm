@@ -24,10 +24,10 @@ class EnterStreetAddressViewModel @Inject constructor() {
 
         upstream.observeOn(Schedulers.io())
                 .publish { shared ->
-            Observable.merge(shared.ofType(EnterStreetAddressView.Event.StreetNameTextChange::class.java)
-                                     .compose(eventStreetNameTextChange),
-                             Observable.empty())
-        }
+                    Observable.merge(shared.ofType(EnterStreetAddressView.Event.StreetNameTextChange::class.java)
+                            .compose(eventStreetNameTextChange),
+                            Observable.empty())
+                }
     }
 
     private val eventStreetNameTextChange = ObservableTransformer<EnterStreetAddressView.Event.StreetNameTextChange,

@@ -7,10 +7,10 @@ import de.sevennerds.trackdefects.data.defect_info.DefectInfoEntity
         tableName = "defect_image",
         foreignKeys = [
             ForeignKey(
-                entity = DefectInfoEntity::class,
-                parentColumns = ["id"],
-                childColumns = ["defect_info_id"],
-                onDelete = ForeignKey.CASCADE
+                    entity = DefectInfoEntity::class,
+                    parentColumns = ["id"],
+                    childColumns = ["defect_info_id"],
+                    onDelete = ForeignKey.CASCADE
             )
         ],
         indices = [

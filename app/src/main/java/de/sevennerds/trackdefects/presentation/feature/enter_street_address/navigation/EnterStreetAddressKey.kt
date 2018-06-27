@@ -2,7 +2,6 @@ package de.sevennerds.trackdefects.presentation.feature.enter_street_address.nav
 
 import de.sevennerds.trackdefects.presentation.base.navigation.BaseKey
 import de.sevennerds.trackdefects.presentation.feature.enter_street_address.EnterStreetAddressFragment
-import de.sevennerds.trackdefects.presentation.feature.preview_image.PreviewImageFragment
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize

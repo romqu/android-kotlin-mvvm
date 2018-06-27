@@ -13,11 +13,13 @@ sealed class Result<out T> {
 sealed class Error {
     // Network failures
     data class NetworkError(val message: String) : Error()
+
     data class RegistrationFailedError(val message: String) : Error()
     data class LoginFailedError(val message: String) : Error()
 
     // File operation failures
     data class SavingFiles(val message: String) : Error()
+
     data class DeletionFailed(val message: String) : Error()
     data class FileNotFoundError(val message: String) : Error()
     data class DuplicateFileError(val message: String) : Error()
@@ -27,5 +29,5 @@ sealed class Error {
 
 
     // Feature specific failures, just extend from this class to impl.
-    abstract class FeatureError: Error()
+    abstract class FeatureError : Error()
 }

@@ -3,7 +3,6 @@ package de.sevennerds.trackdefects.core.di
 import android.app.Application
 import dagger.Module
 import dagger.Provides
-import de.sevennerds.trackdefects.TrackDefectsApp
 import javax.inject.Singleton
 
 @Module

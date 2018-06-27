@@ -8,11 +8,11 @@ import de.sevennerds.trackdefects.data.room.RoomEntity
         tableName = "defect_info",
         foreignKeys = [
             ForeignKey(
-                entity = RoomEntity::class,
-                parentColumns = ["id"],
-                childColumns = ["room_id"],
-                onDelete = ForeignKey.CASCADE,
-                onUpdate = ForeignKey.CASCADE
+                    entity = RoomEntity::class,
+                    parentColumns = ["id"],
+                    childColumns = ["room_id"],
+                    onDelete = ForeignKey.CASCADE,
+                    onUpdate = ForeignKey.CASCADE
             )
         ],
         indices = [
@@ -22,7 +22,7 @@ import de.sevennerds.trackdefects.data.room.RoomEntity
             )
         ]
 )
-data class DefectInfoEntity @JvmOverloads constructor(
+data class DefectInfoEntity(
         @PrimaryKey(autoGenerate = true) val id: Long,
         @ColumnInfo(name = "remote_id") val remoteId: Long,
         @ColumnInfo(name = "description") val description: String,
@@ -30,5 +30,5 @@ data class DefectInfoEntity @JvmOverloads constructor(
         @ColumnInfo(name = "company_in_charge") val companyInCharge: String,
         @ColumnInfo(name = "done_till") val doneTill: String,
         @ColumnInfo(name = "room_id") val roomId: Long,
-        @Ignore @ColumnInfo(name = "defect_image_id") val defectImageEntityList: List<DefectImageEntity> = emptyList()
+        @Ignore @ColumnInfo(name = "defect_image_id") val defectImageEntityList: List<DefectImageEntity>
 )

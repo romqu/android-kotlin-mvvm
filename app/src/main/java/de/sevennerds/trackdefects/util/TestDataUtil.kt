@@ -11,17 +11,17 @@ import de.sevennerds.trackdefects.data.view_participant.ViewParticipantEntity
 
 val defectImageList = listOf(
         DefectImageEntity(0,
-                          0,
-                          "name",
-                          "orig",
-                          0,
-                          1),
+                0,
+                "name",
+                "orig",
+                0,
+                1),
         DefectImageEntity(0,
-                          0,
-                          "name1",
-                          "orig1",
-                          1,
-                          1))
+                0,
+                "name1",
+                "orig1",
+                1,
+                1))
 
 val defectInfo = DefectInfoEntity(
         0,
@@ -34,42 +34,42 @@ val defectInfo = DefectInfoEntity(
         defectImageList)
 
 val room = RoomEntity(0,
-                      0,
-                      1,
-                      "Wohnzimmer",
-                      1,
-                      "Hier")
+        0,
+        1,
+        "Wohnzimmer",
+        1,
+        "Hier")
 
 val livingUnit = LivingUnitEntity(0,
-                                  0,
-                                  1,
-                                  1)
+        0,
+        1,
+        1)
 
 val floor = FloorEntity(0,
-                        0,
-                        1,
-                        "EG")
+        0,
+        1,
+        "EG")
 
 val viewParticipantList = listOf(ViewParticipantEntity(0,
-                                                       0,
-                                                       0,
-                                                       "Bern",
-                                                       "Trem",
-                                                       1324141,
-                                                       "a@a.de",
-                                                       "myco"))
+        0,
+        0,
+        "Bern",
+        "Trem",
+        1324141,
+        "a@a.de",
+        "myco"))
 
 val streetAddress = StreetAddressEntity(0,
-                                        0,
-                                        0,
-                                        "street",
-                                        1,
-                                        1,
-                                        "addd",
-                                        "d21",
-                                        viewParticipantEntityList = viewParticipantList)
+        0,
+        0,
+        "street",
+        1,
+        1,
+        "addd",
+        "d21",
+        viewParticipantEntityList = viewParticipantList)
 
 val defectList = DefectListEntity(0,
-                                  0,
-                                  "name",
-                                  "wqdwqd", streetAddress)
+        0,
+        "name",
+        "wqdwqd", streetAddress)

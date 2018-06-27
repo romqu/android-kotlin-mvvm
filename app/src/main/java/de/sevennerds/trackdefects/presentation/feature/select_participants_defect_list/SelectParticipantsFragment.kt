@@ -83,8 +83,8 @@ class SelectParticipantsFragment : BaseFragment() {
         isRotation = false
 
         return inflater.inflate(R.layout.fragment_select_participants,
-                                container,
-                                false)
+                container,
+                false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -174,7 +174,7 @@ class SelectParticipantsFragment : BaseFragment() {
                 .getOnItemClickListener()
                 .map { itemPosition ->
                     SelectParticipantsView.Event.Remove(itemPosition,
-                                                                                                                                        listAdapter.getList())
+                            listAdapter.getList())
                 }
                 .compose(viewModel.eventTransformer)
                 .subscribe(::render)
@@ -189,7 +189,7 @@ class SelectParticipantsFragment : BaseFragment() {
     private fun init() {
         compositeDisposable += Observable.fromCallable {
             SelectParticipantsView.Event.Init(state
-                                                                                                                                      ?: SelectParticipantsView.StateParcel(emptyList()))
+                    ?: SelectParticipantsView.StateParcel(emptyList()))
         }
                 .compose(viewModel.eventTransformer)
                 .subscribe(::render)
@@ -199,7 +199,7 @@ class SelectParticipantsFragment : BaseFragment() {
 
         compositeDisposable +=
                 SelectParticipantsView.Event.Add(contactResultList,
-                                                                                                                                 listAdapter.getList())
+                        listAdapter.getList())
                         .asObservable()
                         .compose(viewModel.eventTransformer)
                         .subscribe(::render)
@@ -215,12 +215,12 @@ class SelectParticipantsFragment : BaseFragment() {
             is SelectParticipantsView.RenderState.Add -> {
 
                 updateList(renderState.participantModelList,
-                           renderState.diffResult)
+                        renderState.diffResult)
             }
 
             is SelectParticipantsView.RenderState.Remove -> {
                 updateList(renderState.participantModelList,
-                           renderState.diffResult)
+                        renderState.diffResult)
             }
         }
     }

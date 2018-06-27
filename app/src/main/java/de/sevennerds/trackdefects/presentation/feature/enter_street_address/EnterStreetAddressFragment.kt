@@ -13,7 +13,6 @@ import de.sevennerds.trackdefects.presentation.base.BaseFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_enter_street_address.*
 import javax.inject.Inject
 
@@ -40,8 +39,8 @@ class EnterStreetAddressFragment : BaseFragment() {
         super.onCreateView(inflater, container, savedInstanceState)
 
         return inflater.inflate(R.layout.fragment_enter_street_address,
-                                container,
-                                false)
+                container,
+                false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

@@ -8,8 +8,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 
-
-
 /**
  * Yes, I stole that from here:
  * https://github.com/Zhuinden/simple-stack/blob/master/simple-stack-example-mvvm-fragments/src/main/java/com/zhuinden/simplestackexamplemvvm/application/injection/MessageQueue.java

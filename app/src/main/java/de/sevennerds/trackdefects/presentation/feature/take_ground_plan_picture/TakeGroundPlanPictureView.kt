@@ -1,6 +1,5 @@
 package de.sevennerds.trackdefects.presentation.feature.take_ground_plan_picture
 
-import android.graphics.Bitmap
 import android.os.Parcelable
 import io.fotoapparat.result.PhotoResult
 import kotlinx.android.parcel.Parcelize

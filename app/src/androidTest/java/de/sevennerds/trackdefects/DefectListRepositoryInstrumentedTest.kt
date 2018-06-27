@@ -3,7 +3,6 @@ package de.sevennerds.trackdefects
 import android.app.Application
 import androidx.test.filters.LargeTest
 import androidx.test.runner.AndroidJUnit4
-import de.sevennerds.trackdefects.common.Constants.Database.FILES_PATH
 import de.sevennerds.trackdefects.core.di.AppModule
 import de.sevennerds.trackdefects.core.di.DaggerAppComponent
 import de.sevennerds.trackdefects.data.defect_list.DefectListEntity
@@ -40,6 +39,9 @@ class DefectListRepositoryInstrumentedTest {
     fun saveDefectListEntityListToDb() {
 
         val streetAddressEntity = StreetAddressEntity(
+                -1L,
+                -1L,
+                -1L,
                 name = "Himmelstrasse 1",
                 additional = "this address man, it lacks informationS",
                 creationDate = "2017-10-03T03:20:11.687+02:00",
@@ -49,24 +51,32 @@ class DefectListRepositoryInstrumentedTest {
         )
 
         val viewParticipantEntity = ViewParticipantEntity(
-                forename = "MUDEMANN",
-                surname = "SUP",
-                companyName = "NO AG",
-                email = "me@de.de",
-                phoneNumber = 123
+                -1L,
+                -1L,
+                -1L,
+                -1L,
+                "MUDEMANN",
+                "SUP",
+                123,
+                "me@de.de",
+                "NO AG"
         )
 
         val floorPlanEntity = FloorPlanEntity(
-                fileName = "roman.jpg",
-                path = FILES_PATH
+                -1L,
+                "",
+                "",
+                -1L
         )
 
         val defectListEntity = DefectListEntity(
-                name = "kaput fenster",
-                creationDate = "2017-10-03T03:20:11.687+02:00",
-                floorPlanEntity = floorPlanEntity,
-                streetAddressEntity = streetAddressEntity,
-                viewParticipantEntity = viewParticipantEntity
+                -1L,
+                -1L,
+                "kaput fenster",
+                "2017-10-03T03:20:11.687+02:00",
+                floorPlanEntity,
+                streetAddressEntity,
+                viewParticipantEntity
         )
 
         cmp.defectRepository().insert(defectListEntity).test().assertNoErrors()

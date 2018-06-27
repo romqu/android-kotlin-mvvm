@@ -12,7 +12,7 @@ class FloorRepo @Inject constructor(
 ) {
     fun insertOrUpdate(floorEntity: FloorEntity) =
             Single.fromCallable {
-                if (floorEntity.id == 0L){
+                if (floorEntity.id == 0L) {
                     insert(floorEntity)
                 }
             }

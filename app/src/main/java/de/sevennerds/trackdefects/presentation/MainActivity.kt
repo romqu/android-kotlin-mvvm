@@ -32,8 +32,8 @@ class MainActivity : AppCompatActivity(), StateChanger {
 
         backstackDelegate = BackstackDelegate(null)
         backstackDelegate.onCreate(savedInstanceState,
-                                   lastCustomNonConfigurationInstance,
-                                   History.single(EnterStreetAddressKey()))
+                lastCustomNonConfigurationInstance,
+                History.single(EnterStreetAddressKey()))
         backstackDelegate.registerForLifecycleCallbacks(this);
 
         super.onCreate(savedInstanceState)

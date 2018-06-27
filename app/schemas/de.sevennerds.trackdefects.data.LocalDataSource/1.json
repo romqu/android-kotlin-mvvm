@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b174f061d162a7d9c9903b4c83b249f9",
+    "identityHash": "dffea522235ffb2b8b0a350984b4b7c3",
     "entities": [
       {
         "tableName": "client",
@@ -291,6 +291,14 @@
               "email"
             ],
             "createSql": "CREATE  INDEX `index_view_participant_email` ON `${TABLE_NAME}` (`email`)"
+          },
+          {
+            "name": "index_view_participant_street_address_id",
+            "unique": false,
+            "columnNames": [
+              "street_address_id"
+            ],
+            "createSql": "CREATE  INDEX `index_view_participant_street_address_id` ON `${TABLE_NAME}` (`street_address_id`)"
           }
         ],
         "foreignKeys": [
@@ -673,7 +681,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"b174f061d162a7d9c9903b4c83b249f9\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"dffea522235ffb2b8b0a350984b4b7c3\")"
     ]
   }
 }

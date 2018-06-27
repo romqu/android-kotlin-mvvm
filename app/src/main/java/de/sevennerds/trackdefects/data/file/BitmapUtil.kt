@@ -8,8 +8,8 @@ import java.io.FileInputStream
 object BitmapUtil {
 
     fun fileInputStreamToBitmap(fileInputStream: FileInputStream): Observable<Bitmap> {
-        return Observable.just(fileInputStream).map {
-            it -> BitmapFactory.decodeStream(it)
+        return Observable.just(fileInputStream).map { it ->
+            BitmapFactory.decodeStream(it)
         }
     }
 

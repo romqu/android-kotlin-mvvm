@@ -2,12 +2,9 @@ package de.sevennerds.trackdefects.data.view_participant
 
 import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.common.Constants.Database.DATABASE_TRANSACTION_FAILED
-import de.sevennerds.trackdefects.data.LocalDataSource
-import de.sevennerds.trackdefects.data.defect_list.DefectListEntity
 import de.sevennerds.trackdefects.data.response.Error
 import de.sevennerds.trackdefects.data.response.Result
 import io.reactivex.Single
-import java.util.concurrent.Callable
 import javax.inject.Inject
 import javax.inject.Singleton
 

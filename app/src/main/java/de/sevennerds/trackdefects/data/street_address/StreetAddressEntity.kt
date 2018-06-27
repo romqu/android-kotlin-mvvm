@@ -10,11 +10,11 @@ import de.sevennerds.trackdefects.data.view_participant.ViewParticipantEntity
         tableName = "street_address",
         foreignKeys = [
             ForeignKey(
-                entity = DefectListEntity::class,
-                parentColumns = ["id"],
-                childColumns = ["defect_list_id"],
-                onDelete = ForeignKey.CASCADE,
-                onUpdate = ForeignKey.CASCADE
+                    entity = DefectListEntity::class,
+                    parentColumns = ["id"],
+                    childColumns = ["defect_list_id"],
+                    onDelete = ForeignKey.CASCADE,
+                    onUpdate = ForeignKey.CASCADE
             )
         ],
         indices = [
@@ -24,9 +24,9 @@ import de.sevennerds.trackdefects.data.view_participant.ViewParticipantEntity
         ]
 )
 data class StreetAddressEntity @JvmOverloads constructor(
-        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long = -1L,
-        @ColumnInfo(name = "remote_id") val remoteId: Long = -1L,
-        @ColumnInfo(name = "defect_list_id") val defectListId: Long = -1L,
+        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long,
+        @ColumnInfo(name = "remote_id") val remoteId: Long,
+        @ColumnInfo(name = "defect_list_id") val defectListId: Long,
         @ColumnInfo(name = "name") val name: String,
         @ColumnInfo(name = "city") val city: String,
         @ColumnInfo(name = "postal_code") val postalCode: Int,

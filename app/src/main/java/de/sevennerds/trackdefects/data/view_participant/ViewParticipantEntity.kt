@@ -17,10 +17,13 @@ import de.sevennerds.trackdefects.data.defect_list.DefectListEntity
         indices = [
             Index(
                     "email"
+            ),
+            Index(
+                    "street_address_id"
             )
         ]
 )
-data class ViewParticipantEntity @JvmOverloads constructor(
+data class ViewParticipantEntity(
 
         /**
          * @remoteId -- The backend primary key of the object
@@ -28,10 +31,10 @@ data class ViewParticipantEntity @JvmOverloads constructor(
          * @streetAddressId -- FK relation with parent object StreetAddressEntity
          */
 
-        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long = -1L,
-        @ColumnInfo(name = "remote_id") val remoteId: Long = -1L,
-        @ColumnInfo(name = "defect_list_id") val defectListId: Long = -1L,
-        @ColumnInfo(name = "street_address_id") val streetAddressId: Long = -1L, // Ignored for now because we dont have welldefined customer requirements.
+        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long,
+        @ColumnInfo(name = "remote_id") val remoteId: Long,
+        @ColumnInfo(name = "defect_list_id") val defectListId: Long,
+        @ColumnInfo(name = "street_address_id") val streetAddressId: Long,
         @ColumnInfo(name = "forename") val forename: String,
         @ColumnInfo(name = "surname") val surname: String,
         @ColumnInfo(name = "phone_number") val phoneNumber: Int,

@@ -62,8 +62,8 @@ class PreviewImageFragment : BaseFragment(), MessageQueue.Receiver {
         isRotation = false
 
         return inflater.inflate(R.layout.fragment_preview_image,
-                                container,
-                                false)
+                container,
+                false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -74,7 +74,7 @@ class PreviewImageFragment : BaseFragment(), MessageQueue.Receiver {
         viewStateParcel?.run {
             init(imageName)
         } ?: messageQueue.requestMessages(PreviewImageKey(),
-                                          this)
+                this)
 
     }
 
