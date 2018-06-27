@@ -81,6 +81,65 @@ class SelectParticipantsViewModel @Inject constructor() :
         upstream.map { SelectParticipantsView.Result.Init(it.stateParcel) }
     }
 
+    private val eventAddParticipantsToResult = ObservableTransformer<SelectParticipantsView.Event.Add,
+            SelectParticipantsView.Result> { upstream ->
+
+        upstream.flatMap { addParticipantsEvent ->
+
+            val (contactResultList, currentViewParticipantList) = addParticipantsEvent
+
+            contactResultList
+                    // domain layer
+                    .toObservable()
+                    .map { contactResult ->
+                        ParticipantModel(
+                                contactResult.displayName,
+                                contactResult.phoneNumbers.firstOrNull() ?: "",
+                                contactResult.emails.firstOrNull() ?: "")
+                    }
+                    .toList()
+                    .toObservable()
+                    // TODO: DO IT WITH WITH RX JAVA
+                    .map { participantModelList ->
+                        participantModelList
+                                .union(currentViewParticipantList)
+                                .distinctBy { it.phoneNumber }
+                                .toList()
+                    }
+                    .map { newParticipantModelList ->
+                        SelectParticipantsView.Result.Add(DiffUtil.calculateDiff(
+                                BaseDiffCallback(
+                                        currentViewParticipantList,
+                                        newParticipantModelList)), newParticipantModelList)
+                    }
+        }
+    }
+
+    private val eventRemoveParticipantToResult = ObservableTransformer<SelectParticipantsView.Event.Remove,
+            SelectParticipantsView.Result> { upstream ->
+
+        upstream.flatMap { removeContactEvent ->
+
+            val (contactPosition, currentContactModelList) = removeContactEvent
+
+            currentContactModelList
+                    .toObservable()
+                    // domain
+                    .filter { contactModel ->
+                        contactModel != currentContactModelList[contactPosition]
+                    }
+                    .toList()
+                    .toObservable()
+                    .map { newContactModelList ->
+                        SelectParticipantsView.Result.Remove(
+                                newContactModelList,
+                                DiffUtil.calculateDiff(
+                                        BaseDiffCallback(currentContactModelList,
+                                                         newContactModelList)))
+                    }
+        }
+    }
+
     private val resultToViewState = ObservableTransformer<SelectParticipantsView.Result,
             SelectParticipantsView.State> {
 

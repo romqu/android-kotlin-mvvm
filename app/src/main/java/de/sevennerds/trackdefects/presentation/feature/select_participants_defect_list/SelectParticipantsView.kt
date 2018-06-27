@@ -38,18 +38,24 @@ class SelectParticipantsView {
     /**
      * The "global" view state, kept in the ViewModel
      */
-    data class State(val participantModelList: List<ParticipantModel>,
-                     val diffResult: DiffUtil.DiffResult?,
-                     val render: RenderState) {
+/*    data class State(val participantModelList: List<ParticipantModel>,
+                     val diffResult: DiffUtil.DiffResult?) {
         companion object {
-            fun initial() = State(emptyList(), null, RenderState.None)
+            fun initial() = State(emptyList(), null)
+        }
+    }*/
+
+    data class State(val participantModelList: List<ParticipantModel>,
+                     val renderState: RenderState) {
+        companion object {
+            fun initial() = State(emptyList(), RenderState.None)
         }
     }
 
     /**
      * The states the view receives and uses to render its ui, hence RenderState
      */
-    sealed class RenderState {
+/*    sealed class RenderState {
         data class Add(val participantModelList: List<ParticipantModel>,
                        val diffResult: DiffUtil.DiffResult) : RenderState()
 
@@ -59,16 +65,16 @@ class SelectParticipantsView {
         data class Init(val participantModelList: List<ParticipantModel>) : RenderState()
 
         object None: RenderState()
-    }
+    }*/
 
-    sealed class RenderStateTest {
-        data class Add(val participantModelList: List<ParticipantModel>,
-                       val diffResult: DiffUtil.DiffResult) : RenderStateTest()
+    sealed class RenderState {
+        class Add(val diffResult: DiffUtil.DiffResult) : RenderState()
 
-        data class Remove(val participantModelList: List<ParticipantModel>,
-                          val diffResult: DiffUtil.DiffResult) : RenderStateTest()
+        class Remove(val diffResult: DiffUtil.DiffResult) : RenderState()
 
-        data class Init(val participantModelList: List<ParticipantModel>) : RenderStateTest()
+        object Init : RenderState()
+
+        object None : RenderState()
     }
 
     /**
