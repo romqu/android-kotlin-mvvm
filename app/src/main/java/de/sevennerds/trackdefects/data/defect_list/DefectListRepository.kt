@@ -38,18 +38,18 @@ class DefectListRepository @Inject constructor(
                             id = defectListId
                     )
 
-                    val newStreetAddressEntity = streetAddressEntity.copy(
+                    val newStreetAddressEntity = streetAddressEntity!!.copy(
                             defectListId = defectListId
                     )
                     streetAddressRepository.insert(newStreetAddressEntity)
 
-                    val newViewParticipantEntity = viewParticipantEntity.copy(
+                    val newViewParticipantEntity = viewParticipantEntity!!.copy(
                             defectListId = defectListId
                     )
 
                     viewParticipantRepository.insert(newViewParticipantEntity)
 
-                    val newFloorPlanEntity = floorPlanEntity.copy(
+                    val newFloorPlanEntity = floorPlanEntity!!.copy(
                             defectListId = defectListId
                     )
                     floorPlanRepository.insert(newFloorPlanEntity)

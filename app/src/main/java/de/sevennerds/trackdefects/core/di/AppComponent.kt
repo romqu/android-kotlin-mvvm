@@ -32,10 +32,8 @@ interface AppComponent {
 
     // Exposed sub-graphs mostly for testing
     fun floorPlanRepository(): FloorPlanRepository
-
     fun viewParticipantRepository(): ViewParticipantRepository
     fun streetAddressRepository(): StreetAddressRepository
     fun defectRepository(): DefectListRepository
-
 
 }

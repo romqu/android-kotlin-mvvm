@@ -25,7 +25,7 @@ import javax.inject.Singleton
 
 
 @Module
-abstract class DatabaseModule {
+abstract class DatabaseModule(private val context: Context) {
 
     @Module
     companion object {

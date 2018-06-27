@@ -1,12 +1,14 @@
 package de.sevennerds.trackdefects
 
 import android.app.Application
+import androidx.test.InstrumentationRegistry
 import androidx.test.filters.LargeTest
 import androidx.test.runner.AndroidJUnit4
 import de.sevennerds.trackdefects.core.di.AppModule
 import de.sevennerds.trackdefects.core.di.DaggerAppComponent
 import de.sevennerds.trackdefects.data.defect_list.DefectListEntity
 import de.sevennerds.trackdefects.data.floor_plan.FloorPlanEntity
+import de.sevennerds.trackdefects.data.response.Result
 import de.sevennerds.trackdefects.data.street_address.StreetAddressEntity
 import de.sevennerds.trackdefects.data.view_participant.ViewParticipantEntity
 import org.junit.After
@@ -18,11 +20,12 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class DefectListRepositoryInstrumentedTest {
 
-    private val application = Application()
-
     private val cmp = DaggerAppComponent.builder()
-            .appModule(AppModule(application))
-            .build()
+            .appModule(
+                    AppModule(
+                            InstrumentationRegistry.getTargetContext().applicationContext as Application
+                    )
+            ).build()
 
     @Before
     fun setup() {
@@ -37,7 +40,6 @@ class DefectListRepositoryInstrumentedTest {
     @Test
     @Throws(Exception::class)
     fun saveDefectListEntityListToDb() {
-
         val streetAddressEntity = StreetAddressEntity(
                 -1L,
                 -1L,
@@ -79,7 +81,11 @@ class DefectListRepositoryInstrumentedTest {
                 viewParticipantEntity
         )
 
-        cmp.defectRepository().insert(defectListEntity).test().assertNoErrors()
+        cmp.defectRepository().insert(defectListEntity)
+                .test()
+                .assertResult(
+                    Result.success(defectListEntity)
+                )
     }
 
     @Test
