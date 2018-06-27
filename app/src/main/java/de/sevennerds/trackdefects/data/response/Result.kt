@@ -4,6 +4,14 @@ sealed class Result<out T> {
     data class Success<out T>(val data: T) : Result<T>()
     data class Failure(val error: Error) : Result<Nothing>()
 
+    fun getOrThrow(): T {
+        return when (this) {
+
+            is Result.Success -> data
+            is Result.Failure -> throw Error(error.toString())
+        }
+    }
+
     companion object {
         fun <T> success(data: T) = Success(data) as Result<T>
         fun failure(data: Error) = Failure(data) as Result<Nothing>
