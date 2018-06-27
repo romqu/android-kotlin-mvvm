@@ -9,6 +9,7 @@ import de.sevennerds.trackdefects.data.room.RoomEntity
 import de.sevennerds.trackdefects.data.street_address.StreetAddressEntity
 import de.sevennerds.trackdefects.data.view_participant.ViewParticipantEntity
 
+/*
 val defectImageList = listOf(
         DefectImageEntity(0,
                 0,
@@ -72,4 +73,4 @@ val streetAddress = StreetAddressEntity(0,
 val defectList = DefectListEntity(0,
         0,
         "name",
-        "wqdwqd", streetAddress)
+        "wqdwqd", streetAddress)*/

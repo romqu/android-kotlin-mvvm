@@ -22,7 +22,7 @@ import de.sevennerds.trackdefects.data.room.RoomEntity
             )
         ]
 )
-data class DefectInfoEntity(
+data class DefectInfoEntity @JvmOverloads constructor(
         @PrimaryKey(autoGenerate = true) val id: Long,
         @ColumnInfo(name = "remote_id") val remoteId: Long,
         @ColumnInfo(name = "description") val description: String,
@@ -30,5 +30,5 @@ data class DefectInfoEntity(
         @ColumnInfo(name = "company_in_charge") val companyInCharge: String,
         @ColumnInfo(name = "done_till") val doneTill: String,
         @ColumnInfo(name = "room_id") val roomId: Long,
-        @Ignore @ColumnInfo(name = "defect_image_id") val defectImageEntityList: List<DefectImageEntity>
+        @Ignore @ColumnInfo(name = "defect_image_id") val defectImageEntityList: List<DefectImageEntity> = emptyList()
 )
