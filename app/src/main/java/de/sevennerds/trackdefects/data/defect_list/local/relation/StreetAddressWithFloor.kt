@@ -18,10 +18,4 @@ class StreetAddressWithFloor {
     )
     lateinit var floorWithLivingUnitList: List<FloorWithLivingUnit>
 
-    @Relation(
-            parentColumn = "id",
-            entityColumn = "street_address_id",
-            entity = ViewParticipantEntity::class
-    )
-    lateinit var viewParticipantEntityList: List<ViewParticipantEntity>
 }

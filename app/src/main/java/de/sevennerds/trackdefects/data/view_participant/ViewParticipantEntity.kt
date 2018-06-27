@@ -9,7 +9,7 @@ import de.sevennerds.trackdefects.data.defect_list.DefectListEntity
             ForeignKey(
                     entity = DefectListEntity::class,
                     parentColumns = ["id"],
-                    childColumns = ["street_address_id"],
+                    childColumns = ["defect_list_id"],
                     onDelete = ForeignKey.CASCADE,
                     onUpdate = ForeignKey.CASCADE
             )
@@ -17,9 +17,6 @@ import de.sevennerds.trackdefects.data.defect_list.DefectListEntity
         indices = [
             Index(
                     "email"
-            ),
-            Index(
-                    "street_address_id"
             )
         ]
 )
@@ -34,7 +31,6 @@ data class ViewParticipantEntity(
         @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long,
         @ColumnInfo(name = "remote_id") val remoteId: Long,
         @ColumnInfo(name = "defect_list_id") val defectListId: Long,
-        @ColumnInfo(name = "street_address_id") val streetAddressId: Long,
         @ColumnInfo(name = "forename") val forename: String,
         @ColumnInfo(name = "surname") val surname: String,
         @ColumnInfo(name = "phone_number") val phoneNumber: Int,

@@ -103,7 +103,6 @@ abstract class DatabaseModule(private val context: Context) {
         fun provideDefectListRepository(
                 defectListLocalDataSource: DefectListLocalDataSource,
                 localDataSource: LocalDataSource,
-                floorPlanRepository: FloorPlanRepository,
                 streetAddressRepository: StreetAddressRepository,
                 viewParticipantRepository: ViewParticipantRepository
         ): DefectListRepository =
@@ -111,8 +110,7 @@ abstract class DatabaseModule(private val context: Context) {
                         defectListLocalDataSource,
                         localDataSource,
                         streetAddressRepository,
-                        viewParticipantRepository,
-                        floorPlanRepository
+                        viewParticipantRepository
                 )
 
         @Provides

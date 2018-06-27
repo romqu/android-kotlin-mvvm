@@ -3,7 +3,6 @@ package de.sevennerds.trackdefects.data.street_address
 import androidx.room.*
 import de.sevennerds.trackdefects.data.defect_list.DefectListEntity
 import de.sevennerds.trackdefects.data.floor.FloorEntity
-import de.sevennerds.trackdefects.data.view_participant.ViewParticipantEntity
 
 
 @Entity(
@@ -33,6 +32,5 @@ data class StreetAddressEntity @JvmOverloads constructor(
         @ColumnInfo(name = "number") val number: Int,
         @ColumnInfo(name = "additional") val additional: String,
         @ColumnInfo(name = "creation_date") val creationDate: String,
-        @Ignore @ColumnInfo(name = "floor_id") val floorEntityList: List<FloorEntity> = emptyList(),
-        @Ignore @ColumnInfo(name = "view_participant_id") val viewParticipantEntityList: List<ViewParticipantEntity> = emptyList()
+        @Ignore @ColumnInfo(name = "floor_id") val floorEntityList: List<FloorEntity> = emptyList()
 )

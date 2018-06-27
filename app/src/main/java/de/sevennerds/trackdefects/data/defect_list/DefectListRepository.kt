@@ -1,9 +1,10 @@
 package de.sevennerds.trackdefects.data.defect_list
 
+import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.common.asObservable
 import de.sevennerds.trackdefects.data.LocalDataSource
 import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSource
-import de.sevennerds.trackdefects.data.floor_plan.FloorPlanRepository
+import de.sevennerds.trackdefects.data.response.Error
 import de.sevennerds.trackdefects.data.response.Result
 import de.sevennerds.trackdefects.data.street_address.StreetAddressRepository
 import de.sevennerds.trackdefects.data.view_participant.ViewParticipantRepository
@@ -17,61 +18,68 @@ class DefectListRepository @Inject constructor(
         private val defectListLocalDataSource: DefectListLocalDataSource,
         private val localDataSource: LocalDataSource,
         private val streetAddressRepository: StreetAddressRepository,
-        private val viewParticipantRepository: ViewParticipantRepository,
-        private val floorPlanRepository: FloorPlanRepository
+        private val viewParticipantRepository: ViewParticipantRepository
 ) {
 
     fun insert(defectListEntity: DefectListEntity): Single<Result<DefectListEntity>> =
-            localDataSource.runInTransaction(Callable {
 
-                defectListLocalDataSource.insert(defectListEntity)
-                        .asObservable()
-                        .map { defectListEntityId ->
-                            defectListEntity.copy(id = defectListEntityId)
-                        }
-                        .map { defectListEntity ->
-                            defectListEntity
-                                    .copy(streetAddressEntity = defectListEntity.streetAddressEntity!!
-                                            .copy(
-                                                    defectListId = defectListEntity.id
-                                            ))
-                        }
-                        .flatMap { defectListEntity ->
+            defectListEntity
+                    .asObservable()
+                    .singleOrError()
+                    .flatMap {
 
-                            val streetAddressEntity = defectListEntity.streetAddressEntity!!
+                        localDataSource.runInTransaction(Callable {
 
-                            streetAddressRepository
-                                    .insert(streetAddressEntity)
-                                    .map { result: Result<Long> ->
-                                        result.getOrThrow()
+                            defectListLocalDataSource.insert(defectListEntity)
+                                    .asObservable()
+                                    .map { defectListEntityId ->
+                                        defectListEntity.copy(id = defectListEntityId)
                                     }
-                                    .map { streetAddressEntityId ->
-                                        defectListEntity.copy(streetAddressEntity = streetAddressEntity
-                                                .copy(id = streetAddressEntityId))
+                                    .map { defectListEntity ->
+                                        defectListEntity
+                                                .copy(streetAddressEntity = defectListEntity.streetAddressEntity!!
+                                                        .copy(
+                                                                defectListId = defectListEntity.id
+                                                        ))
                                     }
-                                    .toObservable()
-                        }
-                        .map { defectListEntity ->
-                            defectListEntity.copy(viewParticipantEntity = defectListEntity
-                                    .viewParticipantEntity!!
-                                    .copy(defectListId = defectListEntity.id))
-                        }.flatMap { defectListEntity ->
+                                    .flatMap { defectListEntity ->
 
-                            val viewParticipantEntity = defectListEntity.viewParticipantEntity!!
+                                        val streetAddressEntity = defectListEntity.streetAddressEntity!!
 
-                            viewParticipantRepository
-                                    .insert(viewParticipantEntity)
-                                    .map { result: Result<Long> ->
-                                        result.getOrThrow()
+                                        streetAddressRepository
+                                                .insert(streetAddressEntity)
+                                                .map { result: Result<Long> ->
+                                                    result.getOrThrow()
+                                                }
+                                                .map { streetAddressEntityId ->
+                                                    defectListEntity.copy(streetAddressEntity = streetAddressEntity
+                                                            .copy(id = streetAddressEntityId))
+                                                }
+                                                .toObservable()
                                     }
-                                    .map { viewParticipantEnityId: Long ->
-                                        defectListEntity.copy(viewParticipantEntity = viewParticipantEntity
-                                                .copy(id = viewParticipantEnityId))
-                                    }.toObservable()
-                        }.map { defectListEntity ->
-                            Result.success(defectListEntity)
-                        }.singleOrError()
-            })
+                                    .map { defectListEntity ->
+                                        defectListEntity.copy(viewParticipantEntity = defectListEntity
+                                                .viewParticipantEntity!!
+                                                .copy(defectListId = defectListEntity.id))
+                                    }.flatMap { defectListEntity ->
+
+                                        val viewParticipantEntity = defectListEntity.viewParticipantEntity!!
+
+                                        viewParticipantRepository
+                                                .insert(viewParticipantEntity)
+                                                .map { result: Result<Long> ->
+                                                    result.getOrThrow()
+                                                }
+                                                .map { viewParticipantEnityId: Long ->
+                                                    defectListEntity.copy(viewParticipantEntity = viewParticipantEntity
+                                                            .copy(id = viewParticipantEnityId))
+                                                }.toObservable()
+                                    }.map { defectListEntity ->
+                                        Result.success(defectListEntity)
+                                    }.singleOrError()
+                        })
+                                .onErrorReturn { Result.failure(Error.DatabaseError("")) }
+                    }
 
 
     /*fun insertAll(defectListEntityList: List<DefectListEntity>): Observable<Result<DefectListEntity>> =
