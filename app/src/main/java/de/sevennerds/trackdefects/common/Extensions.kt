@@ -6,6 +6,8 @@ import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 
 /*inline fun FragmentManager.inTransaction(func: FragmentTransaction.() -> FragmentTransaction) {
     beginTransaction().func().commit()
@@ -39,3 +41,11 @@ fun <T> Observable<T>.applySchedulers(): Observable<T> =
 
 
 fun <T> T.asObservable(): Observable<T> = Observable.just<T>(this)
+
+fun <T> PublishSubject<T>.toObservable() =
+        this.toFlowable(io.reactivex.BackpressureStrategy.BUFFER)
+                .toObservable()!!
+
+fun <T> BehaviorSubject<T>.toObservable() =
+        this.toFlowable(io.reactivex.BackpressureStrategy.BUFFER)
+                .toObservable()!!

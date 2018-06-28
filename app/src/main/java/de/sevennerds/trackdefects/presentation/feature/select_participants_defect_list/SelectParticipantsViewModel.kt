@@ -1,8 +1,8 @@
 package de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list
 
 import androidx.recyclerview.widget.DiffUtil
-import de.sevennerds.trackdefects.common.applySchedulers
 import de.sevennerds.trackdefects.presentation.base.BaseDiffCallback
+import de.sevennerds.trackdefects.presentation.base.BaseViewModel
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.rxkotlin.toObservable
@@ -29,12 +29,9 @@ import javax.inject.Inject
  * It gets never exposed to the view, only a parcelable version of it.
  */
 
-abstract class ViewModel<EVENT, STATE> {
-    abstract val eventToRenderState: ObservableTransformer<EVENT, STATE>
-}
 
 class SelectParticipantsViewModel @Inject constructor() :
-        ViewModel<SelectParticipantsView.Event, SelectParticipantsView.State>() {
+        BaseViewModel<SelectParticipantsView.Event, SelectParticipantsView.State>() {
 
     /**
      * This transformer is used by the the view (here Fragment).
@@ -48,15 +45,22 @@ class SelectParticipantsViewModel @Inject constructor() :
 
         observable.publish { shared ->
             Observable
-                    .merge(shared.ofType(
-                            SelectParticipantsView.Event.Init::class.java)
-                                   .compose(eventInitToResult),
-                           shared.ofType(
-                                   SelectParticipantsView.Event.Add::class.java)
-                                   .compose(eventAddParticipantsToResult),
-                           shared.ofType(
-                                   SelectParticipantsView.Event.Remove::class.java)
-                                   .compose(eventRemoveParticipantToResult))
+                    .mergeArray(
+                            shared.ofType(
+                                    SelectParticipantsView.Event.Init::class.java)
+                                    .compose(eventInitToResult),
+                            shared.ofType(
+                                    SelectParticipantsView.Event.Add::class.java)
+                                    .compose(eventAddParticipantsToResult),
+                            shared.ofType(
+                                    SelectParticipantsView.Event.Remove::class.java)
+                                    .compose(eventRemoveParticipantToResult),
+                            shared.ofType(
+                                    SelectParticipantsView.Event.ShowContacts::class.java)
+                                    .compose(eventShowContactsToResult),
+                            shared.ofType(
+                                    SelectParticipantsView.Event.Next::class.java)
+                                    .compose(eventNextToResult))
                     .compose(resultToViewState)
         }
     }
@@ -64,7 +68,19 @@ class SelectParticipantsViewModel @Inject constructor() :
     private val eventInitToResult = ObservableTransformer<SelectParticipantsView.Event.Init,
             SelectParticipantsView.Result> { upstream: Observable<SelectParticipantsView.Event.Init> ->
 
-        upstream.map { SelectParticipantsView.Result.Init(it.stateParcel) }
+        upstream.map { SelectParticipantsView.Result.Init(it.parcelState) }
+    }
+
+    private val eventShowContactsToResult = ObservableTransformer<SelectParticipantsView.Event.ShowContacts,
+            SelectParticipantsView.Result> { upstream ->
+
+        upstream.map { SelectParticipantsView.Result.ShowContacts }
+    }
+
+    private val eventNextToResult = ObservableTransformer<SelectParticipantsView.Event.Next,
+            SelectParticipantsView.Result> { upstream ->
+
+        upstream.map { SelectParticipantsView.Result.Next }
     }
 
     private val eventAddParticipantsToResult = ObservableTransformer<SelectParticipantsView.Event.Add,
@@ -140,25 +156,43 @@ class SelectParticipantsViewModel @Inject constructor() :
 
             when (result) {
 
+                is SelectParticipantsView.Result.ShowContacts ->
+                    previousState.copy(renderState = SelectParticipantsView.RenderState.ShowContacts)
+
                 is SelectParticipantsView.Result.Init -> {
 
-                    previousState.copy(participantModelList = result.stateParcel.participantModelList,
-                                       renderState = SelectParticipantsView.RenderState.Init)
+                    val state = previousState.copy(participantModelList = result.parcelState.participantModelList)
+
+                    state.copy(renderState = SelectParticipantsView.RenderState.Init(getParcelState(state)))
                 }
 
-
                 is SelectParticipantsView.Result.Add -> {
-                    previousState.copy(participantModelList = result.participantModelList,
-                                       renderState = SelectParticipantsView.RenderState.Add(result.diffResult))
+
+                    val state = previousState.copy(participantModelList = result.participantModelList,
+                                                   nextOrSkipButtonText = "Next")
+
+                    state.copy(renderState = SelectParticipantsView
+                            .RenderState.Add(result.diffResult,
+                                             getParcelState(state)))
                 }
 
                 is SelectParticipantsView.Result.Remove -> {
-                    previousState.copy(participantModelList = result.participantModelList,
-                                       renderState = SelectParticipantsView.RenderState.Remove(result.diffResult))
+
+                    val state = previousState.copy(participantModelList = result.participantModelList)
+
+                    state.copy(renderState = SelectParticipantsView
+                            .RenderState.Remove(result.diffResult,
+                                                getParcelState(state)))
                 }
+
+                is SelectParticipantsView.Result.Next ->
+                    previousState.copy(renderState = SelectParticipantsView.RenderState.Next)
             }
         }.skip(1)
     }
+
+    private fun getParcelState(viewState: SelectParticipantsView.State) =
+            SelectParticipantsView.ParcelState(viewState.participantModelList)
 
 }
 

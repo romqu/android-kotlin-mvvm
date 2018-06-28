@@ -16,7 +16,7 @@ import com.wafflecopter.multicontactpicker.ContactResult
 import com.wafflecopter.multicontactpicker.MultiContactPicker
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
-import de.sevennerds.trackdefects.common.asObservable
+import de.sevennerds.trackdefects.common.toObservable
 import de.sevennerds.trackdefects.core.di.MessageQueue
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
@@ -25,14 +25,16 @@ import de.sevennerds.trackdefects.presentation.feature.take_ground_plan_picture.
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_select_participants.*
 import javax.inject.Inject
 
 
 /**
- * Takes care of saving the state
+ * Takes care of saving the parcelState
  * Accesses the ViewModel via compose(eventTransformer)
- * Renders the state
+ * Renders the parcelState
  */
 
 class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
@@ -40,17 +42,18 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
     @Inject
     lateinit var messageQueue: MessageQueue
 
+    @Inject
+    lateinit var viewModel: SelectParticipantsViewModel
+
+    private val initEventSubject: PublishSubject<SelectParticipantsView.Event.Init> = PublishSubject.create()
+    private val addEventBSubject: BehaviorSubject<SelectParticipantsView.Event.Add> = BehaviorSubject.create()
+    private val compositeDisposable = CompositeDisposable()
+
     companion object {
-        private const val KEY_STATE = "KEY_STATE"
         private const val CONTACT_PICKER_REQUEST = 991
     }
 
-
-    private val compositeDisposable = CompositeDisposable()
-
-    @Inject
-    lateinit var viewModel: SelectParticipantsViewModel
-    private var state: SelectParticipantsView.StateParcel? = null
+    private var parcelState: SelectParticipantsView.ParcelState? = null
 
     private lateinit var listAdapter: SelectParticipantsListAdapter
 
@@ -77,7 +80,7 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        state = savedInstanceState?.getParcelable(KEY_STATE)
+        parcelState = savedInstanceState?.getParcelable(KEY_STATE_PARCEL)
     }
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -104,7 +107,6 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
         init()
     }
 
-
     override fun onPause() {
         super.onPause()
 
@@ -116,8 +118,8 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
 
     override fun onSaveInstanceState(outState: Bundle) {
 
-        state?.let {
-            outState.putParcelable(KEY_STATE, it)
+        parcelState?.let {
+            outState.putParcelable(KEY_STATE_PARCEL, it)
         }
 
         super.onSaveInstanceState(outState)
@@ -141,7 +143,6 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
                 RESULT_OK ->
                     contactResult(MultiContactPicker.obtainResult(data))
             }
-            /* RESULT_CANCELED -> */
         }
 
     }
@@ -169,69 +170,75 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
 
     private fun setupEvents() {
 
-        Observable.merge()
+        Logger.d(addEventBSubject)
 
-        compositeDisposable += select_participants_fab
-                .clicks()
-                .subscribe {
+        compositeDisposable += Observable
+                .mergeArray(
+                        select_participants_fab
+                                .clicks()
+                                .map { SelectParticipantsView.Event.ShowContacts },
+                        listAdapter
+                                .getOnItemClickListener()
+                                .map { itemPosition ->
+                                    SelectParticipantsView.Event.Remove(itemPosition,
+                                                                        listAdapter.getList())
+                                },
+                        select_participants_next_skip_btn
+                                .clicks()
+                                .map { SelectParticipantsView.Event.Next },
 
-                    contactBuilder
-                            .showPickerForResult(CONTACT_PICKER_REQUEST)
-                }
-
-        compositeDisposable += listAdapter
-                .getOnItemClickListener()
-                .map { itemPosition ->
-                    SelectParticipantsView.Event.Remove(itemPosition,
-                                                        listAdapter.getList())
-                }
+                        initEventSubject.toObservable(),
+                        addEventBSubject.toObservable())
                 .compose(viewModel.eventToRenderState)
                 .subscribe(::render)
-
-        compositeDisposable += select_participants_next_skip_btn
-                .clicks()
-                .subscribe {
-                    MainActivity[requireContext()].navigateTo(TakeGroundPlanPictureKey())
-                }
     }
 
     private fun init() {
-        compositeDisposable += Observable.fromCallable {
-            SelectParticipantsView.Event.Init(state
-                                                      ?: SelectParticipantsView.StateParcel(emptyList()))
-        }
-                .compose(viewModel.eventToRenderState)
-                .subscribe(::render)
+
+        initEventSubject.onNext(
+                SelectParticipantsView.Event
+                        .Init(parcelState
+                                      ?: SelectParticipantsView.ParcelState(emptyList())))
     }
 
     private fun contactResult(contactResultList: List<ContactResult>) {
 
-        compositeDisposable +=
-                SelectParticipantsView.Event.Add(contactResultList,
-                                                 listAdapter.getList())
-                        .asObservable()
-                        .compose(viewModel.eventToRenderState)
-                        .subscribe(::render)
+        addEventBSubject.onNext(SelectParticipantsView.Event
+                                        .Add(contactResultList,
+                                             listAdapter.getList()))
     }
 
     private fun render(viewState: SelectParticipantsView.State) {
 
-        return when (viewState.renderState) {
+        val renderState = viewState.renderState
 
-            is SelectParticipantsView.RenderState.Init ->
+        return when (renderState) {
+
+            is SelectParticipantsView.RenderState.ShowContacts ->
+                contactBuilder
+                        .showPickerForResult(CONTACT_PICKER_REQUEST)
+
+            is SelectParticipantsView.RenderState.Init -> {
+                updateParcelState(renderState.parcelState)
                 updateList(viewState.participantModelList)
+            }
 
             is SelectParticipantsView.RenderState.Add -> {
-
+                updateParcelState(renderState.parcelState)
                 updateList(viewState.participantModelList,
-                           viewState.renderState.diffResult)
+                           renderState.diffResult)
             }
 
             is SelectParticipantsView.RenderState.Remove -> {
+                updateParcelState(renderState.parcelState)
                 updateList(viewState.participantModelList,
-                           viewState.renderState.diffResult)
+                           renderState.diffResult)
             }
-            SelectParticipantsView.RenderState.None -> {
+
+            is SelectParticipantsView.RenderState.Next ->
+                MainActivity[requireContext()].navigateTo(TakeGroundPlanPictureKey())
+
+            is SelectParticipantsView.RenderState.None -> {
             }
         }
     }
@@ -252,6 +259,11 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
                 addAllToList(newParticipantModeList)
                 diffResult?.dispatchUpdatesTo(this) ?: notifyDataSetChanged()
             }
+
+    private fun updateParcelState(parcelState: SelectParticipantsView.ParcelState) {
+        this.parcelState = parcelState
+    }
+
 
     override fun receiveMessage(message: MessageQueue.Message) {
         when (message) {

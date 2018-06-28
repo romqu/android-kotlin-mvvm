@@ -13,66 +13,60 @@ class SelectParticipantsView {
      */
     sealed class Event {
 
+        class Init(val parcelState: ParcelState) : Event()
+
+        object ShowContacts : Event()
+
         data class Add(val contactResultList: List<ContactResult>,
                        val currentParticipantModelList: List<ParticipantModel>) : Event()
 
         data class Remove(val contactPosition: Int,
                           val currentParticipantModelList: List<ParticipantModel>) : Event()
 
-        class Init(val stateParcel: StateParcel) : Event()
+        object Next : Event()
+
+
     }
 
     /**
      * Result returned by the domain
      */
     sealed class Result {
+
+        class Init(val parcelState: ParcelState) : Result()
+
+        object ShowContacts : Result()
+
         data class Add(val diffResult: DiffUtil.DiffResult,
                        val participantModelList: List<ParticipantModel>) : Result()
 
         data class Remove(val participantModelList: List<ParticipantModel>,
                           val diffResult: DiffUtil.DiffResult) : Result()
 
-        class Init(val stateParcel: StateParcel) : Result()
+        object Next : Result()
     }
-
-    /**
-     * The "global" view state, kept in the ViewModel
-     */
-/*    data class State(val participantModelList: List<ParticipantModel>,
-                     val diffResult: DiffUtil.DiffResult?) {
-        companion object {
-            fun initial() = State(emptyList(), null)
-        }
-    }*/
 
     data class State(val participantModelList: List<ParticipantModel>,
+                     val nextOrSkipButtonText: String,
                      val renderState: RenderState) {
         companion object {
-            fun initial() = State(emptyList(), RenderState.None)
+            fun initial() = State(emptyList(), "Skip", RenderState.None)
         }
     }
 
-    /**
-     * The states the view receives and uses to render its ui, hence RenderState
-     */
-/*    sealed class RenderState {
-        data class Add(val participantModelList: List<ParticipantModel>,
-                       val diffResult: DiffUtil.DiffResult) : RenderState()
-
-        data class Remove(val participantModelList: List<ParticipantModel>,
-                          val diffResult: DiffUtil.DiffResult) : RenderState()
-
-        data class Init(val participantModelList: List<ParticipantModel>) : RenderState()
-
-        object None: RenderState()
-    }*/
-
     sealed class RenderState {
-        class Add(val diffResult: DiffUtil.DiffResult) : RenderState()
 
-        class Remove(val diffResult: DiffUtil.DiffResult) : RenderState()
+        class Init(val parcelState: ParcelState) : RenderState()
 
-        object Init : RenderState()
+        object ShowContacts : RenderState()
+
+        class Add(val diffResult: DiffUtil.DiffResult,
+                  val parcelState: ParcelState) : RenderState()
+
+        class Remove(val diffResult: DiffUtil.DiffResult,
+                     val parcelState: ParcelState) : RenderState()
+
+        object Next : RenderState()
 
         object None : RenderState()
     }
@@ -81,7 +75,7 @@ class SelectParticipantsView {
      * The Parcelable version of the ViewState
      */
     @Parcelize
-    data class StateParcel(val participantModelList: List<ParticipantModel>) : Parcelable
+    data class ParcelState(val participantModelList: List<ParticipantModel>) : Parcelable
 
     sealed class Message : MessageQueue.Message {
 
