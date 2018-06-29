@@ -13,17 +13,22 @@ import io.realm.kotlin.where
 import javax.inject.Inject
 
 class PreviewImageViewModel @Inject constructor(
-        private val bitmapCache: LruCache<String, Bitmap>) : BaseViewModel<PreviewImageView.Event, PreviewImageView.State>() {
+        private val bitmapCache: LruCache<String, Bitmap>)
+    : BaseViewModel<PreviewImageView.Event, PreviewImageView.State>() {
 
 
-    override val eventToRenderState =
+    override val eventToViewState =
             ObservableTransformer<PreviewImageView.Event, PreviewImageView.State> { upstream ->
 
                 upstream.observeOn(Schedulers.io())
                         .publish { shared ->
-                            Observable.merge(shared.ofType(PreviewImageView.Event.LoadImage::class.java)
-                                                     .compose(eventLoadImageToResult),
-                                             Observable.empty())
+                            Observable.merge(
+                                    shared.ofType(PreviewImageView.Event.LoadImage::class.java)
+                                            .compose(eventLoadImageToResult),
+                                    shared.ofType(PreviewImageView.Event.DismissImage::class.java)
+                                            .compose(eventDismissImageToResult),
+                                    shared.ofType(PreviewImageView.Event.AcceptImage::class.java)
+                                            .compose(eventAcceptImageToResult))
                                     .compose(resultToViewState)
                         }
             }
@@ -52,11 +57,24 @@ class PreviewImageViewModel @Inject constructor(
         }
     }
 
+    private val eventAcceptImageToResult = ObservableTransformer<PreviewImageView.Event.AcceptImage,
+            PreviewImageView.Result> { upstream ->
+
+        upstream.map { PreviewImageView.Result.AcceptImage }
+    }
+
+    private val eventDismissImageToResult = ObservableTransformer<PreviewImageView.Event.DismissImage,
+            PreviewImageView.Result> { upstream ->
+
+        upstream.map { PreviewImageView.Result.DismissImage }
+    }
+
     private val resultToViewState =
             ObservableTransformer<PreviewImageView.Result,
                     PreviewImageView.State> { upstream ->
 
-                upstream.scan(PreviewImageView.State.initial()) { previousState, result ->
+                upstream.scan(PreviewImageView.State.initial()) { previousState,
+                                                                  result ->
                     when (result) {
 
                         is PreviewImageView.Result.LoadImage -> {
@@ -65,8 +83,11 @@ class PreviewImageViewModel @Inject constructor(
                                     renderState = PreviewImageView.RenderState.LoadImage(result.image.data))
                         }
 
-                        is PreviewImageView.Result.DismissImage -> TODO()
-                        is PreviewImageView.Result.AcceptImage -> TODO()
+                        is PreviewImageView.Result.DismissImage ->
+                            previousState
+
+                        is PreviewImageView.Result.AcceptImage ->
+                            previousState
                     }
                 }.skip(1)
             }

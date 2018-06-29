@@ -46,7 +46,7 @@ class SelectParticipantsViewModel @Inject constructor() :
      * I'm not entirely sure how it works ^^
      * It makes use of what was presented here: https://speakerdeck.com/jakewharton/the-state-of-managing-state-with-rxjava-devoxx-us-2017?slide=180
      */
-    override val eventToRenderState = ObservableTransformer<SelectParticipantsView.Event,
+    override val eventToViewState = ObservableTransformer<SelectParticipantsView.Event,
             SelectParticipantsView.State> { upstream ->
 
         upstream

@@ -19,7 +19,7 @@ class TakeGroundPlanPictureViewModel @Inject constructor(
 
     private var viewState: TakeGroundPlanPictureView.State = TakeGroundPlanPictureView.State.initial()
 
-    override val eventToRenderState = ObservableTransformer<TakeGroundPlanPictureView.Event,
+    override val eventToViewState = ObservableTransformer<TakeGroundPlanPictureView.Event,
             TakeGroundPlanPictureView.State> { upstream ->
 
         upstream

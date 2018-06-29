@@ -128,7 +128,7 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
                     }.subscribeOn(Schedulers.io())
 
                 }
-                .compose(viewModel.eventToRenderState)
+                .compose(viewModel.eventToViewState)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::render)
     }

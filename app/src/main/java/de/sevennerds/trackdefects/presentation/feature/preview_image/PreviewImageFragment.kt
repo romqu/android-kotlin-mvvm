@@ -12,8 +12,9 @@ import de.sevennerds.trackdefects.common.asObservable
 import de.sevennerds.trackdefects.core.di.MessageQueue
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
-import de.sevennerds.trackdefects.presentation.feature.preview_image.navigation.PreviewImageKey
+import de.sevennerds.trackdefects.presentation.feature.create_defect_list_summary.navigation.CreateDefectListSummaryKey
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_preview_image.*
@@ -103,24 +104,18 @@ class PreviewImageFragment : BaseFragment() {
 
     private fun setupEvents() {
 
-        previewImageAcceptBtn
-                .clicks()
-                .subscribe()
-
-
-        compositeDisposable += previewImageDismissBtn
-                .clicks()
-                .subscribe {
-                    MainActivity[requireContext()].onBackPressed()
-                }
-
-    }
-
-    private fun init(imageName: String) {
-        compositeDisposable += imageName.asObservable()
-                .map { PreviewImageView.Event.LoadImage }
-                .compose(viewModel.eventToRenderState)
+        compositeDisposable += Observable
+                .merge(PreviewImageView.Event.LoadImage.asObservable(),
+                       previewImageDismissBtn
+                               .clicks()
+                               .map { PreviewImageView.Event.DismissImage },
+                       previewImageAcceptBtn
+                               .clicks()
+                               .map { PreviewImageView.Event.AcceptImage })
+                .compose(viewModel.eventToViewState)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::render)
+
     }
 
     private fun render(viewState: PreviewImageView.State) =
@@ -128,8 +123,13 @@ class PreviewImageFragment : BaseFragment() {
 
                 is PreviewImageView.RenderState.LoadImage ->
                     previewImageImgView.setImageBitmap(viewState.renderState.bitmap)
-                is PreviewImageView.RenderState.DismissImage -> TODO()
-                is PreviewImageView.RenderState.AcceptImage -> TODO()
+
+                is PreviewImageView.RenderState.DismissImage -> {
+                    MainActivity[requireContext()].onBackPressed()
+                }
+
+                is PreviewImageView.RenderState.AcceptImage ->
+                    MainActivity[requireContext()].navigateTo(CreateDefectListSummaryKey())
 
                 PreviewImageView.RenderState.None -> {
                 }
