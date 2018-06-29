@@ -1,6 +1,9 @@
 package de.sevennerds.trackdefects.presentation.feature.enter_street_address
 
 import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.SelectParticipantsView
+import de.sevennerds.trackdefects.presentation.realm_db.CreateBasicDefectListSummaryRealm
+import de.sevennerds.trackdefects.presentation.realm_db.RealmManager
+import de.sevennerds.trackdefects.presentation.realm_db.StreetAddressRealm
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.schedulers.Schedulers
@@ -126,7 +129,10 @@ class EnterStreetAddressViewModel @Inject constructor() {
                 is EnterStreetAddressView.Result.StreetAdditionalTextChange ->
                     EnterStreetAddressView.RenderState.Nothing(viewStateToParcelState(viewState))
 
-                is EnterStreetAddressView.Result.Next ->
+                is EnterStreetAddressView.Result.Next -> {
+
+                    // TODO impure
+                    updateSharedRealmObject(viewState)
 
                     with(viewState) {
                         EnterStreetAddressView.RenderState.Next(
@@ -135,6 +141,7 @@ class EnterStreetAddressViewModel @Inject constructor() {
                                                        streetNumber,
                                                        streetAdditional))
                     }
+                }
 
                 null ->
                     EnterStreetAddressView.RenderState.Nothing(viewStateToParcelState(viewState))
@@ -151,6 +158,18 @@ class EnterStreetAddressViewModel @Inject constructor() {
                                      streetAdditional,
                                      isButtonEnabled)
             }
+
+    // TODO impure
+    private fun updateSharedRealmObject(viewState: EnterStreetAddressView.State) {
+
+        RealmManager.insertOrUpdate(
+                CreateBasicDefectListSummaryRealm(
+                        streetAddressRealm =
+                        StreetAddressRealm(
+                                streetName = viewState.streetName,
+                                streetNumber = viewState.streetNumber,
+                                streetAdditional = viewState.streetAdditional)))
+    }
 
 }
 

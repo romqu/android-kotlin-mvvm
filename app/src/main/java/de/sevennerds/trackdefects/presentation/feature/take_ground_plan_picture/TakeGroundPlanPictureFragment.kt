@@ -1,6 +1,7 @@
 package de.sevennerds.trackdefects.presentation.feature.take_ground_plan_picture
 
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,16 +11,15 @@ import com.jakewharton.rxbinding2.view.clicks
 import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
-import de.sevennerds.trackdefects.core.di.MessageQueue
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
-import de.sevennerds.trackdefects.presentation.feature.preview_image.PreviewImageView
 import de.sevennerds.trackdefects.presentation.feature.preview_image.navigation.PreviewImageKey
 import io.fotoapparat.Fotoapparat
 import io.fotoapparat.configuration.CameraConfiguration
 import io.fotoapparat.parameter.ScaleType
 import io.fotoapparat.selector.*
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
@@ -30,20 +30,8 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModel: TakeGroundPlanPictureViewModel
-    @Inject
-    lateinit var messageQueue: MessageQueue
-    val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    /*private val camera by lazy {
-        Fotoapparat(
-                context = context!!,
-                cameraConfiguration = cameraConfiguration,
-                view = takeGroundPlanPictureTakCameraView,                   // view which will draw the camera preview
-                scaleType = ScaleType.CenterCrop,    // (optional) we want the preview to fill the view
-                lensPosition = back(),  // (optional) log fatal errors
-                cameraErrorCallback = { cameraException -> Logger.d(cameraException.toString()) }
-        )
-    }*/
+    val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     private lateinit var camera: Fotoapparat
 
@@ -58,6 +46,15 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
             jpegQuality = manualJpegQuality(85)
     )
 
+    override fun onAttach(context: Context?) {
+
+        TrackDefectsApp.get(context!!)
+                .appComponent
+                .inject(this)
+
+        super.onAttach(context)
+    }
+
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -71,10 +68,6 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        TrackDefectsApp.get(context!!)
-                .appComponent
-                .inject(this)
 
         ObjectAnimator.ofFloat(takeGroundPlanPictureTakePictureBtn, "", 360F)
                 .start()
@@ -113,7 +106,7 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
     override fun onStop() {
         super.onStop()
 
-        MainActivity[context!!].apply {
+        MainActivity[requireContext()].apply {
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
             supportActionBar?.show()
             requestedOrientation =
@@ -135,23 +128,21 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
                     }.subscribeOn(Schedulers.io())
 
                 }
-                .compose(viewModel.eventTransformer)
+                .compose(viewModel.eventToRenderState)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::render)
     }
 
-    private fun render(renderState: TakeGroundPlanPictureView.RenderState) =
-            when (renderState) {
+    private fun render(viewState: TakeGroundPlanPictureView.State) =
+            when (viewState.renderState) {
 
                 is TakeGroundPlanPictureView.RenderState.TakePicture -> {
-                    messageQueue
-                            .pushMessageTo(PreviewImageKey(),
-                                           PreviewImageView
-                                                   .Message
-                                                   .ImageName(renderState.imageName))
 
-                    MainActivity[context!!].navigateTo(PreviewImageKey())
+                    MainActivity[requireContext()].navigateTo(PreviewImageKey())
                 }
 
+                is TakeGroundPlanPictureView.RenderState.None -> {
+                }
             }
 
 

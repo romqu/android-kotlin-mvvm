@@ -2,35 +2,39 @@ package de.sevennerds.trackdefects.presentation.feature.take_ground_plan_picture
 
 import android.graphics.Bitmap
 import androidx.collection.LruCache
-import de.sevennerds.trackdefects.common.applySchedulers
+import de.sevennerds.trackdefects.presentation.base.BaseViewModel
+import de.sevennerds.trackdefects.presentation.realm_db.CreateBasicDefectListSummaryRealm
+import de.sevennerds.trackdefects.presentation.realm_db.RealmManager
 import de.sevennerds.trackdefects.util.getUuidV4
 import io.fotoapparat.result.adapter.rxjava2.toObservable
+import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class TakeGroundPlanPictureViewModel @Inject constructor(
-        private val bitmapCache: LruCache<String, Bitmap>) {
+        private val bitmapCache: LruCache<String, Bitmap>) : BaseViewModel<TakeGroundPlanPictureView.Event,
+        TakeGroundPlanPictureView.State>() {
+
 
     private var viewState: TakeGroundPlanPictureView.State = TakeGroundPlanPictureView.State.initial()
 
-    val eventTransformer = ObservableTransformer<TakeGroundPlanPictureView.Event,
-            TakeGroundPlanPictureView.RenderState> { upstream ->
+    override val eventToRenderState = ObservableTransformer<TakeGroundPlanPictureView.Event,
+            TakeGroundPlanPictureView.State> { upstream ->
 
-        upstream.ofType(TakeGroundPlanPictureView.Event.TakePicture::class.java)
-                .compose(takePictureEventTransformer)
-
-        /*upstream.publish { shared ->
-            Observable
-                    .merge(shared.ofType(TakeGroundPlanPictureView.Event.TakePicture::class.java)
-                                   .compose(takePictureEventTransformer),
-                           Observable.empty())*/
-
-
+        upstream
+                .observeOn(Schedulers.io())
+                .publish { shared ->
+                    Observable.merge(shared.ofType(TakeGroundPlanPictureView.Event.TakePicture::class.java)
+                                             .compose(evenTakePictureToResult),
+                                     Observable.empty())
+                }
+                .compose(resultToViewState)
     }
 
-    private val takePictureEventTransformer =
+    private val evenTakePictureToResult =
             ObservableTransformer<TakeGroundPlanPictureView.Event.TakePicture,
-                    TakeGroundPlanPictureView.RenderState> { upstream ->
+                    TakeGroundPlanPictureView.Result> { upstream ->
 
                 upstream.flatMap { takePictureEvent ->
                     takePictureEvent
@@ -42,23 +46,36 @@ class TakeGroundPlanPictureViewModel @Inject constructor(
                                 bitmapCache.put(imageName, bitmapPhoto.bitmap)
                                 TakeGroundPlanPictureView.Result.TakePicture(imageName)
                             }
-                            .compose(resultTransformer)
-                            .map { viewState ->
-                                TakeGroundPlanPictureView.RenderState.TakePicture(viewState.imageName)
-                            }.applySchedulers()
                 }
             }
 
-    private val resultTransformer =
+    private val resultToViewState =
             ObservableTransformer<TakeGroundPlanPictureView.Result,
                     TakeGroundPlanPictureView.State> { upstream ->
 
-                upstream.scan(viewState) { _, result ->
+                upstream.scan(TakeGroundPlanPictureView.State.initial()) { previousState, result ->
                     when (result) {
 
-                        is TakeGroundPlanPictureView.Result.TakePicture -> viewState.copy(result.imageName)
+                        is TakeGroundPlanPictureView.Result.TakePicture -> {
+
+                            val state = previousState.copy(imageName = result.imageName)
+
+                            // TODO impure
+                            updateSharedRealmObject(state)
+
+                            state.copy(renderState = TakeGroundPlanPictureView.RenderState.TakePicture)
+                        }
                     }
                 }.skip(1)
             }
+
+
+    // TODO impure
+    private fun updateSharedRealmObject(viewState: TakeGroundPlanPictureView.State) {
+
+        RealmManager.insertOrUpdate(
+                CreateBasicDefectListSummaryRealm(
+                        groundPlanPictureName = viewState.imageName))
+    }
 
 }

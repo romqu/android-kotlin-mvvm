@@ -10,6 +10,10 @@ import com.squareup.leakcanary.LeakCanary
 import de.sevennerds.trackdefects.core.di.AppComponent
 import de.sevennerds.trackdefects.core.di.AppModule
 import de.sevennerds.trackdefects.core.di.DaggerAppComponent
+import io.realm.Realm
+import io.realm.RealmConfiguration
+
+
 
 
 class TrackDefectsApp : Application() {
@@ -22,13 +26,13 @@ class TrackDefectsApp : Application() {
     }
 
 
-
     override fun onCreate() {
         super.onCreate()
 
         initLeakCanary()
         initLogger()
         initStetho()
+        initRealm()
     }
 
     private fun initLeakCanary() {
@@ -62,6 +66,20 @@ class TrackDefectsApp : Application() {
 
     private fun initStetho() =
             Stetho.initializeWithDefaults(this)
+
+    private fun initRealm() {
+        Realm.init(this)
+
+        val config = RealmConfiguration
+                .Builder()
+                .build()
+
+        Realm.deleteRealm(config)
+
+        Realm.setDefaultConfiguration(config)
+    }
+
+
 
     companion object {
         fun get(context: Context): TrackDefectsApp =

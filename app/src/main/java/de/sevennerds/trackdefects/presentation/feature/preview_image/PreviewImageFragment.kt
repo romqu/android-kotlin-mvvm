@@ -13,17 +13,14 @@ import de.sevennerds.trackdefects.core.di.MessageQueue
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
 import de.sevennerds.trackdefects.presentation.feature.preview_image.navigation.PreviewImageKey
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_preview_image.*
 import javax.inject.Inject
 
-class PreviewImageFragment : BaseFragment(), MessageQueue.Receiver {
+class PreviewImageFragment : BaseFragment() {
 
-
-    companion object {
-        private const val KEY_STATE = "KEY_STATE"
-    }
 
     @Inject
     lateinit var messageQueue: MessageQueue
@@ -50,7 +47,7 @@ class PreviewImageFragment : BaseFragment(), MessageQueue.Receiver {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewStateParcel = savedInstanceState?.getParcelable(KEY_STATE)
+        viewStateParcel = savedInstanceState?.getParcelable(KEY_STATE_PARCEL)
     }
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -71,11 +68,6 @@ class PreviewImageFragment : BaseFragment(), MessageQueue.Receiver {
 
         setup()
 
-        viewStateParcel?.run {
-            init(imageName)
-        } ?: messageQueue.requestMessages(PreviewImageKey(),
-                                          this)
-
     }
 
     override fun onPause() {
@@ -83,15 +75,13 @@ class PreviewImageFragment : BaseFragment(), MessageQueue.Receiver {
 
         isRotation = true
 
-        viewStateParcel = viewModel.getViewStateParcel()
-
         compositeDisposable.clear()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
 
         viewStateParcel?.let {
-            outState.putParcelable(KEY_STATE, it)
+            outState.putParcelable(KEY_STATE_PARCEL, it)
         }
 
         super.onSaveInstanceState(outState)
@@ -117,41 +107,31 @@ class PreviewImageFragment : BaseFragment(), MessageQueue.Receiver {
                 .clicks()
                 .subscribe()
 
+
         compositeDisposable += previewImageDismissBtn
                 .clicks()
                 .subscribe {
-                    MainActivity[context!!].onBackPressed()
+                    MainActivity[requireContext()].onBackPressed()
                 }
 
     }
 
     private fun init(imageName: String) {
         compositeDisposable += imageName.asObservable()
-                .map { PreviewImageView.Event.LoadImage(it) }
-                .compose(viewModel.eventTransformer)
+                .map { PreviewImageView.Event.LoadImage }
+                .compose(viewModel.eventToRenderState)
                 .subscribe(::render)
     }
 
-    private fun render(renderState: PreviewImageView.RenderState) =
-            when (renderState) {
+    private fun render(viewState: PreviewImageView.State) =
+            when (viewState.renderState) {
 
                 is PreviewImageView.RenderState.LoadImage ->
-                    previewImageImgView.setImageBitmap(renderState.bitmap)
+                    previewImageImgView.setImageBitmap(viewState.renderState.bitmap)
                 is PreviewImageView.RenderState.DismissImage -> TODO()
                 is PreviewImageView.RenderState.AcceptImage -> TODO()
 
+                PreviewImageView.RenderState.None -> {
+                }
             }
-
-    override fun receiveMessage(message: MessageQueue.Message) {
-        when (message) {
-            is PreviewImageView.Message.ImageName ->
-                compositeDisposable += message.imageName
-                        .asObservable()
-                        .map { PreviewImageView.Event.LoadImage(it) }
-                        .compose(viewModel.eventTransformer)
-                        .subscribe(::render)
-            else -> {
-            }
-        }
-    }
 }

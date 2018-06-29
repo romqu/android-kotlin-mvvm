@@ -1,11 +1,17 @@
 package de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list
 
 import androidx.recyclerview.widget.DiffUtil
+import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.presentation.base.BaseDiffCallback
 import de.sevennerds.trackdefects.presentation.base.BaseViewModel
+import de.sevennerds.trackdefects.presentation.realm_db.CreateBasicDefectListSummaryRealm
+import de.sevennerds.trackdefects.presentation.realm_db.RealmManager
+import de.sevennerds.trackdefects.presentation.realm_db.ViewParticipantRealm
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.rxkotlin.toObservable
+import io.reactivex.schedulers.Schedulers
+import io.realm.RealmList
 import javax.inject.Inject
 
 
@@ -41,28 +47,31 @@ class SelectParticipantsViewModel @Inject constructor() :
      * It makes use of what was presented here: https://speakerdeck.com/jakewharton/the-state-of-managing-state-with-rxjava-devoxx-us-2017?slide=180
      */
     override val eventToRenderState = ObservableTransformer<SelectParticipantsView.Event,
-            SelectParticipantsView.State> { observable ->
+            SelectParticipantsView.State> { upstream ->
 
-        observable.publish { shared ->
-            Observable
-                    .mergeArray(
-                            shared.ofType(
-                                    SelectParticipantsView.Event.Init::class.java)
-                                    .compose(eventInitToResult),
-                            shared.ofType(
-                                    SelectParticipantsView.Event.Add::class.java)
-                                    .compose(eventAddParticipantsToResult),
-                            shared.ofType(
-                                    SelectParticipantsView.Event.Remove::class.java)
-                                    .compose(eventRemoveParticipantToResult),
-                            shared.ofType(
-                                    SelectParticipantsView.Event.ShowContacts::class.java)
-                                    .compose(eventShowContactsToResult),
-                            shared.ofType(
-                                    SelectParticipantsView.Event.Next::class.java)
-                                    .compose(eventNextToResult))
-                    .compose(resultToViewState)
-        }
+        upstream
+                .observeOn(Schedulers.io())
+                .publish { shared ->
+                    Observable
+                            .mergeArray(
+                                    shared.ofType(
+                                            SelectParticipantsView.Event.Init::class.java)
+                                            .compose(eventInitToResult),
+                                    shared.ofType(
+                                            SelectParticipantsView.Event.Add::class.java)
+                                            .compose(eventAddParticipantsToResult),
+                                    shared.ofType(
+                                            SelectParticipantsView.Event.Remove::class.java)
+                                            .compose(eventRemoveParticipantToResult),
+                                    shared.ofType(
+                                            SelectParticipantsView.Event.ShowContacts::class.java)
+                                            .compose(eventShowContactsToResult),
+                                    shared.ofType(
+                                            SelectParticipantsView.Event.Next::class.java)
+                                            .compose(eventNextToResult))
+                            .compose(resultToViewState)
+
+                }
     }
 
     private val eventInitToResult = ObservableTransformer<SelectParticipantsView.Event.Init,
@@ -80,7 +89,9 @@ class SelectParticipantsViewModel @Inject constructor() :
     private val eventNextToResult = ObservableTransformer<SelectParticipantsView.Event.Next,
             SelectParticipantsView.Result> { upstream ->
 
-        upstream.map { SelectParticipantsView.Result.Next }
+        upstream.map {
+            SelectParticipantsView.Result.Next
+        }
     }
 
     private val eventAddParticipantsToResult = ObservableTransformer<SelectParticipantsView.Event.Add,
@@ -163,7 +174,7 @@ class SelectParticipantsViewModel @Inject constructor() :
 
                     val state = previousState.copy(participantModelList = result.parcelState.participantModelList)
 
-                    state.copy(renderState = SelectParticipantsView.RenderState.Init(getParcelState(state)))
+                    state.copy(renderState = SelectParticipantsView.RenderState.Init(convertViewToParcelState(state)))
                 }
 
                 is SelectParticipantsView.Result.Add -> {
@@ -173,7 +184,7 @@ class SelectParticipantsViewModel @Inject constructor() :
 
                     state.copy(renderState = SelectParticipantsView
                             .RenderState.Add(result.diffResult,
-                                             getParcelState(state)))
+                                             convertViewToParcelState(state)))
                 }
 
                 is SelectParticipantsView.Result.Remove -> {
@@ -182,17 +193,37 @@ class SelectParticipantsViewModel @Inject constructor() :
 
                     state.copy(renderState = SelectParticipantsView
                             .RenderState.Remove(result.diffResult,
-                                                getParcelState(state)))
+                                                convertViewToParcelState(state)))
                 }
 
-                is SelectParticipantsView.Result.Next ->
+                is SelectParticipantsView.Result.Next -> {
+
+                    // TODO impure
+                    updateSharedRealmObject(previousState)
+
                     previousState.copy(renderState = SelectParticipantsView.RenderState.Next)
+                }
             }
         }.skip(1)
     }
 
-    private fun getParcelState(viewState: SelectParticipantsView.State) =
+    private fun convertViewToParcelState(viewState: SelectParticipantsView.State) =
             SelectParticipantsView.ParcelState(viewState.participantModelList)
 
+    // TODO impure
+    private fun updateSharedRealmObject(viewState: SelectParticipantsView.State) {
+
+        val participantRealmList = viewState.participantModelList
+                .map {
+                    ViewParticipantRealm(name = it.name,
+                                         phoneNumber = it.phoneNumber,
+                                         email = it.email)
+                }
+                .toList()
+
+        RealmManager.insertOrUpdate(
+                CreateBasicDefectListSummaryRealm(
+                        viewParticipantRealmList = RealmList(*participantRealmList.toTypedArray())))
+    }
 }
 

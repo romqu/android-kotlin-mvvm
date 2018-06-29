@@ -22,11 +22,14 @@ import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
 import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.list.SelectParticipantsListAdapter
 import de.sevennerds.trackdefects.presentation.feature.take_ground_plan_picture.navigation.TakeGroundPlanPictureKey
+import de.sevennerds.trackdefects.presentation.realm_db.CreateBasicDefectListSummaryRealm
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_select_participants.*
 import javax.inject.Inject
 
@@ -170,8 +173,6 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
 
     private fun setupEvents() {
 
-        Logger.d(addEventBSubject)
-
         compositeDisposable += Observable
                 .mergeArray(
                         select_participants_fab
@@ -190,6 +191,7 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
                         initEventSubject.toObservable(),
                         addEventBSubject.toObservable())
                 .compose(viewModel.eventToRenderState)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::render)
     }
 

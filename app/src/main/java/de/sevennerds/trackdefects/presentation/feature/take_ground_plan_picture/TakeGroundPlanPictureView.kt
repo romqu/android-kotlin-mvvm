@@ -1,6 +1,5 @@
 package de.sevennerds.trackdefects.presentation.feature.take_ground_plan_picture
 
-import android.graphics.Bitmap
 import android.os.Parcelable
 import io.fotoapparat.result.PhotoResult
 import kotlinx.android.parcel.Parcelize
@@ -23,9 +22,11 @@ class TakeGroundPlanPictureView {
     /**
      * The "global" view state, kept in the ViewModel
      */
-    data class State(val imageName: String) {
+    data class State(val imageName: String,
+                     val renderState: RenderState) {
+
         companion object {
-            fun initial() = State("")
+            fun initial() = State("", RenderState.None)
         }
     }
 
@@ -33,7 +34,8 @@ class TakeGroundPlanPictureView {
      * The states the view receives and uses to render its ui, hence RenderState
      */
     sealed class RenderState {
-        data class TakePicture(val imageName: String) : RenderState()
+        object TakePicture : RenderState()
+        object None : RenderState()
     }
 
     /**
