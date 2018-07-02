@@ -41,12 +41,12 @@ class TakeGroundPlanPictureViewModel @Inject constructor(
                             .photoResult
                             .toBitmap()
                             .toObservable()
-                            .map { bitmapPhoto ->
-                                val imageName = getUuidV4()
-                                bitmapCache.put(imageName, bitmapPhoto.bitmap)
-                                TakeGroundPlanPictureView.Result.TakePicture(imageName)
-                            }
                 }
+                        .map { bitmapPhoto ->
+                            val imageName = getUuidV4()
+                            bitmapCache.put(imageName, bitmapPhoto.bitmap)
+                            TakeGroundPlanPictureView.Result.TakePicture(imageName)
+                        }
             }
 
     private val resultToViewState =

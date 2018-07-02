@@ -2,14 +2,14 @@ package de.sevennerds.trackdefects.presentation.feature.preview_image
 
 import android.graphics.Bitmap
 import androidx.collection.LruCache
+import com.orhanobut.logger.Logger
+import com.vicpin.krealmextensions.queryAsSingle
 import de.sevennerds.trackdefects.presentation.base.BaseViewModel
 import de.sevennerds.trackdefects.presentation.model.FileModel
 import de.sevennerds.trackdefects.presentation.realm_db.CreateBasicDefectListSummaryRealm
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.schedulers.Schedulers
-import io.realm.Realm
-import io.realm.kotlin.where
 import javax.inject.Inject
 
 class PreviewImageViewModel @Inject constructor(
@@ -36,26 +36,27 @@ class PreviewImageViewModel @Inject constructor(
     private val eventLoadImageToResult = ObservableTransformer<PreviewImageView.Event.LoadImage,
             PreviewImageView.Result> { upstream ->
 
-        upstream.flatMap {
-            Realm.getDefaultInstance().use {
-                it.where<CreateBasicDefectListSummaryRealm>()
-                        .equalTo("id", 0L)
-                        .findAllAsync()
-                        .asFlowable()
-                        .toObservable()
+        upstream
+                .flatMap {
 
-            }.map {
+                    queryAsSingle<CreateBasicDefectListSummaryRealm> {
+                        equalTo("id", 0L)
+                    }
+                            .toObservable()
+                }
+                .map { it.first() }
+                .map { realmObject ->
 
-                val realmObject = it.first()!!
+                    Logger.d(realmObject)
 
-                val bitmap = bitmapCache.get(realmObject.groundPlanPictureName)
+                    val bitmap = bitmapCache.get(realmObject.groundPlanPictureName)
 
-                PreviewImageView.Result.LoadImage(
-                        FileModel(realmObject.groundPlanPictureName,
-                                  bitmap))
-            }
-        }
+                    PreviewImageView.Result.LoadImage(
+                            FileModel(realmObject.groundPlanPictureName,
+                                      bitmap))
+                }
     }
+
 
     private val eventAcceptImageToResult = ObservableTransformer<PreviewImageView.Event.AcceptImage,
             PreviewImageView.Result> { upstream ->
@@ -84,10 +85,11 @@ class PreviewImageViewModel @Inject constructor(
                         }
 
                         is PreviewImageView.Result.DismissImage ->
-                            previousState
+                            previousState.copy(renderState = PreviewImageView.RenderState.DismissImage)
 
-                        is PreviewImageView.Result.AcceptImage ->
-                            previousState
+                        is PreviewImageView.Result.AcceptImage -> {
+                            previousState.copy(renderState = PreviewImageView.RenderState.AcceptImage)
+                        }
                     }
                 }.skip(1)
             }

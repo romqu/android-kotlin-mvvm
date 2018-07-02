@@ -1,6 +1,7 @@
 package de.sevennerds.trackdefects.presentation.feature.create_defect_list_summary
 
 import android.os.Parcelable
+import de.sevennerds.trackdefects.presentation.model.DefectListModel
 import kotlinx.android.parcel.Parcelize
 
 class CreateDefectListSummaryView {
@@ -15,7 +16,7 @@ class CreateDefectListSummaryView {
      */
     sealed class Result {
 
-        class Init() : Result()
+        class Init(val defectListModel: DefectListModel) : Result()
     }
 
     /**
@@ -32,6 +33,7 @@ class CreateDefectListSummaryView {
      * The states the view receives and uses to render its ui, hence RenderState
      */
     sealed class RenderState {
+        class Init(val defectListModel: DefectListModel) : RenderState()
         object None : RenderState()
     }
 

@@ -120,4 +120,7 @@ dependencies {
     // Permissions
     // implementation 'com.karumi:dexter:5.0.0'
     implementation 'gun0912.ted:tedpermission-rx2:2.2.0'
+
+    // realm extensions
+    implementation "com.github.vicpinm:krealmextensions:2.2.0"
 }

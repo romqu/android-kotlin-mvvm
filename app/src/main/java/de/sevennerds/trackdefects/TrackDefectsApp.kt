@@ -70,13 +70,13 @@ class TrackDefectsApp : Application() {
     private fun initRealm() {
         Realm.init(this)
 
-        val config = RealmConfiguration
+/*        val config = RealmConfiguration
                 .Builder()
                 .build()
 
         Realm.deleteRealm(config)
 
-        Realm.setDefaultConfiguration(config)
+        Realm.setDefaultConfiguration(config)*/
     }
 
 

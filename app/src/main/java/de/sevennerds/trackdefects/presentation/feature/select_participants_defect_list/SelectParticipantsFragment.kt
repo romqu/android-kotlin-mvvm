@@ -11,13 +11,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxbinding2.view.clicks
-import com.orhanobut.logger.Logger
 import com.wafflecopter.multicontactpicker.ContactResult
 import com.wafflecopter.multicontactpicker.MultiContactPicker
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.common.toObservable
-import de.sevennerds.trackdefects.core.di.MessageQueue
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
 import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.list.SelectParticipantsListAdapter
@@ -38,16 +36,17 @@ import javax.inject.Inject
  * Renders the parcelState
  */
 
-class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
-
-    @Inject
-    lateinit var messageQueue: MessageQueue
+class SelectParticipantsFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModel: SelectParticipantsViewModel
 
-    private val initEventSubject: PublishSubject<SelectParticipantsView.Event.Init> = PublishSubject.create()
-    private val addEventBSubject: BehaviorSubject<SelectParticipantsView.Event.Add> = BehaviorSubject.create()
+    private val initEventSubject: PublishSubject<SelectParticipantsView.Event.Init> =
+            PublishSubject.create()
+
+    private val addEventBSubject: BehaviorSubject<SelectParticipantsView.Event.Add> =
+            BehaviorSubject.create()
+
     private val compositeDisposable = CompositeDisposable()
 
     companion object {
@@ -101,10 +100,6 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
         super.onActivityCreated(savedInstanceState)
 
         setup()
-
-        messageQueue.requestMessages(getKey(),
-                                     this)
-
         init()
     }
 
@@ -262,13 +257,5 @@ class SelectParticipantsFragment : BaseFragment(), MessageQueue.Receiver {
 
     private fun updateParcelState(parcelState: SelectParticipantsView.ParcelState) {
         this.parcelState = parcelState
-    }
-
-
-    override fun receiveMessage(message: MessageQueue.Message) {
-        when (message) {
-            is SelectParticipantsView.Message.StreetAddress ->
-                Logger.d(message.streetName)
-        }
     }
 }

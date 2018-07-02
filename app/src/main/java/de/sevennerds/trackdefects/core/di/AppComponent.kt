@@ -2,6 +2,7 @@ package de.sevennerds.trackdefects.core.di
 
 import dagger.Component
 import de.sevennerds.trackdefects.presentation.MainActivity
+import de.sevennerds.trackdefects.presentation.feature.create_defect_list_summary.CreateDefectListSummaryFragment
 import de.sevennerds.trackdefects.presentation.feature.enter_street_address.EnterStreetAddressFragment
 import de.sevennerds.trackdefects.presentation.feature.preview_image.PreviewImageFragment
 import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.SelectParticipantsFragment
@@ -22,5 +23,6 @@ interface AppComponent {
     fun inject(selectParticipantsFragment: SelectParticipantsFragment)
     fun inject(takeGroundPlanPictureFragment: TakeGroundPlanPictureFragment)
     fun inject(previewImageFragment: PreviewImageFragment)
+    fun inject(createDefectListSummaryFragment: CreateDefectListSummaryFragment)
 
 }

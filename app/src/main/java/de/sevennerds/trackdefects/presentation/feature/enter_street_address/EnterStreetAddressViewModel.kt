@@ -1,5 +1,7 @@
 package de.sevennerds.trackdefects.presentation.feature.enter_street_address
 
+import com.orhanobut.logger.Logger
+import com.vicpin.krealmextensions.save
 import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.SelectParticipantsView
 import de.sevennerds.trackdefects.presentation.realm_db.CreateBasicDefectListSummaryRealm
 import de.sevennerds.trackdefects.presentation.realm_db.RealmManager

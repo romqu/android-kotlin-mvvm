@@ -8,7 +8,7 @@ import io.realm.annotations.PrimaryKey
 open class CreateBasicDefectListSummaryRealm(
         @PrimaryKey var id: Long = 0L,
         var groundPlanPictureName: String = "",
-        var streetAddressRealm: StreetAddressRealm? = null,
+        var streetAddressRealm: StreetAddressRealm? = StreetAddressRealm(),
         var viewParticipantRealmList: RealmList<ViewParticipantRealm?> = RealmList()
 ) : RealmObject()
 
