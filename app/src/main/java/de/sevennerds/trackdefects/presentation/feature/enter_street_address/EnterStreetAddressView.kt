@@ -1,17 +1,17 @@
 package de.sevennerds.trackdefects.presentation.feature.enter_street_address
 
 import android.os.Parcelable
-import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.SelectParticipantsView
 import kotlinx.android.parcel.Parcelize
 
 class EnterStreetAddressView {
 
     sealed class Event {
 
+        class Init(val parcelState: ParcelState?) : Event()
         class StreetNameTextChange(val text: String) : Event()
         class StreetNumberTextChange(val text: String) : Event()
         class StreetAdditionalTextChange(val text: String) : Event()
-        object Next: Event()
+        object Next : Event()
     }
 
     /**
@@ -19,7 +19,8 @@ class EnterStreetAddressView {
      */
     sealed class Result {
 
-        class StreetNameTextChange(val text: String, val isNotEmpty: Boolean) : Result()
+        class Init(val parcelState: ParcelState?) : Result()
+        class StreetNameTextChange(val text: String) : Result()
         class StreetNumberTextChange(val text: String) : Result()
         class StreetAdditionalTextChange(val text: String) : Result()
         object Next : Result()
@@ -32,7 +33,7 @@ class EnterStreetAddressView {
                      val streetNumber: String,
                      val streetAdditional: String,
                      val isButtonEnabled: Boolean,
-                     val currentResult: Result?) {
+                     val renderState: RenderState) {
 
         companion object {
             fun initial() = State(
@@ -40,24 +41,28 @@ class EnterStreetAddressView {
                     "",
                     "",
                     false,
-                    currentResult = null)
+                    renderState = RenderState.None)
         }
     }
 
     /**
      * The states the view receives and uses to render its ui, hence RenderState
      */
-    sealed class RenderState() {
-        class SetButtonState(val isEnabled: Boolean, val stateParcel: StateParcel) : RenderState()
-        class Nothing(val stateParcel: StateParcel) : RenderState()
-        class Next(val message: SelectParticipantsView.Message.StreetAddress): RenderState()
+    sealed class RenderState {
+        data class SetButtonState(
+                val isEnabled: Boolean,
+                val parcelState: ParcelState) : RenderState()
+        object Init : RenderState()
+        data class UpdateStateParcel(val parcelState: ParcelState): RenderState()
+        object None : RenderState()
+        object Next : RenderState()
     }
 
     /**
      * The Parcelable version of the ViewState
      */
     @Parcelize
-    data class StateParcel(val streetName: String,
+    data class ParcelState(val streetName: String,
                            val streetNumber: String,
                            val streetAdditional: String,
                            val isButtonEnabled: Boolean) : Parcelable

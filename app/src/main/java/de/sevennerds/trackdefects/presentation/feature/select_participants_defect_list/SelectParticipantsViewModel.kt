@@ -1,10 +1,7 @@
 package de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveDataReactiveStreams
 import androidx.recyclerview.widget.DiffUtil
-import com.orhanobut.logger.Logger
+import com.vicpin.krealmextensions.queryFirst
 import de.sevennerds.trackdefects.presentation.base.BaseDiffCallback
 import de.sevennerds.trackdefects.presentation.base.BaseViewModel
 import de.sevennerds.trackdefects.presentation.realm_db.CreateBasicDefectListSummaryRealm
@@ -14,7 +11,6 @@ import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
-import io.realm.Realm
 import io.realm.RealmList
 import javax.inject.Inject
 
@@ -225,9 +221,13 @@ class SelectParticipantsViewModel @Inject constructor() :
                 }
                 .toList()
 
-        RealmManager.insertOrUpdate(
-                CreateBasicDefectListSummaryRealm(
-                        viewParticipantRealmList = RealmList(*participantRealmList.toTypedArray())))
+        val createBasicDefectListSummaryRealm =
+                queryFirst<CreateBasicDefectListSummaryRealm>()!!
+
+        createBasicDefectListSummaryRealm.viewParticipantRealmList =
+                RealmList(*participantRealmList.toTypedArray())
+
+        RealmManager.insertOrUpdate(createBasicDefectListSummaryRealm)
 
 
     }

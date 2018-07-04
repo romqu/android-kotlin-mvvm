@@ -11,6 +11,7 @@ import com.jakewharton.rxbinding2.view.clicks
 import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
+import de.sevennerds.trackdefects.common.hideKeyboard
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
 import de.sevennerds.trackdefects.presentation.feature.preview_image.navigation.PreviewImageKey
@@ -31,7 +32,7 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
     @Inject
     lateinit var viewModel: TakeGroundPlanPictureViewModel
 
-    val compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     private lateinit var camera: Fotoapparat
 
@@ -75,17 +76,19 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
         camera = Fotoapparat(
                 context = context!!,
                 cameraConfiguration = cameraConfiguration,
-                view = takeGroundPlanPictureTakCameraView,                   // view which will draw the camera preview
-                scaleType = ScaleType.CenterCrop,    // (optional) we want the preview to fill the view
-                lensPosition = back(),  // (optional) log fatal errors
-                cameraErrorCallback = { cameraException -> Logger.d(cameraException.toString()) }
+                view = takeGroundPlanPictureTakCameraView,
+                scaleType = ScaleType.CenterCrop,
+                lensPosition = back(),
+                cameraErrorCallback = { cameraException ->
+                    Logger.d(cameraException.toString())
+                }
         )
     }
 
     override fun onStart() {
         super.onStart()
 
-        MainActivity[context!!].apply {
+        MainActivity[requireContext()].apply {
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
             supportActionBar?.hide()
             requestedOrientation =

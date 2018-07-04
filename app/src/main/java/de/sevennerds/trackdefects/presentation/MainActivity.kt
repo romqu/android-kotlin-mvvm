@@ -12,9 +12,7 @@ import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.presentation.base.navigation.BaseKey
 import de.sevennerds.trackdefects.presentation.base.navigation.FragmentStateChanger
-import de.sevennerds.trackdefects.presentation.feature.create_defect_list_summary.navigation.CreateDefectListSummaryKey
 import de.sevennerds.trackdefects.presentation.feature.enter_street_address.navigation.EnterStreetAddressKey
-import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.navigation.SelectParticipantsKey
 
 
 /**
@@ -33,9 +31,11 @@ class MainActivity : AppCompatActivity(), StateChanger {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         backstackDelegate = BackstackDelegate(null)
+
         backstackDelegate.onCreate(savedInstanceState,
                                    lastCustomNonConfigurationInstance,
-                                   History.single(SelectParticipantsKey()))
+                                   History.single(EnterStreetAddressKey()))
+
         backstackDelegate.registerForLifecycleCallbacks(this);
 
         super.onCreate(savedInstanceState)
@@ -61,6 +61,11 @@ class MainActivity : AppCompatActivity(), StateChanger {
 
     private fun replaceHistory(rootKey: BaseKey) {
         backstackDelegate.backstack.setHistory(History.single(rootKey), StateChange.REPLACE)
+
+    }
+
+    fun replaceTopWith(key: BaseKey){
+        backstackDelegate.backstack.replaceTop(key, StateChange.FORWARD)
     }
 
     fun navigateTo(key: BaseKey) {

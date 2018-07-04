@@ -14,6 +14,7 @@ androidExtensions {
 
 android {
     compileSdkVersion 28
+
     defaultConfig {
 
         applicationId "de.sevennerds.trackdefects"
@@ -37,7 +38,7 @@ android {
         }
     }
 
-    buildToolsVersion '28.0.0 rc2'
+    buildToolsVersion '28.0.1'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -109,7 +110,7 @@ dependencies {
     // logger
     implementation 'com.orhanobut:logger:2.2.0'
     // navigation
-    implementation 'com.github.Zhuinden:simple-stack:1.9.2'
+    implementation 'com.github.Zhuinden:simple-stack:1.11.0'
     // camera
     // implementation 'com.asksira.android:cameraviewplus:0.9.0'
     implementation 'io.fotoapparat.fotoapparat:library:2.2.0'

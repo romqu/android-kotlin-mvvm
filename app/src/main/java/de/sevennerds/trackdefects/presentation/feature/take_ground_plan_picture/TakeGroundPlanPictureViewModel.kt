@@ -2,11 +2,14 @@ package de.sevennerds.trackdefects.presentation.feature.take_ground_plan_picture
 
 import android.graphics.Bitmap
 import androidx.collection.LruCache
+import com.orhanobut.logger.Logger
+import com.vicpin.krealmextensions.queryFirst
 import de.sevennerds.trackdefects.presentation.base.BaseViewModel
 import de.sevennerds.trackdefects.presentation.realm_db.CreateBasicDefectListSummaryRealm
 import de.sevennerds.trackdefects.presentation.realm_db.RealmManager
 import de.sevennerds.trackdefects.util.getUuidV4
 import io.fotoapparat.result.adapter.rxjava2.toObservable
+import io.fotoapparat.result.transformer.scaled
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.schedulers.Schedulers
@@ -39,7 +42,7 @@ class TakeGroundPlanPictureViewModel @Inject constructor(
                 upstream.flatMap { takePictureEvent ->
                     takePictureEvent
                             .photoResult
-                            .toBitmap()
+                            .toBitmap(scaled(scaleFactor = 0.25f))
                             .toObservable()
                 }
                         .map { bitmapPhoto ->
@@ -73,9 +76,11 @@ class TakeGroundPlanPictureViewModel @Inject constructor(
     // TODO impure
     private fun updateSharedRealmObject(viewState: TakeGroundPlanPictureView.State) {
 
-        RealmManager.insertOrUpdate(
-                CreateBasicDefectListSummaryRealm(
-                        groundPlanPictureName = viewState.imageName))
+        val createBasicDefectListSummaryRealm = queryFirst<CreateBasicDefectListSummaryRealm>()!!
+
+        createBasicDefectListSummaryRealm.groundPlanPictureName = viewState.imageName
+
+        RealmManager.insertOrUpdate(createBasicDefectListSummaryRealm)
     }
 
 }

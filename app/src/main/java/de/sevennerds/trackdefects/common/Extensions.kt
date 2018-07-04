@@ -1,6 +1,8 @@
 package de.sevennerds.trackdefects.common
 
+import android.content.Context
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Observable
@@ -49,3 +51,8 @@ fun <T> PublishSubject<T>.toObservable() =
 fun <T> BehaviorSubject<T>.toObservable() =
         this.toFlowable(io.reactivex.BackpressureStrategy.BUFFER)
                 .toObservable()!!
+
+fun Fragment.hideKeyboard() {
+    val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(view!!.windowToken, 0)
+}

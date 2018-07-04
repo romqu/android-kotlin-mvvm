@@ -76,15 +76,6 @@ class SelectParticipantsView {
      */
     @Parcelize
     data class ParcelState(val participantModelList: List<ParticipantModel>) : Parcelable
-
-    sealed class Message : MessageQueue.Message {
-
-        class StreetAddress(val streetName: String,
-                            val streetNumber: String,
-                            val streetAdditional: String) : Message()
-    }
-
-
 }
 
 

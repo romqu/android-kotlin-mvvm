@@ -2,6 +2,7 @@ package de.sevennerds.trackdefects.presentation.feature.create_defect_list_summa
 
 import android.graphics.Bitmap
 import androidx.collection.LruCache
+import com.orhanobut.logger.Logger
 import com.vicpin.krealmextensions.queryAsSingle
 import de.sevennerds.trackdefects.presentation.base.BaseViewModel
 import de.sevennerds.trackdefects.presentation.model.DefectListModel

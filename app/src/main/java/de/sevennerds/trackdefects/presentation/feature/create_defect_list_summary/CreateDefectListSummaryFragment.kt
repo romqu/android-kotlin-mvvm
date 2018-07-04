@@ -111,6 +111,24 @@ class CreateDefectListSummaryFragment : BaseFragment() {
 
                 is CreateDefectListSummaryView.RenderState.Init -> {
 
+                    createDefectListSummaryStreetAddressExtEditTxt
+                            .setText(viewState.renderState
+                                             .defectListModel
+                                             .streetAddressModel
+                                             .name)
+
+                    createDefectListSummaryParticipantsExtEditTxt
+                            .setText(viewState
+                                             .renderState
+                                             .defectListModel
+                                             .viewParticipantModelList
+                                             .map { it.name }
+                                             .reduce { acc, s ->
+                                                 acc + s
+                                             }
+
+                            )
+
                     createDefectListSummaryGroundPlanImgView
                             .setImageBitmap(viewState.renderState
                                                     .defectListModel

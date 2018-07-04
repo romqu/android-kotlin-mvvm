@@ -15,6 +15,7 @@ import com.wafflecopter.multicontactpicker.ContactResult
 import com.wafflecopter.multicontactpicker.MultiContactPicker
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
+import de.sevennerds.trackdefects.common.hideKeyboard
 import de.sevennerds.trackdefects.common.toObservable
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
@@ -216,22 +217,29 @@ class SelectParticipantsFragment : BaseFragment() {
             is SelectParticipantsView.RenderState.Init -> {
                 updateParcelState(renderState.parcelState)
                 updateList(viewState.participantModelList)
+                updateButtonText(viewState.nextOrSkipButtonText)
             }
 
             is SelectParticipantsView.RenderState.Add -> {
                 updateParcelState(renderState.parcelState)
                 updateList(viewState.participantModelList,
                            renderState.diffResult)
+                updateButtonText(viewState.nextOrSkipButtonText)
             }
 
             is SelectParticipantsView.RenderState.Remove -> {
                 updateParcelState(renderState.parcelState)
                 updateList(viewState.participantModelList,
                            renderState.diffResult)
+                updateButtonText(viewState.nextOrSkipButtonText)
             }
 
-            is SelectParticipantsView.RenderState.Next ->
+            is SelectParticipantsView.RenderState.Next -> {
+
+                hideKeyboard()
+
                 MainActivity[requireContext()].navigateTo(TakeGroundPlanPictureKey())
+            }
 
             is SelectParticipantsView.RenderState.None -> {
             }

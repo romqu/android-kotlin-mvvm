@@ -2,6 +2,7 @@ package de.sevennerds.trackdefects.presentation.base.navigation
 
 import android.os.Bundle
 import android.os.Parcelable
+import com.zhuinden.simplestack.ScopeKey
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
 
 abstract class BaseKey : Parcelable {

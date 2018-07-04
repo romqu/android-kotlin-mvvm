@@ -126,7 +126,7 @@ class PreviewImageFragment : BaseFragment() {
                 }
 
                 is PreviewImageView.RenderState.AcceptImage -> {
-                    MainActivity[requireContext()].navigateTo(CreateDefectListSummaryKey())
+                    MainActivity[requireContext()].replaceTopWith(CreateDefectListSummaryKey())
                 }
 
                 PreviewImageView.RenderState.None -> {

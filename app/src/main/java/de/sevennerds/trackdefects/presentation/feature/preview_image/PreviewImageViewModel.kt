@@ -39,6 +39,7 @@ class PreviewImageViewModel @Inject constructor(
         upstream
                 .flatMap {
 
+                    // TODO change thread
                     queryAsSingle<CreateBasicDefectListSummaryRealm> {
                         equalTo("id", 0L)
                     }
