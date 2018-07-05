@@ -15,7 +15,6 @@ import com.wafflecopter.multicontactpicker.ContactResult
 import com.wafflecopter.multicontactpicker.MultiContactPicker
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
-import de.sevennerds.trackdefects.common.hideKeyboard
 import de.sevennerds.trackdefects.common.toObservable
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
@@ -100,6 +99,8 @@ class SelectParticipantsFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        // MainActivity[requireContext()].supportActionBar?.hide()
+
         setup()
         init()
     }
@@ -153,7 +154,7 @@ class SelectParticipantsFragment : BaseFragment() {
     }
 
     private fun setupActionBar() {
-        MainActivity[requireContext()].supportActionBar?.title = "Teilnehmer"
+        MainActivity[requireContext()].supportActionBar?.title = "Participants"
     }
 
     private fun setupRecyclerView() {
@@ -169,7 +170,7 @@ class SelectParticipantsFragment : BaseFragment() {
 
         compositeDisposable += Observable
                 .mergeArray(
-                        select_participants_fab
+                        select_participants_add_fab
                                 .clicks()
                                 .map { SelectParticipantsView.Event.ShowContacts },
                         listAdapter
@@ -178,7 +179,7 @@ class SelectParticipantsFragment : BaseFragment() {
                                     SelectParticipantsView.Event.Remove(itemPosition,
                                                                         listAdapter.getList())
                                 },
-                        select_participants_next_skip_btn
+                        select_participants_next_fab
                                 .clicks()
                                 .map { SelectParticipantsView.Event.Next },
 
@@ -193,8 +194,7 @@ class SelectParticipantsFragment : BaseFragment() {
 
         initEventSubject.onNext(
                 SelectParticipantsView.Event
-                        .Init(parcelState
-                                      ?: SelectParticipantsView.ParcelState(emptyList())))
+                        .Init(parcelState))
     }
 
     private fun contactResult(contactResultList: List<ContactResult>) {
@@ -215,12 +215,14 @@ class SelectParticipantsFragment : BaseFragment() {
                         .showPickerForResult(CONTACT_PICKER_REQUEST)
 
             is SelectParticipantsView.RenderState.Init -> {
+
                 updateParcelState(renderState.parcelState)
                 updateList(viewState.participantModelList)
                 updateButtonText(viewState.nextOrSkipButtonText)
             }
 
             is SelectParticipantsView.RenderState.Add -> {
+
                 updateParcelState(renderState.parcelState)
                 updateList(viewState.participantModelList,
                            renderState.diffResult)
@@ -236,9 +238,8 @@ class SelectParticipantsFragment : BaseFragment() {
 
             is SelectParticipantsView.RenderState.Next -> {
 
-                hideKeyboard()
-
-                MainActivity[requireContext()].navigateTo(TakeGroundPlanPictureKey())
+                MainActivity[requireContext()]
+                        .navigateTo(TakeGroundPlanPictureKey())
             }
 
             is SelectParticipantsView.RenderState.None -> {
@@ -248,7 +249,7 @@ class SelectParticipantsFragment : BaseFragment() {
 
     // TODO: is suppose to change the buttons text from "Skip" to "Next"
     private fun updateButtonText(text: String) {
-        select_participants_next_skip_btn.text = text
+
     }
 
     private fun updateList(newParticipantModeList: List<ParticipantModel>) =

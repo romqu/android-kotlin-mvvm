@@ -13,6 +13,8 @@ import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.presentation.base.navigation.BaseKey
 import de.sevennerds.trackdefects.presentation.base.navigation.FragmentStateChanger
 import de.sevennerds.trackdefects.presentation.feature.enter_street_address.navigation.EnterStreetAddressKey
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_multi_contact_picker.*
 
 
 /**
@@ -43,10 +45,10 @@ class MainActivity : AppCompatActivity(), StateChanger {
 
         TrackDefectsApp.get(this).appComponent.inject(this)
 
-
-
         fragmentStateChanger = FragmentStateChanger(supportFragmentManager, R.id.fragment_container)
         backstackDelegate.setStateChanger(this)
+
+        setSupportActionBar(mainToolbar)
     }
 
     override fun onRetainCustomNonConfigurationInstance(): BackstackDelegate.NonConfigurationInstance =

@@ -11,7 +11,6 @@ import com.jakewharton.rxbinding2.view.clicks
 import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
-import de.sevennerds.trackdefects.common.hideKeyboard
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
 import de.sevennerds.trackdefects.presentation.feature.preview_image.navigation.PreviewImageKey
@@ -70,7 +69,7 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        ObjectAnimator.ofFloat(takeGroundPlanPictureTakePictureBtn, "", 360F)
+        ObjectAnimator.ofFloat(takeGroundPlanPictureTakePictureFab, "", 360F)
                 .start()
 
         camera = Fotoapparat(
@@ -121,7 +120,7 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
 
     private fun setupEvents() {
 
-        compositeDisposable += takeGroundPlanPictureTakePictureBtn
+        compositeDisposable += takeGroundPlanPictureTakePictureFab
                 .clicks()
                 .flatMap {
 

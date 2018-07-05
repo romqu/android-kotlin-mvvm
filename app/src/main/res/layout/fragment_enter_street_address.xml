@@ -8,13 +8,13 @@
         android:id="@+id/enterStreetAddressStreetNameTextFieldBoxes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         app:hasClearButton="true"
         app:labelText="Street Name"
-        app:layout_constraintBottom_toTopOf="@+id/enterStreetAddressNextBtn"
+        app:layout_constraintBottom_toTopOf="@+id/enterStreetAddressNextFab"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -23,8 +23,8 @@
             android:id="@+id/enterStreetAddressStreetNameExtEditTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:imeOptions="actionNext"/>
+            android:imeOptions="actionNext"
+            android:inputType="text" />
 
     </studio.carbonylgroup.textfieldboxes.TextFieldBoxes>
 
@@ -32,7 +32,7 @@
         android:id="@+id/enterStreetAddressNumberTextFieldBoxes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         app:hasClearButton="true"
@@ -45,8 +45,8 @@
             android:id="@+id/enterStreetAddressNumberExtEditTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="number"
-            android:imeOptions="actionNext"/>
+            android:imeOptions="actionNext"
+            android:inputType="number" />
 
     </studio.carbonylgroup.textfieldboxes.TextFieldBoxes>
 
@@ -55,7 +55,7 @@
         android:layout_width="195dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         app:hasClearButton="true"
         app:labelText="Additional"
         app:layout_constraintEnd_toEndOf="parent"
@@ -65,18 +65,22 @@
             android:id="@+id/enterStreetAddressAdditionalExtEditTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:imeOptions="actionDone"/>
+            android:imeOptions="actionDone"
+            android:inputType="text" />
 
     </studio.carbonylgroup.textfieldboxes.TextFieldBoxes>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/enterStreetAddressNextBtn"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/enterStreetAddressNextFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Next"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_keyboard_arrow_right_black_24dp"
+        app:fabSize="normal"
+        app:layout_anchorGravity="top|end"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

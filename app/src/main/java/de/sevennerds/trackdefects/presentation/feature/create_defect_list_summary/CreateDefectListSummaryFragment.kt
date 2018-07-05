@@ -122,8 +122,9 @@ class CreateDefectListSummaryFragment : BaseFragment() {
                                              .renderState
                                              .defectListModel
                                              .viewParticipantModelList
-                                             .map { it.name }
-                                             .reduce { acc, s ->
+                                             .takeIf { it.isNotEmpty() }
+                                             ?.map { it.name }
+                                             ?.reduce { acc, s ->
                                                  acc + s
                                              }
 

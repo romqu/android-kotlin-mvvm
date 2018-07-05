@@ -13,7 +13,7 @@ class SelectParticipantsView {
      */
     sealed class Event {
 
-        class Init(val parcelState: ParcelState) : Event()
+        class Init(val parcelState: ParcelState?) : Event()
 
         object ShowContacts : Event()
 
@@ -33,7 +33,7 @@ class SelectParticipantsView {
      */
     sealed class Result {
 
-        class Init(val parcelState: ParcelState) : Result()
+        class Init(val parcelState: ParcelState?) : Result()
 
         object ShowContacts : Result()
 

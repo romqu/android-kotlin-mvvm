@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -101,8 +102,17 @@ class EnterStreetAddressFragment : BaseFragment() {
         if (isRotation) {
             setupEvents()
             isRotation = false
+            evenInitSubject.onNext(EnterStreetAddressView.Event.Init(parcelState))
         }
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        Logger.d(item.itemId == android.R.id.home)
+
+        return super.onOptionsItemSelected(item)
+    }
+
 
     //----------------------------------------------------------------------------------------------
 
@@ -111,8 +121,10 @@ class EnterStreetAddressFragment : BaseFragment() {
         setupEvents()
     }
 
-    private fun setupActionBar(){
+    private fun setupActionBar() {
         MainActivity[requireContext()].supportActionBar?.title = "Street Address"
+        MainActivity[requireContext()].supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setHasOptionsMenu(true)
     }
 
     private fun setupEvents() {
@@ -141,7 +153,7 @@ class EnterStreetAddressFragment : BaseFragment() {
                                         EnterStreetAddressView.Event
                                                 .StreetAdditionalTextChange(it.view().text.toString())
                                     },
-                            enterStreetAddressNextBtn
+                            enterStreetAddressNextFab
                                     .clicks()
                                     .map { EnterStreetAddressView.Event.Next }
                 )
@@ -157,13 +169,11 @@ class EnterStreetAddressFragment : BaseFragment() {
 
                 is EnterStreetAddressView.RenderState.Init -> {
 
-                    Logger.d("HERE")
-
                     with(viewState) {
                         enterStreetAddressStreetNameExtEditTxt.setText(streetName)
                         enterStreetAddressNumberExtEditTxt.setText(streetNumber)
                         enterStreetAddressAdditionalExtEditTxt.setText(streetAdditional)
-                        enterStreetAddressNextBtn.isEnabled = isButtonEnabled
+                        enterStreetAddressNextFab.isEnabled = isButtonEnabled
                     }
                 }
 
@@ -171,7 +181,7 @@ class EnterStreetAddressFragment : BaseFragment() {
 
                     updateStateParcel(viewState.renderState.parcelState)
 
-                    enterStreetAddressNextBtn.isEnabled = viewState.isButtonEnabled
+                    enterStreetAddressNextFab.isEnabled = viewState.isButtonEnabled
                 }
 
                 is EnterStreetAddressView.RenderState.Next -> {

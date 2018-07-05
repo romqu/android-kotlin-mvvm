@@ -1,6 +1,7 @@
 package de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list
 
 import androidx.recyclerview.widget.DiffUtil
+import com.orhanobut.logger.Logger
 import com.vicpin.krealmextensions.queryFirst
 import de.sevennerds.trackdefects.presentation.base.BaseDiffCallback
 import de.sevennerds.trackdefects.presentation.base.BaseViewModel
@@ -172,9 +173,13 @@ class SelectParticipantsViewModel @Inject constructor() :
 
                 is SelectParticipantsView.Result.Init -> {
 
-                    val state = previousState.copy(participantModelList = result.parcelState.participantModelList)
-
-                    state.copy(renderState = SelectParticipantsView.RenderState.Init(convertViewToParcelState(state)))
+                    result.parcelState?.let {
+                        val state = previousState.copy(participantModelList = result.parcelState.participantModelList)
+                        state.copy(renderState = SelectParticipantsView.RenderState.Init(convertViewToParcelState(state)))
+                    }
+                            ?: previousState
+                                    .copy(renderState = SelectParticipantsView.RenderState.Init(
+                                            convertViewToParcelState(previousState)))
                 }
 
                 is SelectParticipantsView.Result.Add -> {
@@ -204,7 +209,7 @@ class SelectParticipantsViewModel @Inject constructor() :
                     previousState.copy(renderState = SelectParticipantsView.RenderState.Next)
                 }
             }
-        }.skip(1)
+        }.skip(1)//.doOnNext { Logger.d(it) }
     }
 
     private fun convertViewToParcelState(viewState: SelectParticipantsView.State) =
