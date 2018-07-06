@@ -6,25 +6,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/previewImageDismissBtn"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/previewImageDismissFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="✘"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_close_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:fabSize="normal"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/previewImageAcceptBtn"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/previewImageAcceptFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="✔"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_check_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:fabSize="normal" />
 
     <ImageView
         android:id="@+id/previewImageImgView"

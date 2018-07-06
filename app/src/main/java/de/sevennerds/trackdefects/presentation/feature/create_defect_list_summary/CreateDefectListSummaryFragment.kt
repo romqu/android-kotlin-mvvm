@@ -9,6 +9,7 @@ import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.common.asObservable
+import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -60,9 +61,7 @@ class CreateDefectListSummaryFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        createDefectListSummaryStreetAddressExtEditTxt.isEnabled = false
-
-        setupEvents()
+        setup()
     }
 
     override fun onPause() {
@@ -89,6 +88,23 @@ class CreateDefectListSummaryFragment : BaseFragment() {
         if (isRotation) {
             isRotation = false
             setupEvents()
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------
+
+    private fun setup() {
+
+        createDefectListSummaryStreetAddressExtEditTxt.isEnabled = false
+        createDefectListSummaryParticipantsExtEditTxt.isEnabled = false
+
+        setupActionBar()
+        setupEvents()
+    }
+
+    private fun setupActionBar(){
+        MainActivity[requireContext()].supportActionBar?.apply {
+            title = "Summary"
         }
     }
 

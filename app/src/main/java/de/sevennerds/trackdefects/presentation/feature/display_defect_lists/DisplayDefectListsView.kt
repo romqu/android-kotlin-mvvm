@@ -1,15 +1,14 @@
-package de.sevennerds.trackdefects.presentation.feature.create_defect_list_summary
+package de.sevennerds.trackdefects.presentation.feature.display_defect_lists
 
 import android.os.Parcelable
 import de.sevennerds.trackdefects.presentation.model.DefectListModel
 import kotlinx.android.parcel.Parcelize
 
-class CreateDefectListSummaryView {
+class DisplayDefectListsView {
 
     sealed class Event {
 
         object Init : Event()
-        object Save: Event()
     }
 
     /**
@@ -42,5 +41,5 @@ class CreateDefectListSummaryView {
      * The Parcelable version of the ViewState
      */
     @Parcelize
-    data class StateParcel(val name: String) : Parcelable
+    data class ParcelState(val name: String) : Parcelable
 }

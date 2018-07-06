@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.jakewharton.rxbinding2.view.clicks
-import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.common.asObservable
@@ -94,7 +93,14 @@ class PreviewImageFragment : BaseFragment() {
     }
 
     private fun setup() {
+        setupActionBar()
         setupEvents()
+    }
+
+    private fun setupActionBar() {
+        MainActivity[requireContext()].supportActionBar?.apply {
+            title = "Preview"
+        }
     }
 
     private fun setupEvents() {
@@ -104,10 +110,10 @@ class PreviewImageFragment : BaseFragment() {
                                .Event
                                .LoadImage
                                .asObservable(),
-                       previewImageDismissBtn
+                       previewImageDismissFab
                                .clicks()
                                .map { PreviewImageView.Event.DismissImage },
-                       previewImageAcceptBtn
+                       previewImageAcceptFab
                                .clicks()
                                .map { PreviewImageView.Event.AcceptImage })
                 .compose(viewModel.eventToViewState)
@@ -126,7 +132,8 @@ class PreviewImageFragment : BaseFragment() {
                 }
 
                 is PreviewImageView.RenderState.AcceptImage -> {
-                    MainActivity[requireContext()].replaceTopWith(CreateDefectListSummaryKey())
+                    //MainActivity[requireContext()].replaceTopWith(CreateDefectListSummaryKey())
+                    MainActivity[requireContext()].replaceHistory(CreateDefectListSummaryKey())
                 }
 
                 PreviewImageView.RenderState.None -> {

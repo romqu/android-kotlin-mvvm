@@ -64,7 +64,11 @@ class CreateDefectListSummaryViewModel @Inject constructor(
                                 }
                             }
 
-                    DefectListModel("name", imageModel, streetAddressModel, viewParticipantModelList)
+                    DefectListModel(
+                            "name",
+                            imageModel,
+                            streetAddressModel,
+                            viewParticipantModelList)
                 }
                 .map { CreateDefectListSummaryView.Result.Init(it) }
 

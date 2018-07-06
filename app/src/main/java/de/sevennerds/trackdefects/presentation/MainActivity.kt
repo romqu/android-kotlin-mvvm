@@ -61,8 +61,8 @@ class MainActivity : AppCompatActivity(), StateChanger {
         }
     }
 
-    private fun replaceHistory(rootKey: BaseKey) {
-        backstackDelegate.backstack.setHistory(History.single(rootKey), StateChange.REPLACE)
+    fun replaceHistory(rootKey: BaseKey) {
+        backstackDelegate.backstack.setHistory(History.single(rootKey), StateChange.FORWARD)
 
     }
 

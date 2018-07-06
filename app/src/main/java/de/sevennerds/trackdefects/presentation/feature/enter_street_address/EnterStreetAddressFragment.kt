@@ -2,12 +2,15 @@ package de.sevennerds.trackdefects.presentation.feature.enter_street_address
 
 import android.Manifest
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.afterTextChangeEvents
 import com.orhanobut.logger.Logger
@@ -76,6 +79,8 @@ class EnterStreetAddressFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        enterStreetAddressNextFab.alpha = 0.3F
 
         requestRuntimePermissions()
 
@@ -181,12 +186,21 @@ class EnterStreetAddressFragment : BaseFragment() {
 
                     updateStateParcel(viewState.renderState.parcelState)
 
+                    if (viewState.isButtonEnabled) {
+                        enterStreetAddressNextFab.alpha = 1F
+                        /*enterStreetAddressNextFab.backgroundTintList =
+                                ColorStateList.valueOf(ContextCompat.getColor(context!!, R.color.colorAccent))*/
+                    } else {
+                        enterStreetAddressNextFab.alpha = 0.3F
+                        /*enterStreetAddressNextFab.backgroundTintList =
+                                ColorStateList.valueOf(ContextCompat.getColor(context!!, R.color.material_grey_300))*/
+
+                    }
+
                     enterStreetAddressNextFab.isEnabled = viewState.isButtonEnabled
                 }
 
                 is EnterStreetAddressView.RenderState.Next -> {
-
-                    hideKeyboard()
 
                     MainActivity[requireContext()]
                             .navigateTo(SelectParticipantsKey())

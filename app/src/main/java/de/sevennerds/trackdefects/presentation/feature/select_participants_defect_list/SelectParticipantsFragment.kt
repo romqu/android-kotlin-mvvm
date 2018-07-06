@@ -99,8 +99,6 @@ class SelectParticipantsFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        // MainActivity[requireContext()].supportActionBar?.hide()
-
         setup()
         init()
     }
@@ -155,11 +153,13 @@ class SelectParticipantsFragment : BaseFragment() {
 
     private fun setupActionBar() {
         MainActivity[requireContext()].supportActionBar?.title = "Participants"
+        MainActivity[requireContext()].supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setHasOptionsMenu(true)
     }
 
     private fun setupRecyclerView() {
 
-        with(select_participants_rcv) {
+        with(displayDefectListsRcv) {
             layoutManager = LinearLayoutManager(context)
             listAdapter = SelectParticipantsListAdapter(mutableListOf())
             adapter = listAdapter
@@ -170,7 +170,7 @@ class SelectParticipantsFragment : BaseFragment() {
 
         compositeDisposable += Observable
                 .mergeArray(
-                        select_participants_add_fab
+                        displayDefectListsAddFab
                                 .clicks()
                                 .map { SelectParticipantsView.Event.ShowContacts },
                         listAdapter
