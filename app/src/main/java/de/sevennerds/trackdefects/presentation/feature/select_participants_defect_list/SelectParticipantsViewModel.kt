@@ -13,6 +13,7 @@ import io.reactivex.ObservableTransformer
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
 import io.realm.RealmList
+import java.util.*
 import javax.inject.Inject
 
 
@@ -220,7 +221,8 @@ class SelectParticipantsViewModel @Inject constructor() :
 
         val participantRealmList = viewState.participantModelList
                 .map {
-                    ViewParticipantRealm(name = it.name,
+                    ViewParticipantRealm(id = Random().nextLong(),
+                                         name = it.name,
                                          phoneNumber = it.phoneNumber,
                                          email = it.email)
                 }
@@ -233,8 +235,6 @@ class SelectParticipantsViewModel @Inject constructor() :
                 RealmList(*participantRealmList.toTypedArray())
 
         RealmManager.insertOrUpdate(createBasicDefectListSummaryRealm)
-
-
     }
 }
 

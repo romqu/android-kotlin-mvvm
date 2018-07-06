@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.common.asObservable
@@ -102,7 +101,7 @@ class CreateDefectListSummaryFragment : BaseFragment() {
         setupEvents()
     }
 
-    private fun setupActionBar(){
+    private fun setupActionBar() {
         MainActivity[requireContext()].supportActionBar?.apply {
             title = "Summary"
         }
@@ -141,7 +140,7 @@ class CreateDefectListSummaryFragment : BaseFragment() {
                                              .takeIf { it.isNotEmpty() }
                                              ?.map { it.name }
                                              ?.reduce { acc, s ->
-                                                 acc + s
+                                                 "$acc, $s"
                                              }
 
                             )

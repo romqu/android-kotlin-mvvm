@@ -57,6 +57,7 @@ class CreateDefectListSummaryViewModel @Inject constructor(
                         StreetAddressModel(streetName, streetNumber, streetAdditional)
                     }
 
+
                     val viewParticipantModelList = viewParticipantRealmList
                             .map {
                                 with(it!!) {

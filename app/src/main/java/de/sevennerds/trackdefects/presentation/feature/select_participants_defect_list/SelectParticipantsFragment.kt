@@ -26,6 +26,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import kotlinx.android.synthetic.main.fragment_display_defect_lists.*
 import kotlinx.android.synthetic.main.fragment_select_participants.*
 import javax.inject.Inject
 
@@ -159,7 +160,7 @@ class SelectParticipantsFragment : BaseFragment() {
 
     private fun setupRecyclerView() {
 
-        with(displayDefectListsRcv) {
+        with(select_participants_rcv) {
             layoutManager = LinearLayoutManager(context)
             listAdapter = SelectParticipantsListAdapter(mutableListOf())
             adapter = listAdapter
@@ -170,7 +171,7 @@ class SelectParticipantsFragment : BaseFragment() {
 
         compositeDisposable += Observable
                 .mergeArray(
-                        displayDefectListsAddFab
+                        select_participants_add_fab
                                 .clicks()
                                 .map { SelectParticipantsView.Event.ShowContacts },
                         listAdapter
