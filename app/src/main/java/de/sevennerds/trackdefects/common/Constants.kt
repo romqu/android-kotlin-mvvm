@@ -14,7 +14,7 @@ class Constants {
         const val DATABASE_VERSION = 1
 
         val APPLICATION_EXTERNAL_ROOT = FileUtil.getExternalStorageDirectory() + "/TrackDefects"
-        val FILES_PATH = APPLICATION_EXTERNAL_ROOT + "/projects"
+        val FILES_PATH = "$APPLICATION_EXTERNAL_ROOT/projects"
 
 
         /**
