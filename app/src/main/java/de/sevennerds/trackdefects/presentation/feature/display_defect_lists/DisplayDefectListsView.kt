@@ -16,7 +16,7 @@ class DisplayDefectListsView {
      */
     sealed class Result {
 
-        class Init(val defectListModel: DefectListModel) : Result()
+        class Init(val defectListModelList: List<DefectListModel>) : Result()
     }
 
     /**
@@ -33,7 +33,7 @@ class DisplayDefectListsView {
      * The states the view receives and uses to render its ui, hence RenderState
      */
     sealed class RenderState {
-        class Init(val defectListModel: DefectListModel) : RenderState()
+        class Init(val defectListModelList: List<DefectListModel>) : RenderState()
         object None : RenderState()
     }
 

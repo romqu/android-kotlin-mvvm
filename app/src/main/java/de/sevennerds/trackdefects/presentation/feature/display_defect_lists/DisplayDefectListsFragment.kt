@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
@@ -12,6 +13,7 @@ import de.sevennerds.trackdefects.common.asObservable
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
 import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.SelectParticipantsView
+import de.sevennerds.trackdefects.presentation.model.DefectListModel
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -133,11 +135,22 @@ class DisplayDefectListsFragment : BaseFragment() {
         return when (renderState) {
 
             is DisplayDefectListsView.RenderState.Init -> {
+                updateList(renderState.defectListModelList)
             }
             is DisplayDefectListsView.RenderState.None -> {
             }
         }
     }
 
+    private fun updateList(newDefectListModeList: List<DefectListModel>) =
+            updateList(newDefectListModeList, null)
 
+    private fun updateList(newDefectListModeList: List<DefectListModel>,
+                           diffResult: DiffUtil.DiffResult?) =
+
+            with(listAdapter) {
+                clearList()
+                addAllToList(newDefectListModeList)
+                diffResult?.dispatchUpdatesTo(this) ?: notifyDataSetChanged()
+            }
 }

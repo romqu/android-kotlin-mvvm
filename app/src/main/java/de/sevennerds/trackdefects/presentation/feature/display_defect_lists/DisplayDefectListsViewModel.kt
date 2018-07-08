@@ -62,11 +62,11 @@ class DisplayDefectListsViewModel @Inject constructor(
                                 }
                             }
 
-                    DefectListModel(
+                    listOf(DefectListModel(
                             "name",
                             imageModel,
                             streetAddressModel,
-                            viewParticipantModelList)
+                            viewParticipantModelList))
                 }
                 .map { DisplayDefectListsView.Result.Init(it) }
 
@@ -81,7 +81,7 @@ class DisplayDefectListsViewModel @Inject constructor(
             when (result) {
                 is DisplayDefectListsView.Result.Init ->
                     previousState.copy(renderState = DisplayDefectListsView
-                            .RenderState.Init(result.defectListModel))
+                            .RenderState.Init(result.defectListModelList))
             }
 
         }
