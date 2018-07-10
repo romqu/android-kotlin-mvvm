@@ -49,7 +49,7 @@ class DisplayDefectListsViewModel @Inject constructor(
                     val viewParticipantRealmList = createBasicDefectListRealm.viewParticipantRealmList
 
                     val bitmap = bitmapCache.get(groundPlanPictureName)
-                    val imageModel = FileModel<Bitmap>(groundPlanPictureName, bitmap)
+                    val imageModel = FileModel<Bitmap>(groundPlanPictureName, bitmap!!)
                     val streetAddressModel = with(streetAddressRealm!!) {
                         StreetAddressModel(streetName, streetNumber, streetAdditional)
                     }

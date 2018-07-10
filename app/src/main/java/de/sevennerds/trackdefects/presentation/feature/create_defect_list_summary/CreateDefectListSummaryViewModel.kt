@@ -2,8 +2,8 @@ package de.sevennerds.trackdefects.presentation.feature.create_defect_list_summa
 
 import android.graphics.Bitmap
 import androidx.collection.LruCache
-import com.orhanobut.logger.Logger
 import com.vicpin.krealmextensions.queryAsSingle
+import de.sevennerds.trackdefects.domain.feature.load_temporary_picture.LoadTemporaryPictureTask
 import de.sevennerds.trackdefects.presentation.base.BaseViewModel
 import de.sevennerds.trackdefects.presentation.model.DefectListModel
 import de.sevennerds.trackdefects.presentation.model.FileModel
@@ -16,9 +16,14 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class CreateDefectListSummaryViewModel @Inject constructor(
+        private val loadTemporaryPictureTask: LoadTemporaryPictureTask,
         private val bitmapCache: LruCache<String, Bitmap>)
     : BaseViewModel<CreateDefectListSummaryView.Event,
         CreateDefectListSummaryView.State>() {
+
+    private class InitEvent(
+            private val createBasicDefectListSummaryRealm: CreateBasicDefectListSummaryRealm,
+            private val fileModel: FileModel<Bitmap>)
 
     override val eventToViewState = ObservableTransformer<CreateDefectListSummaryView.Event,
             CreateDefectListSummaryView.State> { upstream ->
@@ -46,32 +51,44 @@ class CreateDefectListSummaryViewModel @Inject constructor(
                             .toObservable()
                 }
                 .map { it.first() }
-                .map { createBasicDefectListRealm ->
+                .flatMap { createBasicDefectListRealm ->
                     val groundPlanPictureName = createBasicDefectListRealm.groundPlanPictureName
                     val streetAddressRealm = createBasicDefectListRealm.streetAddressRealm
                     val viewParticipantRealmList = createBasicDefectListRealm.viewParticipantRealmList
 
-                    val bitmap = bitmapCache.get(groundPlanPictureName)
-                    val imageModel = FileModel<Bitmap>(groundPlanPictureName, bitmap)
-                    val streetAddressModel = with(streetAddressRealm!!) {
-                        StreetAddressModel(streetName, streetNumber, streetAdditional)
-                    }
+                    loadTemporaryPictureTask
+                            .execute(groundPlanPictureName)
+                            .map { result ->
 
+                                result.match(
+                                        { file ->
+                                            val imageModel = FileModel(groundPlanPictureName, file.data)
+                                            val streetAddressModel = with(streetAddressRealm!!) {
+                                                StreetAddressModel(streetName, streetNumber, streetAdditional)
+                                            }
 
-                    val viewParticipantModelList = viewParticipantRealmList
-                            .map {
-                                with(it!!) {
-                                    ViewParticipantModel(name, email, phoneNumber)
-                                }
-                            }
+                                            val viewParticipantModelList = viewParticipantRealmList
+                                                    .map {
+                                                        with(it!!) {
+                                                            ViewParticipantModel(name, email, phoneNumber)
+                                                        }
+                                                    }
 
-                    DefectListModel(
-                            "name",
-                            imageModel,
-                            streetAddressModel,
-                            viewParticipantModelList)
+                                            val model = DefectListModel(
+                                                    "name",
+                                                    imageModel,
+                                                    streetAddressModel,
+                                                    viewParticipantModelList)
+
+                                            CreateDefectListSummaryView.Result.Init(model)
+                                        },
+                                        { error ->
+                                            CreateDefectListSummaryView.Result.InitError
+
+                                        })
+
+                            }.toObservable()
                 }
-                .map { CreateDefectListSummaryView.Result.Init(it) }
 
     }
 
@@ -84,6 +101,8 @@ class CreateDefectListSummaryViewModel @Inject constructor(
             when (result) {
                 is CreateDefectListSummaryView.Result.Init ->
                     previousState.copy(renderState = CreateDefectListSummaryView.RenderState.Init(result.defectListModel))
+                CreateDefectListSummaryView.Result.InitError ->
+                    previousState.copy(renderState = CreateDefectListSummaryView.RenderState.None)
             }
 
         }

@@ -2,10 +2,9 @@ package de.sevennerds.trackdefects.presentation.feature.preview_image
 
 import android.graphics.Bitmap
 import androidx.collection.LruCache
-import com.orhanobut.logger.Logger
 import com.vicpin.krealmextensions.queryAsSingle
+import de.sevennerds.trackdefects.domain.feature.load_temporary_picture.LoadTemporaryPictureTask
 import de.sevennerds.trackdefects.presentation.base.BaseViewModel
-import de.sevennerds.trackdefects.presentation.model.FileModel
 import de.sevennerds.trackdefects.presentation.realm_db.CreateBasicDefectListSummaryRealm
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
@@ -13,7 +12,8 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class PreviewImageViewModel @Inject constructor(
-        private val bitmapCache: LruCache<String, Bitmap>)
+        private val bitmapCache: LruCache<String, Bitmap>,
+        loadTemporaryPictureTask: LoadTemporaryPictureTask)
     : BaseViewModel<PreviewImageView.Event, PreviewImageView.State>() {
 
 
@@ -46,15 +46,18 @@ class PreviewImageViewModel @Inject constructor(
                             .toObservable()
                 }
                 .map { it.first() }
-                .map { realmObject ->
+                .flatMapSingle { realmObject ->
 
-                    Logger.d(realmObject)
+                    loadTemporaryPictureTask
+                            .execute(realmObject.groundPlanPictureName)
+                            .map { result ->
+                                result.match({ fileModel ->
+                                                 PreviewImageView.Result.LoadImage(fileModel)
 
-                    val bitmap = bitmapCache.get(realmObject.groundPlanPictureName)
-
-                    PreviewImageView.Result.LoadImage(
-                            FileModel(realmObject.groundPlanPictureName,
-                                      bitmap))
+                                             }, {
+                                                 PreviewImageView.Result.LoadImageError
+                                             })
+                            }
                 }
     }
 
@@ -91,6 +94,8 @@ class PreviewImageViewModel @Inject constructor(
                         is PreviewImageView.Result.AcceptImage -> {
                             previousState.copy(renderState = PreviewImageView.RenderState.AcceptImage)
                         }
+                        is PreviewImageView.Result.LoadImageError ->
+                            previousState.copy(renderState = PreviewImageView.RenderState.None)
                     }
                 }.skip(1)
             }

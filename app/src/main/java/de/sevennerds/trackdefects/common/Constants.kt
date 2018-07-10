@@ -25,7 +25,8 @@ class Constants {
         const val TEMP_FILES_PATH = "temp"
         const val TEMP_FILES_IMAGES_PATH = "$TEMP_FILES_PATH/images"
 
-        const val JPEG_POSTFIX = ".jpeg"
+        const val JPEG_FILE_EXTENSION = ".jpeg"
+        const val JPEG_QUALITY = 85
 
 
         /**

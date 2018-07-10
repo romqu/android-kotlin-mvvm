@@ -12,6 +12,25 @@ sealed class Result<out T> {
         }
     }
 
+    fun <R> onSuccess(invoke: (data: T) -> R): Result<R> {
+        return when (this) {
+
+            is Result.Success -> {
+                val data = invoke(data)
+                Result.success(data)
+            }
+            is Result.Failure -> this
+        }
+    }
+
+    fun <R> match(onSuccess: (data: T) -> R, onFailure: (error: Error) -> R): R {
+        return when (this) {
+
+            is Result.Success -> onSuccess(data)
+            is Result.Failure -> onFailure(error)
+        }
+    }
+
     companion object {
         fun <T> success(data: T) = Success(data) as Result<T>
         fun failure(data: Error) = Failure(data) as Result<Nothing>

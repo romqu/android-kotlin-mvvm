@@ -27,6 +27,8 @@ class PreviewImageView {
 
         object AcceptImage : Result()
 
+        object LoadImageError : Result()
+
         class LoadImage(val image: FileModel<Bitmap>) : Result()
     }
 

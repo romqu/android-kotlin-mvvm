@@ -2,9 +2,10 @@ package de.sevennerds.trackdefects.presentation.feature.take_ground_plan_picture
 
 import android.graphics.Bitmap
 import androidx.collection.LruCache
-import com.orhanobut.logger.Logger
 import com.vicpin.krealmextensions.queryFirst
+import de.sevennerds.trackdefects.domain.feature.save_picture_temporary.SavePictureTemporaryTask
 import de.sevennerds.trackdefects.presentation.base.BaseViewModel
+import de.sevennerds.trackdefects.presentation.model.FileModel
 import de.sevennerds.trackdefects.presentation.realm_db.CreateBasicDefectListSummaryRealm
 import de.sevennerds.trackdefects.presentation.realm_db.RealmManager
 import de.sevennerds.trackdefects.util.getUuidV4
@@ -16,7 +17,9 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class TakeGroundPlanPictureViewModel @Inject constructor(
-        private val bitmapCache: LruCache<String, Bitmap>) : BaseViewModel<TakeGroundPlanPictureView.Event,
+        private val bitmapCache: LruCache<String, Bitmap>,
+        private val savePictureTemporaryTask: SavePictureTemporaryTask)
+    : BaseViewModel<TakeGroundPlanPictureView.Event,
         TakeGroundPlanPictureView.State>() {
 
 
@@ -45,10 +48,23 @@ class TakeGroundPlanPictureViewModel @Inject constructor(
                             .toBitmap(scaled(scaleFactor = 0.25f))
                             .toObservable()
                 }
-                        .map { bitmapPhoto ->
-                            val imageName = getUuidV4()
+                        .flatMapSingle { bitmapPhoto ->
+                            /*val imageName = getUuidV4()
                             bitmapCache.put(imageName, bitmapPhoto.bitmap)
-                            TakeGroundPlanPictureView.Result.TakePicture(imageName)
+                            TakeGroundPlanPictureView.Result.TakePicture(imageName)*/
+
+                            savePictureTemporaryTask
+                                    .execute(FileModel("", bitmapPhoto.bitmap))
+                                    .map {
+                                        it.match({ data ->
+                                                     TakeGroundPlanPictureView.Result.TakePicture(data.name)
+                                                 },
+                                                 { error ->
+                                                     TakeGroundPlanPictureView.Result.TakePicture("")
+                                                 })
+                                    }
+
+
                         }
             }
 
@@ -56,7 +72,8 @@ class TakeGroundPlanPictureViewModel @Inject constructor(
             ObservableTransformer<TakeGroundPlanPictureView.Result,
                     TakeGroundPlanPictureView.State> { upstream ->
 
-                upstream.scan(TakeGroundPlanPictureView.State.initial()) { previousState, result ->
+                upstream.scan(TakeGroundPlanPictureView.State.initial()) { previousState,
+                                                                           result ->
                     when (result) {
 
                         is TakeGroundPlanPictureView.Result.TakePicture -> {

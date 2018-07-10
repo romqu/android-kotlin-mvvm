@@ -2,7 +2,9 @@ package de.sevennerds.trackdefects.data.file
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import com.orhanobut.logger.Logger
+import de.sevennerds.trackdefects.common.Constants
 import de.sevennerds.trackdefects.common.Constants.Database.DELETION_FAILED
 import de.sevennerds.trackdefects.common.Constants.Database.DUPLICATE_FILE
 import de.sevennerds.trackdefects.common.Constants.Database.FILES_DELETED
@@ -42,10 +44,57 @@ class FileRepository @Inject constructor(private val context: Context) {
      *
      */
 
+
+    fun saveTemporary(fileEntity: FileEntity<Bitmap>): Single<Result<FileEntity<Bitmap>>> {
+        return File(context.filesDir, TEMP_FILES_IMAGES_PATH)
+                .asSingle()
+                .map { tempImagesDir ->
+                    if (tempImagesDir.exists().not()) {
+                        tempImagesDir.mkdirs()
+                    }
+
+                    tempImagesDir
+                }
+                .map { tempImagesDir ->
+                    File(tempImagesDir, fileEntity.name)
+                }
+                .map { imageFile ->
+                    FileOutputStream(imageFile).use {
+                        fileEntity
+                                .data
+                                .compress(Bitmap.CompressFormat.JPEG,
+                                          Constants.JPEG_QUALITY,
+                                          it)
+                    }
+
+                    Result.success(fileEntity)
+                }
+                .onErrorReturn { throwable ->
+                    Result.failure(Error.SavingFiles(throwable.toString()))
+                }
+    }
+
+    fun loadTemporaryImage(name: String): Single<Result<FileEntity<Bitmap>>> =
+            BitmapFactory.decodeFile(context
+                                             .filesDir
+                                             .absolutePath + "/"
+                                             + TEMP_FILES_IMAGES_PATH
+                                             + "/"
+                                             + name)
+                    .asSingle()
+                    .map { bitmap ->
+                        Result.success(FileEntity(name, bitmap))
+                    }
+                    .onErrorReturn { throwable ->
+                        Result.failure(Error.FileNotFoundError(throwable.toString()))
+                    }
+
+
     companion object {
         const val JPEG_QUALITY = 100
         const val JPEG_FILE_EXTENSION = ".jpg"
     }
+
 
     @Suppress("UNCHECKED_CAST")
     fun load(fileName: String): Observable<Result<String>> {
@@ -107,35 +156,6 @@ class FileRepository @Inject constructor(private val context: Context) {
                 }.onErrorReturn {
                     Result.failure(Error.DuplicateFileError(it.toString()))
                 }.defaultIfEmpty(Result.failure(Error.DuplicateFileError(DUPLICATE_FILE)))
-    }
-
-    fun saveTemporary(fileEntity: FileEntity<Bitmap>): Single<Result<FileEntity<Bitmap>>> {
-        return File(context.filesDir, TEMP_FILES_IMAGES_PATH)
-                .asSingle()
-                .map { tempImagesDir ->
-                    if (tempImagesDir.exists().not()) {
-                        tempImagesDir.mkdirs()
-                    }
-
-                    tempImagesDir
-                }
-                .map { tempImagesDir ->
-                    File(tempImagesDir, fileEntity.name)
-                }
-                .map { imageFile ->
-                    FileOutputStream(imageFile).use {
-                        fileEntity
-                                .data
-                                .compress(Bitmap.CompressFormat.JPEG,
-                                          85,
-                                          it)
-                    }
-
-                    Result.success(fileEntity)
-                }
-                .onErrorReturn { throwable ->
-                    Result.failure(Error.SavingFiles(throwable.toString()))
-                }
     }
 
     @Suppress("UNCHECKED_CAST")

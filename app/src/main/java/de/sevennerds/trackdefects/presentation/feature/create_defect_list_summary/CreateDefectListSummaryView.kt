@@ -9,7 +9,7 @@ class CreateDefectListSummaryView {
     sealed class Event {
 
         object Init : Event()
-        object Save: Event()
+        object Save : Event()
     }
 
     /**
@@ -18,6 +18,7 @@ class CreateDefectListSummaryView {
     sealed class Result {
 
         class Init(val defectListModel: DefectListModel) : Result()
+        object InitError : Result()
     }
 
     /**

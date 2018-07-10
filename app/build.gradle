@@ -49,12 +49,12 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.0-alpha3'
+    implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
 
     //implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
     implementation 'com.android.support.constraint:constraint-layout:2.0.0-alpha1'
-    implementation 'com.google.android.material:material:1.0.0-alpha3'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha3'
+    implementation 'com.google.android.material:material:1.0.0-beta01'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0-beta01'
     testImplementation 'junit:junit:4.12'
 
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha3'
@@ -67,7 +67,7 @@ dependencies {
     testImplementation "io.mockk:mockk:1.8.4"
 
     // android ktx
-    implementation 'androidx.core:core-ktx:1.0.0-alpha3'
+    implementation 'androidx.core:core-ktx:1.0.0-beta01'
     // LeakCanary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
@@ -76,12 +76,12 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.14'
     // ReactiveStreams support for LiveData
-    implementation 'androidx.lifecycle:lifecycle-reactivestreams:2.0.0-alpha1'
+    implementation 'androidx.lifecycle:lifecycle-reactivestreams:2.0.0-beta01'
     // Room
-    implementation 'androidx.room:room-runtime:2.0.0-alpha1'
-    kapt "androidx.room:room-compiler:2.0.0-alpha1"
-    testImplementation 'androidx.room:room-testing:2.0.0-alpha1'
-    implementation 'androidx.room:room-rxjava2:2.0.0-alpha1'
+    implementation 'androidx.room:room-runtime:2.0.0-beta01'
+    kapt "androidx.room:room-compiler:2.0.0-beta01"
+    testImplementation 'androidx.room:room-testing:2.0.0-beta01'
+    implementation 'androidx.room:room-rxjava2:2.0.0-beta01'
     // Sql Support
     implementation 'io.requery:sqlite-android:3.24.0'
     // Dagger
