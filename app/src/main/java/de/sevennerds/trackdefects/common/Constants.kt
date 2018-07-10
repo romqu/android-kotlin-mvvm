@@ -28,6 +28,8 @@ class Constants {
         const val JPEG_FILE_EXTENSION = ".jpeg"
         const val JPEG_QUALITY = 85
 
+        const val REALM_OBJECT_ID = "id"
+        const val REALM_OBJECT_ID_DEFAULT_VALUE = 0L
 
         /**
          * COMMON ERROR MESSAGE STRINGS

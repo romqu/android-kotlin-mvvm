@@ -12,10 +12,12 @@ import com.zhuinden.simplestack.StateChanger
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.common.Constants
+import de.sevennerds.trackdefects.domain.feature.delete_temp_dir.DeleteTempDirTask
 import de.sevennerds.trackdefects.presentation.base.navigation.BaseKey
 import de.sevennerds.trackdefects.presentation.base.navigation.FragmentStateChanger
 import de.sevennerds.trackdefects.presentation.feature.enter_street_address.navigation.EnterStreetAddressKey
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 
 /**
@@ -26,6 +28,8 @@ import kotlinx.android.synthetic.main.activity_main.*
  */
 class MainActivity : AppCompatActivity(), StateChanger {
 
+    @Inject
+    lateinit var deleteTempDirTask: DeleteTempDirTask
 
     private lateinit var backstackDelegate: BackstackDelegate
     private lateinit var fragmentStateChanger: FragmentStateChanger
@@ -44,12 +48,17 @@ class MainActivity : AppCompatActivity(), StateChanger {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        TrackDefectsApp.get(this).appComponent.inject(this)
+        TrackDefectsApp
+                .get(this)
+                .appComponent
+                .inject(this)
 
         fragmentStateChanger = FragmentStateChanger(supportFragmentManager, R.id.fragment_container)
         backstackDelegate.setStateChanger(this)
 
         setSupportActionBar(mainToolbar)
+
+        deleteTempDir()
 
         // ----------------------------------------------------------------------------------------
 
@@ -126,6 +135,12 @@ class MainActivity : AppCompatActivity(), StateChanger {
         operator fun get(context: Context): MainActivity {
             return context.getSystemService(TAG) as MainActivity
         }
+    }
+
+    private fun deleteTempDir() {
+        deleteTempDirTask
+                .execute()
+                .subscribe()
     }
 
 }

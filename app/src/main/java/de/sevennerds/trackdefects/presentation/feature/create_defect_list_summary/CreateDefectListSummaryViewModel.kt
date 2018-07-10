@@ -3,6 +3,7 @@ package de.sevennerds.trackdefects.presentation.feature.create_defect_list_summa
 import android.graphics.Bitmap
 import androidx.collection.LruCache
 import com.vicpin.krealmextensions.queryAsSingle
+import de.sevennerds.trackdefects.common.Constants
 import de.sevennerds.trackdefects.domain.feature.load_temporary_picture.LoadTemporaryPictureTask
 import de.sevennerds.trackdefects.presentation.base.BaseViewModel
 import de.sevennerds.trackdefects.presentation.model.DefectListModel
@@ -46,9 +47,9 @@ class CreateDefectListSummaryViewModel @Inject constructor(
                 .flatMap {
 
                     queryAsSingle<CreateBasicDefectListSummaryRealm> {
-                        equalTo("id", 0L)
-                    }
-                            .toObservable()
+                        equalTo(Constants.REALM_OBJECT_ID,
+                                Constants.REALM_OBJECT_ID_DEFAULT_VALUE)
+                    }.toObservable()
                 }
                 .map { it.first() }
                 .flatMap { createBasicDefectListRealm ->

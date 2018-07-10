@@ -89,6 +89,22 @@ class FileRepository @Inject constructor(private val context: Context) {
                         Result.failure(Error.FileNotFoundError(throwable.toString()))
                     }
 
+    fun deleteTempDir(): Single<Result<Boolean>> =
+            File(context
+                         .filesDir
+                         .absolutePath + "/"
+                         + TEMP_FILES_IMAGES_PATH
+                         + "/")
+                    .asSingle()
+                    .map { tempDir ->
+                        if (tempDir.exists().and(tempDir.isDirectory)) {
+                            val wasSuccessful = tempDir.deleteRecursively()
+                            Result.success(wasSuccessful)
+                        } else {
+                            Result.failure(Error.FileNotFoundError(""))
+                        }
+                    }
+
 
     companion object {
         const val JPEG_QUALITY = 100
