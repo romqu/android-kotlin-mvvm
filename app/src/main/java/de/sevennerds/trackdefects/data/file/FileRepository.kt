@@ -1,5 +1,6 @@
 package de.sevennerds.trackdefects.data.file
 
+import android.content.Context
 import android.graphics.Bitmap
 import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.common.Constants.Database.DELETION_FAILED
@@ -9,10 +10,12 @@ import de.sevennerds.trackdefects.common.Constants.Database.FILES_PATH
 import de.sevennerds.trackdefects.common.Constants.Database.FILE_DELETED
 import de.sevennerds.trackdefects.common.Constants.Database.FILE_NOT_FOUND
 import de.sevennerds.trackdefects.common.Constants.Database.SAVING_FILES_FAILED
-import de.sevennerds.trackdefects.common.asObservable
+import de.sevennerds.trackdefects.common.Constants.Database.TEMP_FILES_IMAGES_PATH
+import de.sevennerds.trackdefects.common.asSingle
 import de.sevennerds.trackdefects.data.response.Error
 import de.sevennerds.trackdefects.data.response.Result
 import io.reactivex.Observable
+import io.reactivex.Single
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -20,7 +23,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FileRepository @Inject constructor() {
+class FileRepository @Inject constructor(private val context: Context) {
 
     /**
      *
@@ -43,7 +46,6 @@ class FileRepository @Inject constructor() {
         const val JPEG_QUALITY = 100
         const val JPEG_FILE_EXTENSION = ".jpg"
     }
-
 
     @Suppress("UNCHECKED_CAST")
     fun load(fileName: String): Observable<Result<String>> {
@@ -84,37 +86,56 @@ class FileRepository @Inject constructor() {
         }
     }
 
-
-    fun save(input: FileEntity<Bitmap>): Observable<Result<Unit>> {
-        return input
-                .asObservable()
+    @Suppress("UNCHECKED_CAST")
+    fun save(input: FileEntity<Bitmap>): Observable<Result<String>> {
+        return Observable.just(input)
                 .map { it ->
-                    File(FILES_PATH, it.name + JPEG_FILE_EXTENSION)
-                }
-                .filter { it ->
+                    File(FILES_PATH, "${it.name}$JPEG_FILE_EXTENSION")
+                }.filter { it ->
                     !it.exists() && FileUtil.isWritable()
-                }
-                .map { it ->
+                }.map { it ->
                     FileOutputStream(it)
-                }
-                .map { it ->
+                }.map { it ->
                     it.use {
-                        input.data
-                                .compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY,
-                                          it)
-                        Result.success(Unit)
+                        input.data.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, it)
+                        Result.success(Unit) as Result<String>
                     }
-                }
-                .doOnNext {
+                }.doOnNext {
                     Logger.d("FileOutputStream: $it")
-                }
-                .doOnError {
+                }.doOnError {
                     Logger.d("OnErrorReturn: $it")
-                }
-                .onErrorReturn {
+                }.onErrorReturn {
                     Result.failure(Error.DuplicateFileError(it.toString()))
+                }.defaultIfEmpty(Result.failure(Error.DuplicateFileError(DUPLICATE_FILE)))
+    }
+
+    fun saveTemporary(fileEntity: FileEntity<Bitmap>): Single<Result<FileEntity<Bitmap>>> {
+        return File(context.filesDir, TEMP_FILES_IMAGES_PATH)
+                .asSingle()
+                .map { tempImagesDir ->
+                    if (tempImagesDir.exists().not()) {
+                        tempImagesDir.mkdirs()
+                    }
+
+                    tempImagesDir
                 }
-                .defaultIfEmpty(Result.failure(Error.DuplicateFileError(DUPLICATE_FILE)))
+                .map { tempImagesDir ->
+                    File(tempImagesDir, fileEntity.name)
+                }
+                .map { imageFile ->
+                    FileOutputStream(imageFile).use {
+                        fileEntity
+                                .data
+                                .compress(Bitmap.CompressFormat.JPEG,
+                                          85,
+                                          it)
+                    }
+
+                    Result.success(fileEntity)
+                }
+                .onErrorReturn { throwable ->
+                    Result.failure(Error.SavingFiles(throwable.toString()))
+                }
     }
 
     @Suppress("UNCHECKED_CAST")

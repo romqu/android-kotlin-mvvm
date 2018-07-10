@@ -6,6 +6,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
@@ -43,6 +44,8 @@ fun <T> Observable<T>.applySchedulers(): Observable<T> =
 
 
 fun <T> T.asObservable(): Observable<T> = Observable.just<T>(this)
+
+fun <T> T.asSingle(): Single<T> = Single.just<T>(this)
 
 fun <T> PublishSubject<T>.toObservable() =
         this.toFlowable(io.reactivex.BackpressureStrategy.BUFFER)

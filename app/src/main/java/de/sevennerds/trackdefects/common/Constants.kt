@@ -1,10 +1,16 @@
 @file:JvmName("Constants")
+
 package de.sevennerds.trackdefects.common
 
 import de.sevennerds.trackdefects.data.file.FileUtil
 
 class Constants {
     companion object Database {
+
+        /**
+         * API
+         */
+        const val BASE_API_URL = "http://10.0.2.2:3000/"
 
         /**
          * DATABASE
@@ -15,6 +21,11 @@ class Constants {
 
         val APPLICATION_EXTERNAL_ROOT = FileUtil.getExternalStorageDirectory() + "/TrackDefects"
         val FILES_PATH = "$APPLICATION_EXTERNAL_ROOT/projects"
+
+        const val TEMP_FILES_PATH = "temp"
+        const val TEMP_FILES_IMAGES_PATH = "$TEMP_FILES_PATH/images"
+
+        const val JPEG_POSTFIX = ".jpeg"
 
 
         /**
@@ -33,8 +44,12 @@ class Constants {
         const val SAVING_FILES_FAILED = "Saving files failed."
         const val SAVING_FILE_FAILED = "Saving file failed."
 
-        // Network failure
+        // Network
         const val NETWORK_NOT_AVAILABLE = "Network not available."
         const val NETWORK_REQUEST_FAILED = "Network request failed."
+
+        // Database
+        const val DATABASE_TRANSACTION_FAILED = "Something went wrong."
+        const val DATABASE_TRANSACTION_SUCCEEDED = "Database transaction succeeded."
     }
 }

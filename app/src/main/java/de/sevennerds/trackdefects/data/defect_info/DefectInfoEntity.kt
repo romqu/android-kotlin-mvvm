@@ -8,11 +8,11 @@ import de.sevennerds.trackdefects.data.room.RoomEntity
         tableName = "defect_info",
         foreignKeys = [
             ForeignKey(
-                entity = RoomEntity::class,
-                parentColumns = ["id"],
-                childColumns = ["room_id"],
-                onDelete = ForeignKey.CASCADE,
-                onUpdate = ForeignKey.CASCADE
+                    entity = RoomEntity::class,
+                    parentColumns = ["id"],
+                    childColumns = ["room_id"],
+                    onDelete = ForeignKey.CASCADE,
+                    onUpdate = ForeignKey.CASCADE
             )
         ],
         indices = [

@@ -3,7 +3,7 @@ package de.sevennerds.trackdefects.core.di
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
-import de.sevennerds.trackdefects.data.client.local.ClientLocalDataSource
+import de.sevennerds.trackdefects.common.Constants.Database.BASE_API_URL
 import de.sevennerds.trackdefects.data.client.net.ClientNetDataSource
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -16,8 +16,6 @@ abstract class NetworkModule {
 
     @Module
     companion object {
-
-        private const val BASE_URL = "http://10.0.2.2:3000/"
 
         @Provides
         @Singleton
@@ -34,7 +32,7 @@ abstract class NetworkModule {
                         RxJava2CallAdapterFactory.create())
                 .addConverterFactory(
                         MoshiConverterFactory.create(moshi))
-                .baseUrl(BASE_URL)
+                .baseUrl(BASE_API_URL)
                 .build()
 
         @Provides

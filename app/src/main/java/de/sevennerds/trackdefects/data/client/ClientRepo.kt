@@ -15,23 +15,27 @@ class ClientRepo @Inject constructor(private val clientNet: ClientNetDataSource)
 
     fun login(loginCredentials: LoginCredentials): Single<Result<LoginResponse>> =
             clientNet.login(loginCredentials)
-                    .map { t -> t.body()?.let { responseNet ->
-                        if(responseNet.isSuccess){
-                            Result.success(responseNet.data!!)
-                        } else {
-                            Result.failure(Error.NetworkError(responseNet.errors.toString()))
-                        }
-                    } ?: Result.failure(Error.NetworkError(NETWORK_REQUEST_FAILED)) }
+                    .map { t ->
+                        t.body()?.let { responseNet ->
+                            if (responseNet.isSuccess) {
+                                Result.success(responseNet.data!!)
+                            } else {
+                                Result.failure(Error.NetworkError(responseNet.errors.toString()))
+                            }
+                        } ?: Result.failure(Error.NetworkError(NETWORK_REQUEST_FAILED))
+                    }
                     .onErrorReturn { t: Throwable -> Result.failure(Error.LoginFailedError(t.toString())) }
 
     fun register(registrationData: RegistrationData): Single<Result<RegistrationResponse>> =
             clientNet.register(registrationData)
-                    .map { t -> t.body()?.let { responseNet ->
-                        if(responseNet.isSuccess){
-                            Result.success(responseNet.data!!)
-                        } else {
-                            Result.failure(Error.NetworkError(responseNet.errors.toString()))
-                        }
-                    } ?: Result.failure(Error.NetworkError(NETWORK_REQUEST_FAILED)) }
+                    .map { t ->
+                        t.body()?.let { responseNet ->
+                            if (responseNet.isSuccess) {
+                                Result.success(responseNet.data!!)
+                            } else {
+                                Result.failure(Error.NetworkError(responseNet.errors.toString()))
+                            }
+                        } ?: Result.failure(Error.NetworkError(NETWORK_REQUEST_FAILED))
+                    }
                     .onErrorReturn { t: Throwable -> Result.failure(Error.RegistrationFailedError(t.toString())) }
 }

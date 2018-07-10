@@ -7,11 +7,11 @@ import de.sevennerds.trackdefects.data.floor.FloorEntity
         tableName = "living_unit",
         foreignKeys = [
             ForeignKey(
-                entity = FloorEntity::class,
-                parentColumns = ["id"],
-                childColumns = ["floor_id"],
-                onDelete = ForeignKey.CASCADE,
-                onUpdate = ForeignKey.CASCADE
+                    entity = FloorEntity::class,
+                    parentColumns = ["id"],
+                    childColumns = ["floor_id"],
+                    onDelete = ForeignKey.CASCADE,
+                    onUpdate = ForeignKey.CASCADE
             )
         ],
         indices = [

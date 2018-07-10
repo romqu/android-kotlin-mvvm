@@ -3,6 +3,7 @@ package de.sevennerds.trackdefects
 import android.app.Application
 import android.content.Context
 import com.facebook.stetho.Stetho
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
@@ -33,6 +34,7 @@ class TrackDefectsApp : Application() {
         initLogger()
         initStetho()
         initRealm()
+        initThreeTenAbp()
     }
 
     private fun initLeakCanary() {
@@ -80,6 +82,10 @@ class TrackDefectsApp : Application() {
     }
 
 
+
+    private fun initThreeTenAbp() {
+        AndroidThreeTen.init(this);
+    }
 
     companion object {
         fun get(context: Context): TrackDefectsApp =

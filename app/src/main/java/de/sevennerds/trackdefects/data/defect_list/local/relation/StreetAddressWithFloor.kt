@@ -11,11 +11,11 @@ class StreetAddressWithFloor {
     @Embedded
     lateinit var streetAddressEntity: StreetAddressEntity
 
-    @Relation(parentColumn = "id",
-            entityColumn = "street_address_id", entity = FloorEntity::class)
+    @Relation(
+            parentColumn = "id",
+            entityColumn = "street_address_id",
+            entity = FloorEntity::class
+    )
     lateinit var floorWithLivingUnitList: List<FloorWithLivingUnit>
 
-    @Relation(parentColumn = "id",
-            entityColumn = "street_address_id", entity = ViewParticipantEntity::class)
-    lateinit var viewParticipantEntityList: List<ViewParticipantEntity>
 }

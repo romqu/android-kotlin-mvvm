@@ -124,4 +124,7 @@ dependencies {
 
     // realm extensions
     implementation "com.github.vicpinm:krealmextensions:2.2.0"
+
+    // Date and Time
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.1.0'
 }
