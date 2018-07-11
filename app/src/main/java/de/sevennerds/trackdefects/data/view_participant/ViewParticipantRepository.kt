@@ -2,6 +2,7 @@ package de.sevennerds.trackdefects.data.view_participant
 
 import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.common.Constants.Database.DATABASE_TRANSACTION_FAILED
+import de.sevennerds.trackdefects.common.asSingle
 import de.sevennerds.trackdefects.data.response.Error
 import de.sevennerds.trackdefects.data.response.Result
 import io.reactivex.Single
@@ -24,4 +25,16 @@ class ViewParticipantRepository @Inject constructor(
                     }.onErrorReturn {
                         Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
                     }
+
+    fun insert(viewParticipantEntityList: List<ViewParticipantEntity>): Single<Result<List<Long>>> {
+        return viewParticipantLocalDataSource
+                .insert(viewParticipantEntityList)
+                .asSingle()
+                .map { Result.success(it) }
+                .onErrorReturn {
+                    Result.failure(Error.DatabaseError(DATABASE_TRANSACTION_FAILED))
+                }
+
+
+    }
 }

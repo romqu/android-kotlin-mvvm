@@ -3,23 +3,13 @@ package de.sevennerds.trackdefects.data.file
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.common.Constants
-import de.sevennerds.trackdefects.common.Constants.Database.DELETION_FAILED
-import de.sevennerds.trackdefects.common.Constants.Database.DUPLICATE_FILE
-import de.sevennerds.trackdefects.common.Constants.Database.FILES_DELETED
-import de.sevennerds.trackdefects.common.Constants.Database.FILES_PATH
-import de.sevennerds.trackdefects.common.Constants.Database.FILE_DELETED
-import de.sevennerds.trackdefects.common.Constants.Database.FILE_NOT_FOUND
-import de.sevennerds.trackdefects.common.Constants.Database.SAVING_FILES_FAILED
 import de.sevennerds.trackdefects.common.Constants.Database.TEMP_FILES_IMAGES_PATH
 import de.sevennerds.trackdefects.common.asSingle
 import de.sevennerds.trackdefects.data.response.Error
 import de.sevennerds.trackdefects.data.response.Result
-import io.reactivex.Observable
 import io.reactivex.Single
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -43,6 +33,17 @@ class FileRepository @Inject constructor(private val context: Context) {
      *      '-  0a4257c9-b989-44c3-bb0e-e1106f386d44.jpg
      *
      */
+
+    fun createDirectory(name: String) {
+        val dir = File(context.filesDir, "/$name")
+
+        if (dir.exists().not()) {
+            dir.mkdirs()
+        }
+    }
+
+    fun save(fileEntity: FileEntity<Bitmap>) {
+    }
 
 
     fun saveTemporary(fileEntity: FileEntity<Bitmap>): Single<Result<FileEntity<Bitmap>>> {
@@ -112,7 +113,7 @@ class FileRepository @Inject constructor(private val context: Context) {
     }
 
 
-    @Suppress("UNCHECKED_CAST")
+/*    @Suppress("UNCHECKED_CAST")
     fun load(fileName: String): Observable<Result<String>> {
         return Observable.just(fileName)
                 .filter {
@@ -195,21 +196,23 @@ class FileRepository @Inject constructor(private val context: Context) {
 
     fun delete(file: File): Observable<Result<String>> {
 
-        /**
-         *  If file does not exist, do not proceed to delete
-         *  instead return an FileNotFoundError
-         */
+        */
+    /**
+     *  If file does not exist, do not proceed to delete
+     *  instead return an FileNotFoundError
+     *//*
 
         return Observable.just(file).filter {
 
-            /**
-             *  whatever is filtered out is taken
-             *  to next step .map{}
-             *  In this case, every file that exists
-             *  is proceeded to deletion step.
-             *
-             *  if expression is true proceed to next
-             */
+            */
+    /**
+     *  whatever is filtered out is taken
+     *  to next step .map{}
+     *  In this case, every file that exists
+     *  is proceeded to deletion step.
+     *
+     *  if expression is true proceed to next
+     *//*
 
             it ->
             it.exists()
@@ -244,5 +247,5 @@ class FileRepository @Inject constructor(private val context: Context) {
         }.onErrorReturn { it ->
             Result.failure(Error.DeletionFailed(it.toString()))
         }
-    }
+    }*/
 }

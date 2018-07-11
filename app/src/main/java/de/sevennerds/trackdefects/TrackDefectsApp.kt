@@ -11,13 +11,16 @@ import com.squareup.leakcanary.LeakCanary
 import de.sevennerds.trackdefects.core.di.AppComponent
 import de.sevennerds.trackdefects.core.di.AppModule
 import de.sevennerds.trackdefects.core.di.DaggerAppComponent
+import de.sevennerds.trackdefects.domain.feature.delete_temp_dir.DeleteTempDirTask
 import io.realm.Realm
 import io.realm.RealmConfiguration
-
-
+import javax.inject.Inject
 
 
 class TrackDefectsApp : Application() {
+
+    @Inject
+    lateinit var deleteTempDirTask: DeleteTempDirTask
 
     val appComponent: AppComponent by lazy {
         DaggerAppComponent
@@ -30,11 +33,16 @@ class TrackDefectsApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        appComponent
+                .inject(this)
+
         initLeakCanary()
         initLogger()
         initStetho()
         initRealm()
         initThreeTenAbp()
+
+        deleteTempDir()
     }
 
     private fun initLeakCanary() {
@@ -71,20 +79,17 @@ class TrackDefectsApp : Application() {
 
     private fun initRealm() {
         Realm.init(this)
-
-/*        val config = RealmConfiguration
-                .Builder()
-                .build()
-
-        Realm.deleteRealm(config)
-
-        Realm.setDefaultConfiguration(config)*/
     }
-
 
 
     private fun initThreeTenAbp() {
         AndroidThreeTen.init(this);
+    }
+
+    private fun deleteTempDir() {
+        /*deleteTempDirTask
+                .execute()
+                .subscribe()*/
     }
 
     companion object {

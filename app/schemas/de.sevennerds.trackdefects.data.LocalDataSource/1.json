@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "04c57b686a40348076a9a1c259bc5845",
+    "identityHash": "f9815ef34e65fca27643aac6a63443ea",
     "entities": [
       {
         "tableName": "client",
@@ -171,7 +171,7 @@
       },
       {
         "tableName": "floor_plan",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `file_name` TEXT NOT NULL, `path` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `file_name` TEXT NOT NULL, `defect_list_id` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -186,9 +186,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "path",
-            "columnName": "path",
-            "affinity": "TEXT",
+            "fieldPath": "defectListId",
+            "columnName": "defect_list_id",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -206,14 +206,6 @@
               "file_name"
             ],
             "createSql": "CREATE  INDEX `index_floor_plan_file_name` ON `${TABLE_NAME}` (`file_name`)"
-          },
-          {
-            "name": "index_floor_plan_path",
-            "unique": false,
-            "columnNames": [
-              "path"
-            ],
-            "createSql": "CREATE  INDEX `index_floor_plan_path` ON `${TABLE_NAME}` (`path`)"
           }
         ],
         "foreignKeys": []
@@ -667,7 +659,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"04c57b686a40348076a9a1c259bc5845\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"f9815ef34e65fca27643aac6a63443ea\")"
     ]
   }
 }

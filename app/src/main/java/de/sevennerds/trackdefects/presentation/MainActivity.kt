@@ -4,18 +4,18 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.orhanobut.logger.Logger
 import com.zhuinden.simplestack.BackstackDelegate
 import com.zhuinden.simplestack.History
 import com.zhuinden.simplestack.StateChange
 import com.zhuinden.simplestack.StateChanger
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
-import de.sevennerds.trackdefects.common.Constants
 import de.sevennerds.trackdefects.domain.feature.delete_temp_dir.DeleteTempDirTask
 import de.sevennerds.trackdefects.presentation.base.navigation.BaseKey
 import de.sevennerds.trackdefects.presentation.base.navigation.FragmentStateChanger
 import de.sevennerds.trackdefects.presentation.feature.enter_street_address.navigation.EnterStreetAddressKey
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -28,11 +28,12 @@ import javax.inject.Inject
  */
 class MainActivity : AppCompatActivity(), StateChanger {
 
-    @Inject
-    lateinit var deleteTempDirTask: DeleteTempDirTask
 
     private lateinit var backstackDelegate: BackstackDelegate
     private lateinit var fragmentStateChanger: FragmentStateChanger
+
+    @Inject
+    lateinit var deleteTempDirTask: DeleteTempDirTask
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,35 +59,10 @@ class MainActivity : AppCompatActivity(), StateChanger {
 
         setSupportActionBar(mainToolbar)
 
-        deleteTempDir()
-
-        // ----------------------------------------------------------------------------------------
-
-/*        val tempImagesPath = "temp/images"
-        val tempImagesDir = File(filesDir, tempImagesPath)
-
-        if (tempImagesDir.exists().not()) {
-            tempImagesDir.mkdirs()
+        if (savedInstanceState == null){
+            deleteTempDir()
         }
-
-        val tempImageFile = File(tempImagesDir, "${getUuidV4()}.jpeg")
-
-        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.mangel)
-
-        saveFile(bitmap, tempImageFile)*/
     }
-
-/*    private fun saveFile(bitmap: Bitmap, file: File) {
-        val fileOutputStream = try {
-            FileOutputStream(file)
-        } catch (e: FileNotFoundException) {
-            throw FileSaveException(e)
-        }
-
-        fileOutputStream.use {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, it)
-        }
-    }*/
 
     override fun onRetainCustomNonConfigurationInstance(): BackstackDelegate.NonConfigurationInstance =
             backstackDelegate.onRetainCustomNonConfigurationInstance()
@@ -137,12 +113,20 @@ class MainActivity : AppCompatActivity(), StateChanger {
         }
     }
 
-    private fun deleteTempDir() {
+    private fun deleteTempDir(){
+
+        val config = RealmConfiguration
+                .Builder()
+                .build()
+
+        Realm.deleteRealm(config)
+
+        Realm.setDefaultConfiguration(config)
+
         deleteTempDirTask
                 .execute()
                 .subscribe()
     }
-
 }
 
 

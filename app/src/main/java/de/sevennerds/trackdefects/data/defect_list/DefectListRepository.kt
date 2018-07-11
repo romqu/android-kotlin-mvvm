@@ -4,6 +4,7 @@ import de.sevennerds.trackdefects.common.asObservable
 import de.sevennerds.trackdefects.common.asSingle
 import de.sevennerds.trackdefects.data.LocalDataSource
 import de.sevennerds.trackdefects.data.defect_list.local.DefectListLocalDataSource
+import de.sevennerds.trackdefects.data.floor_plan.FloorPlanRepository
 import de.sevennerds.trackdefects.data.response.Error
 import de.sevennerds.trackdefects.data.response.Result
 import de.sevennerds.trackdefects.data.street_address.StreetAddressRepository
@@ -18,7 +19,8 @@ class DefectListRepository @Inject constructor(
         private val defectListLocalDataSource: DefectListLocalDataSource,
         private val localDataSource: LocalDataSource,
         private val streetAddressRepository: StreetAddressRepository,
-        private val viewParticipantRepository: ViewParticipantRepository
+        private val viewParticipantRepository: ViewParticipantRepository,
+        private val floorPlanRepository: FloorPlanRepository
 ) {
 
     fun insert(defectListEntity: DefectListEntity): Single<Result<DefectListEntity>> =
@@ -58,25 +60,51 @@ class DefectListRepository @Inject constructor(
                                                 .toObservable()
                                     }
                                     .map { defectListEntity ->
-                                        defectListEntity.copy(viewParticipantEntity = defectListEntity
-                                                .viewParticipantEntity!!
-                                                .copy(defectListId = defectListEntity.id))
-                                    }.flatMap { defectListEntity ->
+                                        defectListEntity.copy(viewParticipantEntityList = defectListEntity
+                                                .viewParticipantEntityList
+                                                .map { it.copy(defectListId = defectListEntity.id) })
+                                    }
+                                    .flatMap { defectListEntity ->
 
-                                        val viewParticipantEntity = defectListEntity.viewParticipantEntity!!
+                                        val viewParticipantEntityList = defectListEntity.viewParticipantEntityList
 
                                         viewParticipantRepository
-                                                .insert(viewParticipantEntity)
+                                                .insert(viewParticipantEntityList)
+                                                .map { result: Result<List<Long>> ->
+                                                    result.getOrThrow()
+                                                }
+                                                .map { viewParticipantEnityIdList: Long ->
+
+                                                    val newViewParticipantEntityList=  viewParticipantEntityList
+                                                            .mapIndexed { index,
+                                                                          viewParticipantEntity ->
+                                                                viewParticipantEntity.copy(id = viewParticipantEnityIdList[index])
+                                                            }
+
+
+                                                    defectListEntity.copy(viewParticipantEntityList = newViewParticipantEntityList)
+                                                }
+                                                .toObservable()
+                                    }
+                                    .flatMapSingle { defectListEntity ->
+
+                                        val floorPlanEntity = defectListEntity.floorPlanEntity
+
+                                        floorPlanRepository
+                                                .insert(floorPlanEntity!!.copy(defectListId = defectListEntity.id))
                                                 .map { result: Result<Long> ->
                                                     result.getOrThrow()
                                                 }
-                                                .map { viewParticipantEnityId: Long ->
-                                                    defectListEntity.copy(viewParticipantEntity = viewParticipantEntity
-                                                            .copy(id = viewParticipantEnityId))
-                                                }.toObservable()
-                                    }.map { defectListEntity ->
+                                                .map { floorPlanEntityId ->
+                                                    defectListEntity.copy(floorPlanEntity = floorPlanEntity
+                                                            .copy(defectListId = defectListEntity.id),
+                                                                          id = floorPlanEntityId)
+                                                }
+                                    }
+                                    .map { defectListEntity ->
                                         Result.success(defectListEntity)
-                                    }.singleOrError()
+                                    }
+                                    .singleOrError()
                         })
                                 .onErrorReturn { Result.failure(Error.DatabaseError("")) }
                     }

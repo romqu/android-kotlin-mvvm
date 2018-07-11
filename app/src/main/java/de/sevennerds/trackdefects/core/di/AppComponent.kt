@@ -1,6 +1,7 @@
 package de.sevennerds.trackdefects.core.di
 
 import dagger.Component
+import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.data.defect_list.DefectListRepository
 import de.sevennerds.trackdefects.data.floor_plan.FloorPlanRepository
 import de.sevennerds.trackdefects.data.street_address.StreetAddressRepository
@@ -26,6 +27,7 @@ import javax.inject.Singleton
 )
 interface AppComponent {
 
+    fun inject(trackDefectsApp: TrackDefectsApp)
     fun inject(mainActivity: MainActivity)
     fun inject(enterStreetAddressFragment: EnterStreetAddressFragment)
     fun inject(selectParticipantsFragment: SelectParticipantsFragment)

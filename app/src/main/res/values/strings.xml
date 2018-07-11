@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Track-Defects</string>
+    <string name="app_name">TrackDefects</string>
     <string name="action_settings">Settings</string>
     <string name="skip_next_btn">NEXT</string>
 </resources>
