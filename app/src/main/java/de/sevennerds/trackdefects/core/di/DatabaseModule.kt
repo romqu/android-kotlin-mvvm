@@ -97,7 +97,7 @@ abstract class DatabaseModule(private val context: Context) {
         fun provideDefectImageLocalDataSource(localDataSource: LocalDataSource): DefectImageLocalDataSource =
                 localDataSource.defectImage()
 
-        @Provides
+        /*@Provides
         @Singleton
         @JvmStatic
         fun provideDefectListRepository(
@@ -130,7 +130,7 @@ abstract class DatabaseModule(private val context: Context) {
         @JvmStatic
         fun provideStreetAddressRepository(streetAddressLocalDataSource: StreetAddressLocalDataSource): StreetAddressRepository =
                 StreetAddressRepository(streetAddressLocalDataSource)
-
+*/
     }
 
 }

@@ -34,15 +34,36 @@ class FileRepository @Inject constructor(private val context: Context) {
      *
      */
 
-    fun createDirectory(name: String) {
-        val dir = File(context.filesDir, "/$name")
+    fun createDirectory(path: String): Single<Result<Boolean>> {
 
-        if (dir.exists().not()) {
-            dir.mkdirs()
+        return Single.fromCallable {
+            File(context.filesDir, "/$path")
+        }.map { dir ->
+            if (dir.exists().not()) {
+                Result.success(dir.mkdirs())
+            }
+            Result.success(true)
+        }.onErrorReturn { throwable ->
+            Result.failure(Error.SavingFiles(throwable.toString()))
         }
     }
 
-    fun save(fileEntity: FileEntity<Bitmap>) {
+    fun save(fileEntity: FileEntity<Bitmap>): Single<Result<FileEntity<Bitmap>>> {
+        return File(context.filesDir, "/${fileEntity.path}/${fileEntity.name}")
+                .asSingle()
+                .map { imageFile ->
+                    FileOutputStream(imageFile).use {
+                        fileEntity
+                                .data
+                                .compress(Bitmap.CompressFormat.JPEG,
+                                          100,
+                                          it)
+                        Result.success(fileEntity)
+                    }
+                }
+                .onErrorReturn { throwable ->
+                    Result.failure(Error.SavingFiles(throwable.toString()))
+                }
     }
 
 
@@ -84,7 +105,7 @@ class FileRepository @Inject constructor(private val context: Context) {
                                              + name)
                     .asSingle()
                     .map { bitmap ->
-                        Result.success(FileEntity(name, bitmap))
+                        Result.success(FileEntity(name, data = bitmap))
                     }
                     .onErrorReturn { throwable ->
                         Result.failure(Error.FileNotFoundError(throwable.toString()))

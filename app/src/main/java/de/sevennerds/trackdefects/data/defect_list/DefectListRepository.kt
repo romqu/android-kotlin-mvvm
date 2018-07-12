@@ -73,7 +73,7 @@ class DefectListRepository @Inject constructor(
                                                 .map { result: Result<List<Long>> ->
                                                     result.getOrThrow()
                                                 }
-                                                .map { viewParticipantEnityIdList: Long ->
+                                                .map { viewParticipantEnityIdList: List<Long> ->
 
                                                     val newViewParticipantEntityList=  viewParticipantEntityList
                                                             .mapIndexed { index,

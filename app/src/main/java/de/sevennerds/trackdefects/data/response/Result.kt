@@ -1,5 +1,7 @@
 package de.sevennerds.trackdefects.data.response
 
+import io.reactivex.Single
+
 sealed class Result<out T> {
     data class Success<out T>(val data: T) : Result<T>()
     data class Failure(val error: Error) : Result<Nothing>()
@@ -20,6 +22,16 @@ sealed class Result<out T> {
                 Result.success(data)
             }
             is Result.Failure -> this
+        }
+    }
+
+    fun <R> onSuccessSingle(invoke: (data: T) -> Single<Result<R>>): Single<Result<R>> {
+        return when (this) {
+
+            is Result.Success -> {
+                invoke(data)
+            }
+            is Result.Failure -> Single.fromCallable { failure(this.error) }
         }
     }
 
