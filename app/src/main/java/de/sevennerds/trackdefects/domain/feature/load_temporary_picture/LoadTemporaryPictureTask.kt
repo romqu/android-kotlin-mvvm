@@ -1,7 +1,6 @@
 package de.sevennerds.trackdefects.domain.feature.load_temporary_picture
 
 import android.graphics.Bitmap
-import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.common.asSingle
 import de.sevennerds.trackdefects.data.cache.BitmapCache
 import de.sevennerds.trackdefects.data.file.FileRepository
@@ -24,14 +23,14 @@ class LoadTemporaryPictureTask @Inject constructor(
                                .get(fileName)
                                .asSingle()
                                .map { result ->
-                                   result.onSuccess { bitmap ->
+                                   result.onSuccessResult { bitmap ->
                                        FileModel(fileName, bitmap)
                                    }
                                },
                        fileRepository
                                .loadTemporaryImage(fileName)
                                .map { result ->
-                                   result.onSuccess { fileEnityBitmap ->
+                                   result.onSuccessResult { fileEnityBitmap ->
                                        FileModel(fileEnityBitmap.name,
                                                  fileEnityBitmap.data)
                                    }

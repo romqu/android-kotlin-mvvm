@@ -19,6 +19,9 @@ class CreateDefectListSummaryView {
 
         class Init(val defectListModel: DefectListModel) : Result()
         object InitError : Result()
+        object Save : Result()
+        object SaveError : Result()
+
     }
 
     /**
@@ -27,7 +30,7 @@ class CreateDefectListSummaryView {
     data class State(val renderState: RenderState) {
 
         companion object {
-            fun initial() = State(RenderState.None)
+            fun initial() = State(renderState = RenderState.None)
         }
     }
 

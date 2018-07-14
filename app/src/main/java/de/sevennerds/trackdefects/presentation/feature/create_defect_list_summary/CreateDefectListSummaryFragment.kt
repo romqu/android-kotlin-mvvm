@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.jakewharton.rxbinding2.view.clicks
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.common.asObservable
@@ -114,7 +115,13 @@ class CreateDefectListSummaryFragment : BaseFragment() {
                                .Event
                                .Init
                                .asObservable(),
-                       Observable.empty())
+                       createDefectListSummarySaveFab
+                               .clicks()
+                               .map {
+                                   CreateDefectListSummaryView
+                                           .Event
+                                           .Save
+                               })
                 .compose(viewModel.eventToViewState)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::render)
@@ -148,7 +155,7 @@ class CreateDefectListSummaryFragment : BaseFragment() {
                     createDefectListSummaryGroundPlanImgView
                             .setImageBitmap(viewState.renderState
                                                     .defectListModel
-                                                    .imageModel
+                                                    .floorPlanPicture
                                                     .data)
                 }
 

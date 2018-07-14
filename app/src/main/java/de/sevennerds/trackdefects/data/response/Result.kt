@@ -14,7 +14,9 @@ sealed class Result<out T> {
         }
     }
 
-    fun <R> onSuccess(invoke: (data: T) -> R): Result<R> {
+
+
+    fun <R> onSuccessResult(invoke: (data: T) -> R): Result<R> {
         return when (this) {
 
             is Result.Success -> {

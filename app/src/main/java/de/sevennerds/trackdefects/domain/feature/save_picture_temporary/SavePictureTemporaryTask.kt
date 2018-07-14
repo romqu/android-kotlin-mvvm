@@ -23,7 +23,7 @@ class SavePictureTemporaryTask @Inject constructor(
                             fileBitmapModel.data))
                     .map { result ->
 
-                        result.onSuccess { fileEntityBitmap ->
+                        result.onSuccessResult { fileEntityBitmap ->
                             bitmapCache.clearAndInsert(fileEntityBitmap.name,
                                                        fileEntityBitmap.data)
                             fileEntityBitmap

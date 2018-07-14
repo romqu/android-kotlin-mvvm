@@ -49,7 +49,7 @@ class FileRepository @Inject constructor(private val context: Context) {
     }
 
     fun save(fileEntity: FileEntity<Bitmap>): Single<Result<FileEntity<Bitmap>>> {
-        return File(context.filesDir, "/${fileEntity.path}/${fileEntity.name}")
+        return File(context.filesDir, "/${fileEntity.path}/${fileEntity.name}${Constants.JPEG_FILE_EXTENSION}")
                 .asSingle()
                 .map { imageFile ->
                     FileOutputStream(imageFile).use {
@@ -93,6 +93,23 @@ class FileRepository @Inject constructor(private val context: Context) {
                 }
                 .onErrorReturn { throwable ->
                     Result.failure(Error.SavingFiles(throwable.toString()))
+                }
+    }
+
+    fun load(path: String, name: String): Single<Result<FileEntity<Bitmap>>> {
+        return BitmapFactory
+                .decodeFile(context
+                                    .filesDir
+                                    .absolutePath + "/"
+                                    + path
+                                    + "/"
+                                    + name)
+                .asSingle()
+                .map { bitmap ->
+                    Result.success(FileEntity(name, data = bitmap))
+                }
+                .onErrorReturn { throwable ->
+                    Result.failure(Error.FileNotFoundError(throwable.toString()))
                 }
     }
 

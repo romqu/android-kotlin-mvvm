@@ -33,7 +33,7 @@ data class ViewParticipantEntity(
         @ColumnInfo(name = "defect_list_id") val defectListId: Long,
         @ColumnInfo(name = "forename") val forename: String,
         @ColumnInfo(name = "surname") val surname: String,
-        @ColumnInfo(name = "phone_number") val phoneNumber: Int,
+        @ColumnInfo(name = "phone_number") val phoneNumber: String,
         @ColumnInfo(name = "email") val email: String,
         @ColumnInfo(name = "company_name") val companyName: String
 )

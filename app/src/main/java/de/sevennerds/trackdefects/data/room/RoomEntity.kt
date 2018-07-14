@@ -6,7 +6,7 @@ import de.sevennerds.trackdefects.data.living_unit.LivingUnitEntity
 
 
 @Entity(
-        tableName = "room_entity",
+        tableName = "room",
         foreignKeys = [
             ForeignKey(
                     entity = LivingUnitEntity::class,

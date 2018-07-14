@@ -9,6 +9,7 @@ import de.sevennerds.trackdefects.data.response.Error
 import de.sevennerds.trackdefects.data.response.Result
 import de.sevennerds.trackdefects.data.street_address.StreetAddressRepository
 import de.sevennerds.trackdefects.data.view_participant.ViewParticipantRepository
+import io.reactivex.Flowable
 import io.reactivex.Single
 import java.util.concurrent.Callable
 import javax.inject.Inject
@@ -75,7 +76,7 @@ class DefectListRepository @Inject constructor(
                                                 }
                                                 .map { viewParticipantEnityIdList: List<Long> ->
 
-                                                    val newViewParticipantEntityList=  viewParticipantEntityList
+                                                    val newViewParticipantEntityList = viewParticipantEntityList
                                                             .mapIndexed { index,
                                                                           viewParticipantEntity ->
                                                                 viewParticipantEntity.copy(id = viewParticipantEnityIdList[index])
@@ -108,6 +109,35 @@ class DefectListRepository @Inject constructor(
                         })
                                 .onErrorReturn { Result.failure(Error.DatabaseError("")) }
                     }
+
+    fun getAll(): Single<Result<List<DefectListEntity>>> {
+
+        return defectListLocalDataSource
+                .getDefectListWithRelations()
+                .map { defectListWithStreetAddressList ->
+                    defectListWithStreetAddressList
+                            .map { defectListWithStreetAddress ->
+                                val defectListEntity = defectListWithStreetAddress.defectListEntity
+                                val streetAddressEntity = defectListWithStreetAddress.streetAddressWithFloor
+                                        .first().streetAddressEntity
+                                val viewParticipantEntityList = defectListWithStreetAddress.viewParticipantEntityList
+                                val floorPlanEntity = defectListWithStreetAddress.floorPlanEntity.first()
+
+                                val newDefectListEntity = defectListEntity
+                                        .copy(streetAddressEntity = streetAddressEntity,
+                                              viewParticipantEntityList = viewParticipantEntityList,
+                                              floorPlanEntity = floorPlanEntity)
+
+                                newDefectListEntity
+                            }
+
+
+                }
+                .map { Result.success(it) }
+                .singleOrError()
+                .onErrorReturn { Result.failure(Error.DatabaseError("")) }
+
+    }
 
 
     /*fun insertAll(defectListEntityList: List<DefectListEntity>): Observable<Result<DefectListEntity>> =

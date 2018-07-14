@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CreateBasicDefectListTaskManager @Inject constructor(
+class CreateBasicDefectListManager @Inject constructor(
         private val defectListRepository: DefectListRepository,
         private val fileRepository: FileRepository,
         private val savePictureTask: SavePictureDiskTask) {
@@ -43,13 +43,13 @@ class CreateBasicDefectListTaskManager @Inject constructor(
                                               0,
                                               viewParticipantModel.name,
                                               viewParticipantModel.name,
-                                              viewParticipantModel.phoneNumber.toInt(),
+                                              viewParticipantModel.phoneNumber,
                                               viewParticipantModel.email,
                                               "")
                     }
 
 
-            val floorPlanEntity = with(imageModel) {
+            val floorPlanEntity = with(floorPlanPicture) {
                 FloorPlanEntity(0,
                                 getUuidV4(),
                                 0)
@@ -79,7 +79,7 @@ class CreateBasicDefectListTaskManager @Inject constructor(
                     result.onSuccessSingle {
                         savePictureTask.execute(FileModel(
                                 defectListEntity.floorPlanEntity!!.fileName,
-                                defectListModel.imageModel.data,
+                                defectListModel.floorPlanPicture.data,
                                 "${Constants.PROJECTS_PATH}/${defectListEntity.name}"))
                     }
                 }

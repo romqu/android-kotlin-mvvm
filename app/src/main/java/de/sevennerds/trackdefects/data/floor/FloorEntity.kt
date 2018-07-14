@@ -6,7 +6,7 @@ import de.sevennerds.trackdefects.data.street_address.StreetAddressEntity
 
 
 @Entity(
-        tableName = "floorEntity",
+        tableName = "floor",
         foreignKeys = [
             ForeignKey(
                     entity = StreetAddressEntity::class,

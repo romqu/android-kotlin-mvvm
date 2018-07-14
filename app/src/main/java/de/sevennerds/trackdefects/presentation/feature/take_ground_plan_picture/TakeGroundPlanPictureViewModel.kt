@@ -58,7 +58,7 @@ class TakeGroundPlanPictureViewModel @Inject constructor(
                                         it.match({ data ->
                                                      TakeGroundPlanPictureView.Result.TakePicture(data.name)
                                                  },
-                                                 { error ->
+                                                 { _ ->
                                                      TakeGroundPlanPictureView.Result.TakePicture("")
                                                  })
                                     }
