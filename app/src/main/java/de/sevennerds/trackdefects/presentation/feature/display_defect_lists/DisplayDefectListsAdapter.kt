@@ -12,6 +12,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.PublishSubject
+import kotlinx.android.synthetic.main.item_display_defects_list.view.*
 
 class DisplayDefectListsAdapter(private val defectListModelList: MutableList<DefectListModel>)
     : RecyclerView.Adapter<ViewHolder>() {
@@ -22,7 +23,7 @@ class DisplayDefectListsAdapter(private val defectListModelList: MutableList<Def
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
             ViewHolder(LayoutInflater
                                .from(parent.context)
-                               .inflate(R.layout.item_select_contacts,
+                               .inflate(R.layout.item_display_defects_list,
                                         parent,
                                         false),
                        onItemClickSubject,
@@ -63,5 +64,10 @@ class ViewHolder(view: View,
                 .subscribe { onClickSubject.onNext(adapterPosition) }
     }
 
-    fun bind(defectListModel: DefectListModel) {}
+    fun bind(defectListModel: DefectListModel) {
+        with(defectListModel) {
+            itemView.displayDefectsItemTextView.text =
+                    defectListModel.streetAddressModel.name
+        }
+    }
 }

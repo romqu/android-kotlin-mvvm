@@ -1,21 +1,15 @@
 package de.sevennerds.trackdefects.presentation.feature.display_defect_lists
 
-import android.graphics.Bitmap
-import androidx.collection.LruCache
-import com.vicpin.krealmextensions.queryAsSingle
+import com.orhanobut.logger.Logger
+import de.sevennerds.trackdefects.domain.feature.load_defect_list.LoadDefectListsManager
 import de.sevennerds.trackdefects.presentation.base.BaseViewModel
-import de.sevennerds.trackdefects.presentation.model.DefectListModel
-import de.sevennerds.trackdefects.presentation.model.FileModel
-import de.sevennerds.trackdefects.presentation.model.StreetAddressModel
-import de.sevennerds.trackdefects.presentation.model.ViewParticipantModel
-import de.sevennerds.trackdefects.presentation.realm_db.CreateBasicDefectListSummaryRealm
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class DisplayDefectListsViewModel @Inject constructor(
-        private val bitmapCache: LruCache<String, Bitmap>)
+        private val loadDefectListsManager: LoadDefectListsManager)
     : BaseViewModel<DisplayDefectListsView.Event, DisplayDefectListsView.State>() {
 
     override val eventToViewState = ObservableTransformer<DisplayDefectListsView.Event,
@@ -37,38 +31,10 @@ class DisplayDefectListsViewModel @Inject constructor(
 
         upstream.flatMap {
 
-            queryAsSingle<CreateBasicDefectListSummaryRealm> {
-                equalTo("id", 0L)
-            }
-                    .toObservable()
+            loadDefectListsManager
+                    .execute()
         }
-                .map { it.first() }
-                .map { createBasicDefectListRealm ->
-                    val groundPlanPictureName = createBasicDefectListRealm.groundPlanPictureName
-                    val streetAddressRealm = createBasicDefectListRealm.streetAddressRealm
-                    val viewParticipantRealmList = createBasicDefectListRealm.viewParticipantRealmList
-
-                    val bitmap = bitmapCache.get(groundPlanPictureName)
-                    val imageModel = FileModel<Bitmap>(groundPlanPictureName, bitmap!!)
-                    val streetAddressModel = with(streetAddressRealm!!) {
-                        StreetAddressModel(streetName, streetNumber, streetAdditional)
-                    }
-
-
-                    val viewParticipantModelList = viewParticipantRealmList
-                            .map {
-                                with(it!!) {
-                                    ViewParticipantModel(name, email, phoneNumber)
-                                }
-                            }
-
-                    listOf(DefectListModel(
-                            "name",
-                            imageModel,
-                            streetAddressModel,
-                            viewParticipantModelList))
-                }
-                .map { DisplayDefectListsView.Result.Init(it) }
+                .map { DisplayDefectListsView.Result.Init(listOf(it)) }
 
     }
 

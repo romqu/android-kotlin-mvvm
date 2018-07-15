@@ -103,7 +103,8 @@ class FileRepository @Inject constructor(private val context: Context) {
                                     .absolutePath + "/"
                                     + path
                                     + "/"
-                                    + name)
+                                    + name
+                                    + Constants.JPEG_FILE_EXTENSION)
                 .asSingle()
                 .map { bitmap ->
                     Result.success(FileEntity(name, data = bitmap))

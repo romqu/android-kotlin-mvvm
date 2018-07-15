@@ -13,7 +13,7 @@ import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.domain.feature.delete_temp_dir.DeleteTempDirTask
 import de.sevennerds.trackdefects.presentation.base.navigation.BaseKey
 import de.sevennerds.trackdefects.presentation.base.navigation.FragmentStateChanger
-import de.sevennerds.trackdefects.presentation.feature.enter_street_address.navigation.EnterStreetAddressKey
+import de.sevennerds.trackdefects.presentation.feature.display_defect_lists.DisplayDefectListsKey
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.activity_main.*
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), StateChanger {
 
         backstackDelegate.onCreate(savedInstanceState,
                                    lastCustomNonConfigurationInstance,
-                                   History.single(EnterStreetAddressKey()))
+                                   History.single(DisplayDefectListsKey()))
 
         backstackDelegate.registerForLifecycleCallbacks(this)
 
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity(), StateChanger {
 
         setSupportActionBar(mainToolbar)
 
-        if (savedInstanceState == null){
+        if (savedInstanceState == null) {
             deleteTempDir()
         }
     }
@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity(), StateChanger {
         }
     }
 
-    private fun deleteTempDir(){
+    private fun deleteTempDir() {
 
         val config = RealmConfiguration
                 .Builder()

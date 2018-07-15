@@ -45,7 +45,9 @@ fun <T> Observable<T>.applySchedulers(): Observable<T> =
 
 fun <T> T.asObservable(): Observable<T> = Observable.just<T>(this)
 
-fun <T> T.asSingle(): Single<T> = Single.just<T>(this)
+fun <T> T.asSingle(): Single<T> = Single.fromCallable {
+    this
+}
 
 fun <T> PublishSubject<T>.toObservable() =
         this.toFlowable(io.reactivex.BackpressureStrategy.BUFFER)

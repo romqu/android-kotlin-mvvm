@@ -1,5 +1,6 @@
 package de.sevennerds.trackdefects.data.defect_list
 
+import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.common.asObservable
 import de.sevennerds.trackdefects.common.asSingle
 import de.sevennerds.trackdefects.data.LocalDataSource
@@ -10,6 +11,7 @@ import de.sevennerds.trackdefects.data.response.Result
 import de.sevennerds.trackdefects.data.street_address.StreetAddressRepository
 import de.sevennerds.trackdefects.data.view_participant.ViewParticipantRepository
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.Single
 import java.util.concurrent.Callable
 import javax.inject.Inject
@@ -110,7 +112,7 @@ class DefectListRepository @Inject constructor(
                                 .onErrorReturn { Result.failure(Error.DatabaseError("")) }
                     }
 
-    fun getAll(): Single<Result<List<DefectListEntity>>> {
+    fun getAll(): Observable<Result<List<DefectListEntity>>> {
 
         return defectListLocalDataSource
                 .getDefectListWithRelations()
@@ -134,7 +136,7 @@ class DefectListRepository @Inject constructor(
 
                 }
                 .map { Result.success(it) }
-                .singleOrError()
+                .toObservable()
                 .onErrorReturn { Result.failure(Error.DatabaseError("")) }
 
     }
