@@ -1,8 +1,8 @@
 package de.sevennerds.trackdefects.data.file
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.common.Constants
 import de.sevennerds.trackdefects.common.Constants.Database.TEMP_FILES_IMAGES_PATH
 import de.sevennerds.trackdefects.common.asSingle
@@ -15,7 +15,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FileRepository @Inject constructor(private val context: Context) {
+class FileRepository @Inject constructor(private val filesDir: File) {
 
     /**
      *
@@ -37,7 +37,7 @@ class FileRepository @Inject constructor(private val context: Context) {
     fun createDirectory(path: String): Single<Result<Boolean>> {
 
         return Single.fromCallable {
-            File(context.filesDir, "/$path")
+            File(filesDir, "/$path")
         }.map { dir ->
             if (dir.exists().not()) {
                 Result.success(dir.mkdirs())
@@ -49,7 +49,7 @@ class FileRepository @Inject constructor(private val context: Context) {
     }
 
     fun save(fileEntity: FileEntity<Bitmap>): Single<Result<FileEntity<Bitmap>>> {
-        return File(context.filesDir, "/${fileEntity.path}/${fileEntity.name}${Constants.JPEG_FILE_EXTENSION}")
+        return File(filesDir, "/${fileEntity.path}/${fileEntity.name}${Constants.JPEG_FILE_EXTENSION}")
                 .asSingle()
                 .map { imageFile ->
                     FileOutputStream(imageFile).use {
@@ -68,7 +68,7 @@ class FileRepository @Inject constructor(private val context: Context) {
 
 
     fun saveTemporary(fileEntity: FileEntity<Bitmap>): Single<Result<FileEntity<Bitmap>>> {
-        return File(context.filesDir, TEMP_FILES_IMAGES_PATH)
+        return File(filesDir, TEMP_FILES_IMAGES_PATH)
                 .asSingle()
                 .map { tempImagesDir ->
                     if (tempImagesDir.exists().not()) {
@@ -97,9 +97,9 @@ class FileRepository @Inject constructor(private val context: Context) {
     }
 
     fun load(path: String, name: String): Single<Result<FileEntity<Bitmap>>> {
+
         return BitmapFactory
-                .decodeFile(context
-                                    .filesDir
+                .decodeFile(filesDir
                                     .absolutePath + "/"
                                     + path
                                     + "/"
@@ -107,6 +107,7 @@ class FileRepository @Inject constructor(private val context: Context) {
                                     + Constants.JPEG_FILE_EXTENSION)
                 .asSingle()
                 .map { bitmap ->
+
                     Result.success(FileEntity(name, data = bitmap))
                 }
                 .onErrorReturn { throwable ->
@@ -115,8 +116,7 @@ class FileRepository @Inject constructor(private val context: Context) {
     }
 
     fun loadTemporaryImage(name: String): Single<Result<FileEntity<Bitmap>>> =
-            BitmapFactory.decodeFile(context
-                                             .filesDir
+            BitmapFactory.decodeFile(filesDir
                                              .absolutePath + "/"
                                              + TEMP_FILES_IMAGES_PATH
                                              + "/"
@@ -130,8 +130,7 @@ class FileRepository @Inject constructor(private val context: Context) {
                     }
 
     fun deleteTempDir(): Single<Result<Boolean>> =
-            File(context
-                         .filesDir
+            File(filesDir
                          .absolutePath + "/"
                          + TEMP_FILES_IMAGES_PATH
                          + "/")

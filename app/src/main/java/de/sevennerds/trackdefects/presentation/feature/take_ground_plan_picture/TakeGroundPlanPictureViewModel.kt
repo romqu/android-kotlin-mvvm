@@ -16,7 +16,6 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class TakeGroundPlanPictureViewModel @Inject constructor(
-        private val bitmapCache: LruCache<String, Bitmap>,
         private val savePictureTemporaryTask: SavePictureTemporaryTask)
     : BaseViewModel<TakeGroundPlanPictureView.Event,
         TakeGroundPlanPictureView.State>() {

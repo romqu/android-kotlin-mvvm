@@ -1,7 +1,5 @@
 package de.sevennerds.trackdefects.presentation.feature.preview_image
 
-import android.graphics.Bitmap
-import androidx.collection.LruCache
 import com.vicpin.krealmextensions.queryAsSingle
 import de.sevennerds.trackdefects.domain.feature.load_temporary_picture.LoadTemporaryPictureTask
 import de.sevennerds.trackdefects.presentation.base.BaseViewModel
@@ -12,7 +10,6 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class PreviewImageViewModel @Inject constructor(
-        private val bitmapCache: LruCache<String, Bitmap>,
         loadTemporaryPictureTask: LoadTemporaryPictureTask)
     : BaseViewModel<PreviewImageView.Event, PreviewImageView.State>() {
 

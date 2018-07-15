@@ -11,6 +11,7 @@ import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.common.asObservable
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
+import de.sevennerds.trackdefects.presentation.feature.display_defect_lists.DisplayDefectListsKey
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -160,6 +161,10 @@ class CreateDefectListSummaryFragment : BaseFragment() {
                 }
 
                 is CreateDefectListSummaryView.RenderState.None -> {
+                }
+                is CreateDefectListSummaryView.RenderState.Save -> {
+                    MainActivity[requireContext()]
+                            .replaceHistory(DisplayDefectListsKey())
                 }
             }
 

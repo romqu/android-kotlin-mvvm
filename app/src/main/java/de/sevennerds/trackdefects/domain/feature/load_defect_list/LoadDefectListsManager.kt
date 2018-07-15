@@ -1,6 +1,5 @@
 package de.sevennerds.trackdefects.domain.feature.load_defect_list
 
-import com.orhanobut.logger.Logger
 import de.sevennerds.trackdefects.common.Constants
 import de.sevennerds.trackdefects.data.defect_list.DefectListRepository
 import de.sevennerds.trackdefects.data.response.Result
@@ -29,12 +28,11 @@ class LoadDefectListsManager @Inject constructor(
                         .fileName
 
                 loadPictureTask
-                        .execute(fileName, Constants.PROJECTS_PATH)
+                        .execute(fileName, Constants.PROJECTS_PATH + "/" + defectListEntity.name)
                         .map { Pair(defectListEntity, it.getOrThrow()) }
             }
             .map { pair ->
                 Result.success(DefectListMapper
-                        .entityToModel(pair.first, pair.second))
+                                       .entityToModel(pair.first, pair.second))
             }
-
 }

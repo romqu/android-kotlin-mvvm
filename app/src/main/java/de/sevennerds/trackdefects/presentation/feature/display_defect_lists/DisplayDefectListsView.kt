@@ -9,6 +9,7 @@ class DisplayDefectListsView {
     sealed class Event {
 
         object Init : Event()
+        object Add : Event()
     }
 
     /**
@@ -17,6 +18,8 @@ class DisplayDefectListsView {
     sealed class Result {
 
         class Init(val defectListModelList: List<DefectListModel>) : Result()
+        object InitError : Result()
+        object Add : Result()
     }
 
     /**
@@ -34,6 +37,7 @@ class DisplayDefectListsView {
      */
     sealed class RenderState {
         class Init(val defectListModelList: List<DefectListModel>) : RenderState()
+        object Add : RenderState()
         object None : RenderState()
     }
 

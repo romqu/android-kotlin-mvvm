@@ -22,7 +22,7 @@ import javax.inject.Singleton
             ContextModule::class,
             DatabaseModule::class,
             NetworkModule::class,
-            LruCacheModule::class
+            FileModule::class
         ]
 )
 interface AppComponent {
@@ -38,6 +38,7 @@ interface AppComponent {
 
     // Exposed sub-graphs mostly for testing
     fun floorPlanRepository(): FloorPlanRepository
+
     fun viewParticipantRepository(): ViewParticipantRepository
     fun streetAddressRepository(): StreetAddressRepository
     fun defectRepository(): DefectListRepository

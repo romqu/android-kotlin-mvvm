@@ -113,8 +113,6 @@ class EnterStreetAddressFragment : BaseFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        Logger.d(item.itemId == android.R.id.home)
-
         return super.onOptionsItemSelected(item)
     }
 

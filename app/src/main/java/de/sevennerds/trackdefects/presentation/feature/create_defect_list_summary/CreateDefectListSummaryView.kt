@@ -39,6 +39,7 @@ class CreateDefectListSummaryView {
      */
     sealed class RenderState {
         class Init(val defectListModel: DefectListModel) : RenderState()
+        object Save : RenderState()
         object None : RenderState()
     }
 

@@ -168,7 +168,7 @@ class CreateDefectListSummaryViewModel @Inject constructor(
                 is CreateDefectListSummaryView.Result.InitError ->
                     previousState.copy(renderState = CreateDefectListSummaryView.RenderState.None)
                 is CreateDefectListSummaryView.Result.Save ->
-                    previousState.copy(renderState = CreateDefectListSummaryView.RenderState.None)
+                    previousState.copy(renderState = CreateDefectListSummaryView.RenderState.Save)
                 is CreateDefectListSummaryView.Result.SaveError ->
                     previousState.copy(renderState = CreateDefectListSummaryView.RenderState.None)
             }

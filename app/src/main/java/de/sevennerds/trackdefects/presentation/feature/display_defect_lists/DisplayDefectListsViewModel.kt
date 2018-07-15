@@ -1,8 +1,9 @@
 package de.sevennerds.trackdefects.presentation.feature.display_defect_lists
 
-import com.orhanobut.logger.Logger
+import de.sevennerds.trackdefects.data.response.Result
 import de.sevennerds.trackdefects.domain.feature.load_defect_list.LoadDefectListsManager
 import de.sevennerds.trackdefects.presentation.base.BaseViewModel
+import de.sevennerds.trackdefects.presentation.model.DefectListModel
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.schedulers.Schedulers
@@ -17,15 +18,19 @@ class DisplayDefectListsViewModel @Inject constructor(
 
         upstream.observeOn(Schedulers.io())
                 .publish { shared ->
-                    Observable.mergeArray(shared.ofType(
-                            DisplayDefectListsView.Event.Init::class.java)
-                                                  .compose(initEventToResult))
-                            .compose(resultToViewState)
+                    Observable.mergeArray(
+                            shared.ofType(
+                                    DisplayDefectListsView.Event.Init::class.java)
+                                    .compose(initEventToResult),
+                            shared.ofType(DisplayDefectListsView.Event.Add::class.java)
+                                    .compose(addEventToResult)
+                    ).compose(resultToViewState)
                 }
 
     }
 
 
+    // TODO move scan part to domain
     private val initEventToResult = ObservableTransformer<DisplayDefectListsView.Event.Init,
             DisplayDefectListsView.Result> { upstream ->
 
@@ -33,9 +38,22 @@ class DisplayDefectListsViewModel @Inject constructor(
 
             loadDefectListsManager
                     .execute()
-        }
-                .map { DisplayDefectListsView.Result.Init(listOf(it)) }
+        }.scan(emptyList()) { previousList: List<DefectListModel>, result: Result<DefectListModel> ->
 
+            previousList.union(
+                    listOf(result.getOrThrow()))
+                    .toList()
+        }
+                .map { defectListModelList ->
+                    DisplayDefectListsView.Result.Init(defectListModelList)
+                }
+
+    }
+
+    private val addEventToResult = ObservableTransformer<DisplayDefectListsView.Event.Add,
+            DisplayDefectListsView.Result> { upstream ->
+
+        upstream.map { DisplayDefectListsView.Result.Add }
     }
 
     private val resultToViewState = ObservableTransformer<DisplayDefectListsView.Result,
@@ -48,6 +66,12 @@ class DisplayDefectListsViewModel @Inject constructor(
                 is DisplayDefectListsView.Result.Init ->
                     previousState.copy(renderState = DisplayDefectListsView
                             .RenderState.Init(result.defectListModelList))
+                is DisplayDefectListsView.Result.InitError ->
+                    previousState.copy(renderState = DisplayDefectListsView
+                            .RenderState.None)
+                is DisplayDefectListsView.Result.Add ->
+                    previousState.copy(renderState = DisplayDefectListsView
+                            .RenderState.Add)
             }
 
         }

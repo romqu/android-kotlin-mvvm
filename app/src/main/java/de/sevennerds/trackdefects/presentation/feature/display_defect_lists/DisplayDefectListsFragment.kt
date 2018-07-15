@@ -7,14 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.jakewharton.rxbinding2.view.clicks
 import de.sevennerds.trackdefects.R
 import de.sevennerds.trackdefects.TrackDefectsApp
 import de.sevennerds.trackdefects.common.asObservable
 import de.sevennerds.trackdefects.presentation.MainActivity
 import de.sevennerds.trackdefects.presentation.base.BaseFragment
+import de.sevennerds.trackdefects.presentation.feature.enter_street_address.navigation.EnterStreetAddressKey
 import de.sevennerds.trackdefects.presentation.feature.select_participants_defect_list.SelectParticipantsView
 import de.sevennerds.trackdefects.presentation.model.DefectListModel
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.PublishSubject
@@ -94,6 +97,7 @@ class DisplayDefectListsFragment : BaseFragment() {
         super.onResume()
 
         if (isRotation) {
+            setupActionBar()
             setupEvents()
             isRotation = false
         }
@@ -109,6 +113,7 @@ class DisplayDefectListsFragment : BaseFragment() {
 
     private fun setupActionBar() {
         MainActivity[requireContext()].supportActionBar?.title = "Defect Lists"
+        MainActivity[requireContext()].supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
     private fun setupRecyclerView() {
@@ -123,8 +128,13 @@ class DisplayDefectListsFragment : BaseFragment() {
 
     private fun setupEvents() {
         compositeDisposable += Observable
-                .mergeArray(DisplayDefectListsView.Event.Init.asObservable())
+                .mergeArray(DisplayDefectListsView.Event.Init
+                                    .asObservable(),
+                            displayDefectListsAddFab
+                                    .clicks()
+                                    .map { DisplayDefectListsView.Event.Add })
                 .compose(viewModel.eventToViewState)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::render)
     }
 
@@ -138,6 +148,10 @@ class DisplayDefectListsFragment : BaseFragment() {
                 updateList(renderState.defectListModelList)
             }
             is DisplayDefectListsView.RenderState.None -> {
+            }
+            is DisplayDefectListsView.RenderState.Add -> {
+                MainActivity[requireContext()]
+                        .navigateTo(EnterStreetAddressKey())
             }
         }
     }
