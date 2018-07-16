@@ -21,7 +21,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         javaCompileOptions {
@@ -113,8 +113,8 @@ dependencies {
     implementation 'com.github.Zhuinden:simple-stack:1.11.0'
     // camera
     // implementation 'com.asksira.android:cameraviewplus:0.9.0'
-    implementation 'io.fotoapparat.fotoapparat:library:2.2.0'
-    implementation 'io.fotoapparat.fotoapparat:adapter-rxjava2:2.2.0'
+    implementation 'io.fotoapparat.fotoapparat:library:2.3.1'
+    implementation 'io.fotoapparat.fotoapparat:adapter-rxjava2:2.3.1'
     // TextField
     implementation 'com.github.HITGIF:TextFieldBoxes:1.4.4'
 

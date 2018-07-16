@@ -26,7 +26,6 @@ class DisplayDefectListsViewModel @Inject constructor(
                                     .compose(addEventToResult)
                     ).compose(resultToViewState)
                 }
-
     }
 
 
@@ -43,10 +42,9 @@ class DisplayDefectListsViewModel @Inject constructor(
             previousList.union(
                     listOf(result.getOrThrow()))
                     .toList()
+        }.map { defectListModelList ->
+            DisplayDefectListsView.Result.Init(defectListModelList)
         }
-                .map { defectListModelList ->
-                    DisplayDefectListsView.Result.Init(defectListModelList)
-                }
 
     }
 

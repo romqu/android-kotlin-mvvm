@@ -6,6 +6,9 @@ sealed class Result<out T> {
     data class Success<out T>(val data: T) : Result<T>()
     data class Failure(val error: Error) : Result<Nothing>()
 
+    val isSuccess: Boolean
+        get() = this is Success
+
     fun getOrThrow(): T {
         return when (this) {
 
@@ -13,7 +16,6 @@ sealed class Result<out T> {
             is Result.Failure -> throw Error(error.toString())
         }
     }
-
 
 
     fun <R> onSuccessResult(invoke: (data: T) -> R): Result<R> {
@@ -44,6 +46,8 @@ sealed class Result<out T> {
             is Result.Failure -> onFailure(error)
         }
     }
+
+    /*fun isSuccess() = this is Success*/
 
     companion object {
         fun <T> success(data: T) = Success(data) as Result<T>

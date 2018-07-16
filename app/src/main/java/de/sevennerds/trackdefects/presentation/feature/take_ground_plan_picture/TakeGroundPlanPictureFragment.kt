@@ -18,7 +18,6 @@ import io.fotoapparat.Fotoapparat
 import io.fotoapparat.configuration.CameraConfiguration
 import io.fotoapparat.parameter.ScaleType
 import io.fotoapparat.selector.*
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -122,13 +121,18 @@ class TakeGroundPlanPictureFragment : BaseFragment() {
 
         compositeDisposable += takeGroundPlanPictureTakePictureFab
                 .clicks()
-                .flatMap {
+                .observeOn(Schedulers.io())
+                /*.flatMap {
 
                     Observable.fromCallable {
                         TakeGroundPlanPictureView.Event.TakePicture(
                                 camera.takePicture())
                     }.subscribeOn(Schedulers.io())
 
+                }*/
+                .map {
+                    TakeGroundPlanPictureView.Event.TakePicture(
+                            camera.takePicture())
                 }
                 .compose(viewModel.eventToViewState)
                 .observeOn(AndroidSchedulers.mainThread())

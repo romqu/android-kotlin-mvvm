@@ -117,6 +117,7 @@ class DefectListRepository @Inject constructor(
         return defectListLocalDataSource
                 .getDefectListWithRelations()
                 .map { defectListWithStreetAddressList ->
+
                     defectListWithStreetAddressList
                             .map { defectListWithStreetAddress ->
                                 val defectListEntity = defectListWithStreetAddress.defectListEntity
